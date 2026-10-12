@@ -4,11 +4,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import okhttp3.Interceptor
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
@@ -40,8 +40,8 @@ object ApiClient {
             throw IOException("No hay conexión a internet")
         }
 
-        val jsonMediaType = MediaType.parse("application/json; charset=utf-8")
-        val responseBody = ResponseBody.create(jsonMediaType, MockData.DESTINOS_JSON)
+        val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+        val responseBody = MockData.DESTINOS_JSON.toResponseBody(jsonMediaType)
 
         // Respuesta HTTP 200 con el catálogo de destinos turísticos
         Response.Builder()

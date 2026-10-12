@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.gson)
+    implementation(libs.okhttp)
     implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
