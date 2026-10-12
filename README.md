@@ -31,11 +31,13 @@
 ## 3. Requisitos Funcionales Cumplidos
 
 ### Continuidad con APF1 (Semana 5)
-- [x] **Navegación fluida:** Menú inferior `BottomNavigationView` con fragments:
-  1. **Destinos:** Catálogo completo desde la API.
-  2. **Favoritos:** Filtro local de destinos guardados.
-  3. **Ajustes:** Configuración del tema y datos de la app.
+- [x] **Navegación multinivel:** Menú inferior `BottomNavigationView` con 4 secciones:
+  1. **Destinos:** Catálogo completo desde la API REST.
+  2. **Guía Perú:** Recomendaciones de viaje (soroche, temporadas, clima) y marcación oficial a IPERÚ vía **Intent Implícito**.
+  3. **Favoritos:** Filtro local de destinos guardados con persistencia.
+  4. **Ajustes:** Configuración del tema visual y datos del proyecto.
 - [x] **Navegación hacia detalle:** Apertura de `DetalleDestinoActivity` vía `Intent` explícito con `Bundle`.
+- [x] **Ruta y Ubicación:** Nueva pantalla `RutaDestinoActivity` con coordenadas GPS, transporte según la región y botón para abrir navegación en **Google Maps** vía **Intent Implícito**.
 
 ### Novedades de APF2 (Semana 10)
 - [x] **Consumo de API REST pública en RecyclerView:** Catálogo de 12 destinos con imágenes cargadas asíncronamente vía Glide.
@@ -54,11 +56,13 @@
 ```text
 pe.edu.utp.peruviajero/
 ├── ui/
-│   ├── MainActivity.kt / .java
-│   ├── DestinosFragment.kt / .java
-│   ├── FavoritosFragment.kt / .java
-│   ├── AjustesFragment.kt / .java
-│   └── DetalleDestinoActivity.kt / .java
+│   ├── MainActivity.kt
+│   ├── DestinosFragment.kt
+│   ├── GuiaViajeFragment.kt
+│   ├── FavoritosFragment.kt
+│   ├── AjustesFragment.kt
+│   ├── DetalleDestinoActivity.kt
+│   └── RutaDestinoActivity.kt
 ├── data/
 │   ├── model/
 │   │   └── Destino.kt / .java

@@ -29,6 +29,10 @@
             android:name=".ui.DetalleDestinoActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.RutaDestinoActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.DetalleDestinoActivity" />
     </application>
 
 </manifest>

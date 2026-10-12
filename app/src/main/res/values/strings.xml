@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">PerúViajero</string>
     <string name="nav_destinos">Destinos</string>
+    <string name="nav_guia">Guía Perú</string>
     <string name="nav_favoritos">Favoritos</string>
     <string name="nav_ajustes">Ajustes</string>
+    <string name="como_llegar">¿Cómo llegar y Ubicación?</string>
+    <string name="abrir_en_mapa">Abrir en Google Maps / GPS</string>
     
     <string name="buscar_hint">Buscar atractivo o ciudad...</string>
     <string name="cargando_destinos">Cargando destinos turísticos...</string>

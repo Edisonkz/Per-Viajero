@@ -1,5 +1,6 @@
 package pe.edu.utp.perviajero.ui
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
@@ -26,6 +27,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
     private lateinit var tvDetalleNombre: TextView
     private lateinit var tvDetalleDepartamento: TextView
     private lateinit var tvDetalleDescripcion: TextView
+    private lateinit var btnComoLlegar: MaterialButton
     private lateinit var btnDetalleFavorito: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
         tvDetalleNombre = findViewById(R.id.tvDetalleNombre)
         tvDetalleDepartamento = findViewById(R.id.tvDetalleDepartamento)
         tvDetalleDescripcion = findViewById(R.id.tvDetalleDescripcion)
+        btnComoLlegar = findViewById(R.id.btnComoLlegar)
         btnDetalleFavorito = findViewById(R.id.btnDetalleFavorito)
 
         // Configuración de Toolbar con botón de retroceso
@@ -79,6 +82,14 @@ class DetalleDestinoActivity : AppCompatActivity() {
             .error(android.R.drawable.ic_dialog_alert)
             .into(ivDetalleFoto)
 
+        // Botón ¿Cómo llegar y Ubicación? (Intent explícito hacia RutaDestinoActivity)
+        btnComoLlegar.setOnClickListener {
+            val intent = Intent(this, RutaDestinoActivity::class.java).apply {
+                putExtra(RutaDestinoActivity.EXTRA_DESTINO, destino)
+            }
+            startActivity(intent)
+        }
+
         // Configurar estado del botón favorito
         val prefs = PreferencesHelper.getInstance(this)
         actualizarTextoBotonFavorito(prefs.isFavorito(destino.id))
@@ -99,4 +110,3 @@ class DetalleDestinoActivity : AppCompatActivity() {
         }
     }
 }
-

@@ -11,6 +11,7 @@ import pe.edu.utp.perviajero.network.ApiClient
 import pe.edu.utp.perviajero.ui.AjustesFragment
 import pe.edu.utp.perviajero.ui.DestinosFragment
 import pe.edu.utp.perviajero.ui.FavoritosFragment
+import pe.edu.utp.perviajero.ui.GuiaViajeFragment
 
 // REQ-01 / REQ-02 / REQ-04: Actividad principal con navegación multinivel (Continuidad APF1)
 class MainActivity : AppCompatActivity() {
@@ -37,13 +38,18 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Configuración de BottomNavigationView
+        // Configuración de BottomNavigationView con 4 secciones
         bottomNavigation = findViewById(R.id.bottomNavigation)
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_destinos -> {
                     toolbar.title = getString(R.string.app_name)
                     cambiarFragment(DestinosFragment())
+                    true
+                }
+                R.id.navigation_guia -> {
+                    toolbar.title = getString(R.string.nav_guia)
+                    cambiarFragment(GuiaViajeFragment())
                     true
                 }
                 R.id.navigation_favoritos -> {

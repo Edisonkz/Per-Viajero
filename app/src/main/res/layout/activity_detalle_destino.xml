@@ -144,12 +144,29 @@
                     android:textColor="?android:attr/textColorSecondary"
                     tools:text="Obra maestra de la ingeniería y arquitectura incaica ubicada a 2,430 m s. n. m..." />
 
+                <!-- Botón ¿Cómo llegar y Ubicación? -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnComoLlegar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/colorCardBackground"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="1.5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/como_llegar"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_location"
+                    app:iconTint="@color/colorPrimary"
+                    app:iconGravity="textStart" />
+
                 <!-- Botón de Favorito -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDetalleFavorito"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="12dp"
                     android:backgroundTint="@color/colorPrimary"
                     android:text="Guardar en Favoritos"
                     android:textAllCaps="false"

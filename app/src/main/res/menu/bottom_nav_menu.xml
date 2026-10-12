@@ -5,6 +5,10 @@
         android:icon="@drawable/ic_destinos"
         android:title="@string/nav_destinos" />
     <item
+        android:id="@+id/navigation_guia"
+        android:icon="@drawable/ic_guia"
+        android:title="@string/nav_guia" />
+    <item
         android:id="@+id/navigation_favoritos"
         android:icon="@drawable/ic_favoritos"
         android:title="@string/nav_favoritos" />
@@ -13,4 +17,3 @@
         android:icon="@drawable/ic_ajustes"
         android:title="@string/nav_ajustes" />
 </menu>
-
