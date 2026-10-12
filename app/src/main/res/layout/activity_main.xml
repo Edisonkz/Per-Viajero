@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- REQ-01 / REQ-02: Pantalla principal con Toolbar y BottomNavigationView (Continuidad APF1) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Toolbar superior con Material Design -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="@string/app_name"
+        app:titleTextColor="#FFFFFF"
+        app:elevation="4dp" />
+
+    <!-- Contenedor dinámico de Fragments -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Barra de navegación inferior -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorCardBackground"
+        app:elevation="8dp"
+        app:itemIconTint="@color/selector_nav_colors"
+        app:itemTextColor="@color/selector_nav_colors"
+        app:menu="@menu/bottom_nav_menu" />
+
+</LinearLayout>

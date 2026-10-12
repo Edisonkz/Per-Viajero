@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- REQ-09: Pantalla de favoritos persistidos en SharedPreferences -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFavoritos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        tools:listitem="@layout/item_destino" />
+
+    <LinearLayout
+        android:id="@+id/layoutFavoritosVacio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="32dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_favoritos_border"
+            app:tint="?android:attr/textColorSecondary"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:contentDescription="@string/nav_favoritos" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/sin_favoritos"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</FrameLayout>
+

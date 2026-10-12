@@ -1,0 +1,74 @@
+package pe.edu.utp.perviajero
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import pe.edu.utp.perviajero.data.local.PreferencesHelper
+import pe.edu.utp.perviajero.network.ApiClient
+import pe.edu.utp.perviajero.ui.AjustesFragment
+import pe.edu.utp.perviajero.ui.DestinosFragment
+import pe.edu.utp.perviajero.ui.FavoritosFragment
+
+// REQ-01 / REQ-02 / REQ-04: Actividad principal con navegación multinivel (Continuidad APF1)
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var toolbar: MaterialToolbar
+    private lateinit var bottomNavigation: BottomNavigationView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // REQ-10: Aplicar preferencia de tema guardada antes de inflar vistas
+        val prefs = PreferencesHelper.getInstance(this)
+        if (prefs.isDarkMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Inicializar cliente HTTP
+        ApiClient.initialize(this)
+
+        // Configuración de Toolbar
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // Configuración de BottomNavigationView
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_destinos -> {
+                    toolbar.title = getString(R.string.app_name)
+                    cambiarFragment(DestinosFragment())
+                    true
+                }
+                R.id.navigation_favoritos -> {
+                    toolbar.title = getString(R.string.nav_favoritos)
+                    cambiarFragment(FavoritosFragment())
+                    true
+                }
+                R.id.navigation_ajustes -> {
+                    toolbar.title = getString(R.string.nav_ajustes)
+                    cambiarFragment(AjustesFragment())
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Cargar fragment inicial (Destinos)
+        if (savedInstanceState == null) {
+            bottomNavigation.selectedItemId = R.id.navigation_destinos
+        }
+    }
+
+    private fun cambiarFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
+    }
+}

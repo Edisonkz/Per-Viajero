@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- REQ-07 / REQ-08: Pantalla de destinos con 3 estados y buscador reactivo -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Buscador en tiempo real (Estado Dinámico / useState equivalente) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilBuscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeWidth="1dp"
+        app:hintEnabled="false"
+        app:startIconDrawable="@android:drawable/ic_menu_search"
+        app:endIconMode="clear_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etBuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/buscar_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Contenedor de Estados de Carga -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- 1. ESTADO CARGANDO -->
+        <LinearLayout
+            android:id="@+id/layoutCargando"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/cargando_destinos"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- 2. ESTADO ÉXITO: RecyclerView con lista poblada -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDestinos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            android:visibility="gone"
+            tools:listitem="@layout/item_destino" />
+
+        <!-- 3. ESTADO ERROR: Simulación sin conexión / falla -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_error_cloud"
+                android:contentDescription="@string/error_conexion" />
+
+            <TextView
+                android:id="@+id/tvErrorTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/error_conexion"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvErrorMensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/error_conexion_detalle"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReintentar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="@string/reintentar"
+                android:textAllCaps="false"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <!-- Estado vacío para búsqueda -->
+        <LinearLayout
+            android:id="@+id/layoutVacio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/sin_resultados"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
+

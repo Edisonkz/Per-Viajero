@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">PerúViajero</string>
+    <string name="nav_destinos">Destinos</string>
+    <string name="nav_favoritos">Favoritos</string>
+    <string name="nav_ajustes">Ajustes</string>
+    
+    <string name="buscar_hint">Buscar atractivo o ciudad...</string>
+    <string name="cargando_destinos">Cargando destinos turísticos...</string>
+    <string name="error_conexion">No se pudo conectar al servidor</string>
+    <string name="error_conexion_detalle">Verifica tu conexión a internet e inténtalo nuevamente.</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="sin_favoritos">Aún no tienes destinos favoritos guardados.</string>
+    <string name="sin_resultados">No se encontraron atractivos que coincidan con la búsqueda.</string>
+    
+    <string name="titulo_ajustes">Configuración</string>
+    <string name="modo_oscuro">Modo Oscuro</string>
+    <string name="modo_oscuro_desc">Alternar entre tema claro y tema oscuro</string>
+    <string name="info_acerca_de">Acerca de PerúViajero</string>
+    <string name="info_universidad">Universidad Tecnológica del Perú - UTP</string>
+    <string name="info_curso">Desarrollo de Aplicaciones Móviles</string>
+    <string name="info_avance">Avance de Proyecto Final 2 (Semana 10)</string>
+    <string name="volver">Volver</string>
+</resources>
