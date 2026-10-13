@@ -2,8 +2,9 @@
     <string name="app_name">PerúViajero</string>
     <string name="nav_destinos">Destinos</string>
     <string name="nav_guia">Guía Perú</string>
+    <string name="nav_reservas">Reservas</string>
     <string name="nav_favoritos">Favoritos</string>
-    <string name="nav_ajustes">Ajustes</string>
+    <string name="nav_ajustes">Perfil</string>
     <string name="como_llegar">¿Cómo llegar y Ubicación?</string>
     <string name="abrir_en_mapa">Abrir en Google Maps / GPS</string>
     
@@ -15,7 +16,7 @@
     <string name="sin_favoritos">Aún no tienes destinos favoritos guardados.</string>
     <string name="sin_resultados">No se encontraron atractivos que coincidan con la búsqueda.</string>
     
-    <string name="titulo_ajustes">Configuración</string>
+    <string name="titulo_ajustes">Configuración y Perfil</string>
     <string name="modo_oscuro">Modo Oscuro</string>
     <string name="modo_oscuro_desc">Alternar entre tema claro y tema oscuro</string>
     <string name="info_acerca_de">Acerca de PerúViajero</string>

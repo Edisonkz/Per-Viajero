@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_guia"
         android:title="@string/nav_guia" />
     <item
+        android:id="@+id/navigation_reservas"
+        android:icon="@drawable/ic_receipt"
+        android:title="@string/nav_reservas" />
+    <item
         android:id="@+id/navigation_favoritos"
         android:icon="@drawable/ic_favoritos"
         android:title="@string/nav_favoritos" />

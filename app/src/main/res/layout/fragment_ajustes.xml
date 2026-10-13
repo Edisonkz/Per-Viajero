@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- REQ-10: Configuración del sistema y selector de tema visual Claro/Oscuro -->
+<!-- REQ-10: Configuración del sistema, perfil de usuario, alternancia de roles y tema Claro/Oscuro -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
@@ -11,6 +12,109 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
+
+        <!-- Tarjeta de Perfil y Alternancia de Roles -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#20000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:src="@drawable/ic_person"
+                        app:tint="@color/colorPrimary"
+                        android:background="#15006837"
+                        android:padding="8dp"
+                        android:contentDescription="Avatar" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPerfilNombre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            tools:text="Kevin Turista" />
+
+                        <TextView
+                            android:id="@+id/tvPerfilEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="13sp"
+                            tools:text="kevin@peruviajero.pe" />
+
+                        <TextView
+                            android:id="@+id/tvPerfilRol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/bg_badge_categoria"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="ROL: TURISTA" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="14dp"
+                    android:background="#15000000" />
+
+                <!-- Botón de Alternancia Rápida de Rol -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCambiarRol"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cambiar a Modo Administrador"
+                    android:textAllCaps="false"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_dashboard"
+                    app:iconGravity="textStart" />
+
+                <!-- Botón de Login / Logout -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLoginLogout"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Cerrar Sesión"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorError" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Tarjeta de Selector de Tema Visual -->
         <com.google.android.material.card.MaterialCardView
@@ -123,4 +227,3 @@
 
     </LinearLayout>
 </ScrollView>
-

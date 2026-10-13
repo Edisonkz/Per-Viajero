@@ -2,18 +2,34 @@ package pe.edu.utp.perviajero.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.data.model.RolUsuario
+import pe.edu.utp.perviajero.data.model.Usuario
 
-// REQ-09 / REQ-10: Persistencia local con SharedPreferences (Favoritos y Tema)
+// REQ-09 / REQ-10: Persistencia local con SharedPreferences (Sesiones, Roles, Favoritos y Reservas)
 class PreferencesHelper private constructor(context: Context) {
 
     private val prefs: SharedPreferences =
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val gson = Gson()
 
     companion object {
         private const val PREFS_NAME = "peruviajero_prefs"
         private const val KEY_FAVORITOS = "key_favoritos"
         private const val KEY_DARK_MODE = "key_dark_mode"
         private const val KEY_LAST_SEARCH = "key_last_search"
+
+        // Sesión y Rol
+        private const val KEY_IS_LOGGED_IN = "key_is_logged_in"
+        private const val KEY_USER_ID = "key_user_id"
+        private const val KEY_USER_NOMBRE = "key_user_nombre"
+        private const val KEY_USER_EMAIL = "key_user_email"
+        private const val KEY_USER_ROL = "key_user_rol"
+
+        // Reservas de Agencia
+        private const val KEY_RESERVAS = "key_reservas"
 
         @Volatile
         private var instance: PreferencesHelper? = null
@@ -25,7 +41,130 @@ class PreferencesHelper private constructor(context: Context) {
         }
     }
 
-    // Gestión de favoritos
+    // --- Gestión de Sesión y Autenticación Local ---
+    fun login(usuario: Usuario) {
+        prefs.edit()
+            .putBoolean(KEY_IS_LOGGED_IN, true)
+            .putString(KEY_USER_ID, usuario.id)
+            .putString(KEY_USER_NOMBRE, usuario.nombre)
+            .putString(KEY_USER_EMAIL, usuario.email)
+            .putString(KEY_USER_ROL, usuario.rol.name)
+            .apply()
+    }
+
+    fun logout() {
+        prefs.edit()
+            .putBoolean(KEY_IS_LOGGED_IN, false)
+            .remove(KEY_USER_ID)
+            .remove(KEY_USER_NOMBRE)
+            .remove(KEY_USER_EMAIL)
+            .remove(KEY_USER_ROL)
+            .apply()
+    }
+
+    fun isLoggedIn(): Boolean {
+        return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+    }
+
+    fun getUsuarioActual(): Usuario? {
+        if (!isLoggedIn()) return null
+        val id = prefs.getString(KEY_USER_ID, "") ?: ""
+        val nombre = prefs.getString(KEY_USER_NOMBRE, "Viajero") ?: "Viajero"
+        val email = prefs.getString(KEY_USER_EMAIL, "turista@peruviajero.pe") ?: "turista@peruviajero.pe"
+        val rolStr = prefs.getString(KEY_USER_ROL, RolUsuario.CLIENTE.name) ?: RolUsuario.CLIENTE.name
+        val rol = try {
+            RolUsuario.valueOf(rolStr)
+        } catch (_: Exception) {
+            RolUsuario.CLIENTE
+        }
+        return Usuario(id, nombre, email, rol)
+    }
+
+    fun getRolActual(): RolUsuario {
+        val rolStr = prefs.getString(KEY_USER_ROL, RolUsuario.CLIENTE.name) ?: RolUsuario.CLIENTE.name
+        return try {
+            RolUsuario.valueOf(rolStr)
+        } catch (_: Exception) {
+            RolUsuario.CLIENTE
+        }
+    }
+
+    fun cambiarRol(nuevoRol: RolUsuario) {
+        prefs.edit().putString(KEY_USER_ROL, nuevoRol.name).apply()
+    }
+
+    // --- Gestión de Reservas (Módulo Agencia de Turismo) ---
+    fun getReservas(): List<Reserva> {
+        val json = prefs.getString(KEY_RESERVAS, null)
+        if (json.isNullOrEmpty()) {
+            val iniciales = obtenerReservasDemoIniciales()
+            guardarListaReservas(iniciales)
+            return iniciales
+        }
+        return try {
+            val type = object : TypeToken<List<Reserva>>() {}.type
+            gson.fromJson(json, type) ?: obtenerReservasDemoIniciales()
+        } catch (_: Exception) {
+            obtenerReservasDemoIniciales()
+        }
+    }
+
+    fun guardarReserva(reserva: Reserva) {
+        val lista = getReservas().toMutableList()
+        lista.add(0, reserva) // Se agrega al inicio para orden cronológico inverso
+        guardarListaReservas(lista)
+    }
+
+    fun actualizarEstadoReserva(codigo: String, nuevoEstado: String): Boolean {
+        val lista = getReservas().toMutableList()
+        val index = lista.indexOfFirst { it.codigoReserva == codigo }
+        if (index != -1) {
+            lista[index].estado = nuevoEstado
+            guardarListaReservas(lista)
+            return true
+        }
+        return false
+    }
+
+    private fun guardarListaReservas(lista: List<Reserva>) {
+        val json = gson.toJson(lista)
+        prefs.edit().putString(KEY_RESERVAS, json).apply()
+    }
+
+    private fun obtenerReservasDemoIniciales(): List<Reserva> {
+        return listOf(
+            Reserva(
+                codigoReserva = "PV-2026-8412",
+                destinoId = "dest_01",
+                destinoNombre = "Santuario Histórico de Machu Picchu",
+                destinoFoto = "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+                fechaSalida = "15/11/2026",
+                cantidadPersonas = 2,
+                tipoMovilidad = "Minibús Panorámico",
+                categoriaHotel = "Hotel Turista 3★",
+                costoTotal = 560.0,
+                estado = "Confirmada",
+                usuarioNombre = "Kevin Turista",
+                usuarioEmail = "kevin@peruviajero.pe"
+            ),
+            Reserva(
+                codigoReserva = "PV-2026-3190",
+                destinoId = "dest_02",
+                destinoNombre = "Líneas de Nazca",
+                destinoFoto = "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?w=800",
+                fechaSalida = "20/11/2026",
+                cantidadPersonas = 4,
+                tipoMovilidad = "Camioneta 4x4 Privada",
+                categoriaHotel = "Hotel Superior 4★",
+                costoTotal = 1760.0,
+                estado = "En Ruta",
+                usuarioNombre = "Gerson Turista",
+                usuarioEmail = "gerson@peruviajero.pe"
+            )
+        )
+    }
+
+    // --- Gestión de favoritos ---
     fun isFavorito(id: String): Boolean {
         val favoritos = prefs.getStringSet(KEY_FAVORITOS, emptySet()) ?: emptySet()
         return favoritos.contains(id)
@@ -48,7 +187,7 @@ class PreferencesHelper private constructor(context: Context) {
         return prefs.getStringSet(KEY_FAVORITOS, emptySet()) ?: emptySet()
     }
 
-    // Gestión de tema visual (Claro/Oscuro)
+    // --- Gestión de tema visual (Claro/Oscuro) ---
     fun isDarkMode(): Boolean {
         return prefs.getBoolean(KEY_DARK_MODE, false)
     }
@@ -57,7 +196,7 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putBoolean(KEY_DARK_MODE, enabled).apply()
     }
 
-    // Último término buscado
+    // --- Último término buscado ---
     fun getLastSearch(): String {
         return prefs.getString(KEY_LAST_SEARCH, "") ?: ""
     }
@@ -66,4 +205,3 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putString(KEY_LAST_SEARCH, query).apply()
     }
 }
-

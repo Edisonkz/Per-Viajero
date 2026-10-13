@@ -7,13 +7,16 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import pe.edu.utp.perviajero.data.local.PreferencesHelper
+import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.network.ApiClient
+import pe.edu.utp.perviajero.ui.AdminDashboardFragment
 import pe.edu.utp.perviajero.ui.AjustesFragment
 import pe.edu.utp.perviajero.ui.DestinosFragment
 import pe.edu.utp.perviajero.ui.FavoritosFragment
 import pe.edu.utp.perviajero.ui.GuiaViajeFragment
+import pe.edu.utp.perviajero.ui.MisReservasFragment
 
-// REQ-01 / REQ-02 / REQ-04: Actividad principal con navegación multinivel (Continuidad APF1)
+// REQ-01 / REQ-02 / REQ-04: Actividad principal con navegación adaptativa según rol (Turista / Administrador)
 class MainActivity : AppCompatActivity() {
 
     private lateinit var toolbar: MaterialToolbar
@@ -38,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Configuración de BottomNavigationView con 4 secciones
+        // Configuración de BottomNavigationView
         bottomNavigation = findViewById(R.id.bottomNavigation)
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -50,6 +53,17 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_guia -> {
                     toolbar.title = getString(R.string.nav_guia)
                     cambiarFragment(GuiaViajeFragment())
+                    true
+                }
+                R.id.navigation_reservas -> {
+                    val rol = prefs.getRolActual()
+                    if (rol == RolUsuario.ADMIN) {
+                        toolbar.title = "Panel de Agencia"
+                        cambiarFragment(AdminDashboardFragment())
+                    } else {
+                        toolbar.title = "Mis Reservas de Tour"
+                        cambiarFragment(MisReservasFragment())
+                    }
                     true
                 }
                 R.id.navigation_favoritos -> {
@@ -66,9 +80,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        actualizarNavegacionPorRol()
+
         // Cargar fragment inicial (Destinos)
         if (savedInstanceState == null) {
             bottomNavigation.selectedItemId = R.id.navigation_destinos
+        }
+    }
+
+    fun actualizarNavegacionPorRol() {
+        val prefs = PreferencesHelper.getInstance(this)
+        val rol = prefs.getRolActual()
+        val menuItem = bottomNavigation.menu.findItem(R.id.navigation_reservas)
+
+        if (rol == RolUsuario.ADMIN) {
+            menuItem?.title = "Agencia"
+            menuItem?.setIcon(R.drawable.ic_dashboard)
+        } else {
+            menuItem?.title = "Reservas"
+            menuItem?.setIcon(R.drawable.ic_receipt)
+        }
+
+        // Si actualmente estamos en la pestaña de reservas, recargar el fragment adecuado
+        if (bottomNavigation.selectedItemId == R.id.navigation_reservas) {
+            if (rol == RolUsuario.ADMIN) {
+                toolbar.title = "Panel de Agencia"
+                cambiarFragment(AdminDashboardFragment())
+            } else {
+                toolbar.title = "Mis Reservas de Tour"
+                cambiarFragment(MisReservasFragment())
+            }
         }
     }
 

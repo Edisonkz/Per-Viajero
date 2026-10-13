@@ -29,6 +29,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
     private lateinit var tvDetalleDescripcion: TextView
     private lateinit var btnComoLlegar: MaterialButton
     private lateinit var btnDetalleFavorito: MaterialButton
+    private lateinit var btnCotizarReserva: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
         tvDetalleDescripcion = findViewById(R.id.tvDetalleDescripcion)
         btnComoLlegar = findViewById(R.id.btnComoLlegar)
         btnDetalleFavorito = findViewById(R.id.btnDetalleFavorito)
+        btnCotizarReserva = findViewById(R.id.btnCotizarReserva)
 
         // Configuración de Toolbar con botón de retroceso
         setSupportActionBar(toolbarDetalle)
@@ -82,6 +84,35 @@ class DetalleDestinoActivity : AppCompatActivity() {
             .error(android.R.drawable.ic_dialog_alert)
             .into(ivDetalleFoto)
 
+        // Cotizador interactivo: Verifica si hay sesión activa o invita a identificarse
+        val prefs = PreferencesHelper.getInstance(this)
+        btnCotizarReserva.setOnClickListener {
+            if (!prefs.isLoggedIn()) {
+                com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle("Acceso a Reservas")
+                    .setMessage("Para cotizar y confirmar reservas en PerúViajero se requiere una cuenta. ¿Deseas iniciar sesión o usar acceso rápido?")
+                    .setPositiveButton("Iniciar Sesión") { _, _ ->
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                    .setNeutralButton("Continuar como Turista") { _, _ ->
+                        prefs.login(
+                            pe.edu.utp.perviajero.data.model.Usuario(
+                                "usr_kevin_01",
+                                "Kevin Turista",
+                                "kevin@peruviajero.pe",
+                                pe.edu.utp.perviajero.data.model.RolUsuario.CLIENTE
+                            )
+                        )
+                        abrirCotizador(destino)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            } else {
+                abrirCotizador(destino)
+            }
+        }
+
         // Botón ¿Cómo llegar y Ubicación? (Intent explícito hacia RutaDestinoActivity)
         btnComoLlegar.setOnClickListener {
             val intent = Intent(this, RutaDestinoActivity::class.java).apply {
@@ -91,13 +122,19 @@ class DetalleDestinoActivity : AppCompatActivity() {
         }
 
         // Configurar estado del botón favorito
-        val prefs = PreferencesHelper.getInstance(this)
         actualizarTextoBotonFavorito(prefs.isFavorito(destino.id))
 
         btnDetalleFavorito.setOnClickListener {
             val nuevoEstado = prefs.toggleFavorito(destino.id)
             actualizarTextoBotonFavorito(nuevoEstado)
         }
+    }
+
+    private fun abrirCotizador(destino: Destino) {
+        val intent = Intent(this, ReservaTourActivity::class.java).apply {
+            putExtra(ReservaTourActivity.EXTRA_DESTINO, destino)
+        }
+        startActivity(intent)
     }
 
     private fun actualizarTextoBotonFavorito(esFavorito: Boolean) {

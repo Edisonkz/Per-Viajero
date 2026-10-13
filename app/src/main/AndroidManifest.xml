@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.PerúViajero">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,14 +26,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.DetalleDestinoActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+
         <activity
             android:name=".ui.RutaDestinoActivity"
             android:exported="false"
             android:parentActivityName=".ui.DetalleDestinoActivity" />
+
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.ReservaTourActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.DetalleDestinoActivity"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
