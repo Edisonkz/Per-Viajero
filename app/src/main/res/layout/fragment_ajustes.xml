@@ -90,6 +90,19 @@
                     android:layout_marginVertical="14dp"
                     android:background="#15000000" />
 
+                <!-- Botón de Planificador de Itinerario -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMiItinerario"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="Mi Planificador de Itinerario"
+                    android:textAllCaps="false"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_calendar"
+                    app:iconGravity="textStart" />
+
                 <!-- Botón de Alternancia Rápida de Rol -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCambiarRol"

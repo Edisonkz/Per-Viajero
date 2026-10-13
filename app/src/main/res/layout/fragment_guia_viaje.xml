@@ -29,6 +29,68 @@
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
+        <!-- Tarjeta Interactiva: Planificador de Itinerario -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/colorPrimary"
+                        android:contentDescription="Planificador" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Mi Planificador de Viaje"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Crea tu itinerario por días, añade notas personales, recibe sugerencias de lugares y chequea tus actividades completadas."
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAbrirItinerario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="Abrir Mi Planificador de Viaje"
+                    android:textAllCaps="false"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_calendar" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Tarjeta 1: Mal de Altura (Soroche) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

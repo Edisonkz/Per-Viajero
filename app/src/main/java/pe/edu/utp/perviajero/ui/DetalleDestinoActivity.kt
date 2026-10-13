@@ -30,6 +30,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
     private lateinit var btnComoLlegar: MaterialButton
     private lateinit var btnDetalleFavorito: MaterialButton
     private lateinit var btnCotizarReserva: MaterialButton
+    private lateinit var btnPlanearItinerario: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +47,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
         btnComoLlegar = findViewById(R.id.btnComoLlegar)
         btnDetalleFavorito = findViewById(R.id.btnDetalleFavorito)
         btnCotizarReserva = findViewById(R.id.btnCotizarReserva)
+        btnPlanearItinerario = findViewById(R.id.btnPlanearItinerario)
 
         // Configuración de Toolbar con botón de retroceso
         setSupportActionBar(toolbarDetalle)
@@ -111,6 +113,14 @@ class DetalleDestinoActivity : AppCompatActivity() {
             } else {
                 abrirCotizador(destino)
             }
+        }
+
+        // Planificador: Agregar este atractivo al itinerario personal
+        btnPlanearItinerario.setOnClickListener {
+            val intent = Intent(this, ItinerarioActivity::class.java).apply {
+                putExtra(ItinerarioActivity.EXTRA_LUGAR_INICIAL, destino.nombre)
+            }
+            startActivity(intent)
         }
 
         // Botón ¿Cómo llegar y Ubicación? (Intent explícito hacia RutaDestinoActivity)

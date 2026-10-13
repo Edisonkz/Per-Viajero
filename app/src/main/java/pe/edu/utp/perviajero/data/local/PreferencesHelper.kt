@@ -35,6 +35,9 @@ class PreferencesHelper private constructor(context: Context) {
         // Datos Fiscales y Corporativos de la Agencia
         private const val KEY_EMPRESA_INFO = "key_empresa_info"
 
+        // Planificador de Itinerario de Viaje
+        private const val KEY_ITINERARIO = "key_itinerario"
+
         @Volatile
         private var instance: PreferencesHelper? = null
 
@@ -231,4 +234,78 @@ class PreferencesHelper private constructor(context: Context) {
     fun saveLastSearch(query: String) {
         prefs.edit().putString(KEY_LAST_SEARCH, query).apply()
     }
+
+    // --- Gestión de Planificador de Itinerario (Turista) ---
+    fun getItinerario(): List<pe.edu.utp.perviajero.data.model.ActividadItinerario> {
+        val json = prefs.getString(KEY_ITINERARIO, null)
+        if (json.isNullOrEmpty()) {
+            val demo = listOf(
+                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                    id = "act_01",
+                    dia = "Día 1",
+                    horario = "Mañana (09:00 AM)",
+                    lugar = "Plaza de Armas y Centro de Cusco",
+                    descripcion = "Llegada, check-in en el hotel y aclimatación con mate de coca.",
+                    completada = true
+                ),
+                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                    id = "act_02",
+                    dia = "Día 2",
+                    horario = "Mañana (06:00 AM)",
+                    lugar = "Santuario Histórico de Machu Picchu",
+                    descripcion = "Tour guiado por la ciudadela inca y sesión de fotos en el mirador.",
+                    completada = false
+                ),
+                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                    id = "act_03",
+                    dia = "Día 3",
+                    horario = "Tarde (01:00 PM)",
+                    lugar = "Mercado de San Pedro",
+                    descripcion = "Almuerzo gastronómico y compra de artesanías y souvenirs.",
+                    completada = false
+                )
+            )
+            guardarListaItinerario(demo)
+            return demo
+        }
+        return try {
+            val type = object : TypeToken<List<pe.edu.utp.perviajero.data.model.ActividadItinerario>>() {}.type
+            gson.fromJson(json, type) ?: emptyList()
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    fun guardarActividad(actividad: pe.edu.utp.perviajero.data.model.ActividadItinerario) {
+        val lista = getItinerario().toMutableList()
+        lista.add(actividad)
+        guardarListaItinerario(lista)
+    }
+
+    fun eliminarActividad(id: String): Boolean {
+        val lista = getItinerario().toMutableList()
+        val eliminada = lista.removeAll { it.id == id }
+        if (eliminada) {
+            guardarListaItinerario(lista)
+        }
+        return eliminada
+    }
+
+    fun toggleActividadCompletada(id: String): Boolean {
+        val lista = getItinerario().toMutableList()
+        val item = lista.find { it.id == id }
+        return if (item != null) {
+            item.completada = !item.completada
+            guardarListaItinerario(lista)
+            item.completada
+        } else {
+            false
+        }
+    }
+
+    private fun guardarListaItinerario(lista: List<pe.edu.utp.perviajero.data.model.ActividadItinerario>) {
+        val json = gson.toJson(lista)
+        prefs.edit().putString(KEY_ITINERARIO, json).apply()
+    }
 }
+

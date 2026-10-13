@@ -50,6 +50,12 @@
             android:parentActivityName=".ui.DetalleDestinoActivity"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.ItinerarioActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

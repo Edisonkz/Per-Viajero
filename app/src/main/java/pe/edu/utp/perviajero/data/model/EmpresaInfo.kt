@@ -12,3 +12,4 @@ data class EmpresaInfo(
     val sitioWeb: String = "www.peruviajero.pe",
     val registroMincetur: String = "DIRCETUR-CUS-2026-0894"
 ) : Serializable
+

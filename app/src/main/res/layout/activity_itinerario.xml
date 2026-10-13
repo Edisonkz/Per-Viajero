@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarItinerario"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:navigationIconTint="#FFFFFF"
+        app:title="Planificador de Viaje"
+        app:titleTextColor="#FFFFFF" />
+
+    <!-- Encabezado con Progreso del Itinerario -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#20000000"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/colorPrimary"
+                    android:contentDescription="Itinerario" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="Progreso de tu Itinerario"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvProgresoItinerario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="1 de 3 (33%)" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbProgresoItinerario"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="10dp"
+                android:max="100"
+                android:progress="33"
+                android:progressTint="@color/colorPrimary" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Barra de Filtros por Día -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingHorizontal="12dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupDias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTodos"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Todos los días" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDia1"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día 1" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDia2"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día 2" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDia3"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día 3" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDia4"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día 4" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDia5"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Día 5" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Fila de Sugerencias Rápidas de Lugares -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="2dp"
+        android:text="💡 Sugerencias rápidas (Toca para agregar):"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingHorizontal="14dp">
+
+        <LinearLayout
+            android:id="@+id/layoutSugerenciasChips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugMachuPicchu"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Machu Picchu" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugVinicunca"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Montaña 7 Colores" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugValleSagrado"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Valle Sagrado" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugHuacachina"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Oasis Huacachina" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugColca"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Cañón del Colca" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSugTiticaca"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="Lago Titicaca" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Lista de Actividades -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvItinerario"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingVertical="6dp"
+        tools:listitem="@layout/item_actividad_itinerario" />
+
+    <!-- Estado Vacío -->
+    <LinearLayout
+        android:id="@+id/layoutSinActividades"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="?android:attr/textColorSecondary"
+            android:contentDescription="Sin actividades" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="No hay actividades para este día"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Agrega tus planes manualmente o toca una sugerencia rápida."
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Botón Inferior para Agregar Nueva Actividad -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="?android:attr/colorBackground">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompartirItinerario"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Compartir Plan"
+            android:textAllCaps="false"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_receipt" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNuevaActividad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="+ Nueva Actividad"
+            android:textAllCaps="false"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+
+</LinearLayout>

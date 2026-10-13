@@ -55,21 +55,30 @@ La aplicación implementa un modelo de **Acceso Libre Inicial (Modo Invitado)** 
 
 ### 2.2 Rol 1: Turista / Cliente (Viajero)
 - **Perfil de Viajero:** Inicia sesión o se registra con sus datos locales.
+- **Planificador de Itinerario Interactivo (`ItinerarioActivity`):**
+  - Permite al turista diseñar su propio viaje día por día (Día 1 a Día 5).
+  - Redacción manual de notas y recordatorios (tips, recomendaciones de altura, compras).
+  - Sugerencias rápidas de lugares en chips interactivos (Machu Picchu, Vinicunca, Valle Sagrado, Huacachina, Colca, etc.).
+  - Barra de progreso porcentual del viaje y casillas de verificación para tachar actividades completadas.
+  - Opción de exportar y compartir el itinerario planificado a través de WhatsApp o mensajería (`Intent.ACTION_SEND`).
 - **Cotizador Dinámico Interactivo (Alta Interacción):**
   - **Fecha de Salida:** Selector de fecha nativo (`DatePickerDialog`).
   - **Cantidad de Pasajeros:** Contador interactivo `[ - ] 1 [ + ]` de 1 a 10 personas.
-  - **Selección de Movilidad:** Van Turística (+S/ 0), Bus Panorámico (+S/ 25), 4x4 Aventura (+S/ 50) o Tren Ejecutivo (+S/ 90 por pers.).
-  - **Selección de Hospedaje:** Solo tour (+S/ 0), Hotel 3★ (+S/ 45), Hotel 4★ (+S/ 95) o Resort 5★ (+S/ 180 por noche/pers.).
-  - **Cálculo de Presupuesto en Tiempo Real:** El total en Soles (S/.) se recalcula al instante ante cualquier cambio de los controles sin recargar la pantalla.
-- **Generación de Voucher y "Mis Reservas":** Al confirmar la reserva, se crea un código de voucher único (ej. `PV-2026-7841`) guardado en `SharedPreferences` y visible en la pestaña *"Mis Reservas"*.
+  - **Selección de Movilidad:** Van Turística (+S/ 0), Minibús Panorámico (+S/ 40), Camioneta 4x4 (+S/ 120), Tren Ejecutivo (+S/ 250).
+  - **Selección de Hospedaje:** Solo tour (+S/ 0), Hotel 3★ (+S/ 90), Hotel 4★ (+S/ 180), Resort 5★ (+S/ 320).
+  - **Servicio de Guía Oficial MINCETUR:** Tour Libre (+S/ 0), Guía en Español (+S/ 45), Guía Bilingüe (+S/ 80), Guía Alta Montaña (+S/ 130).
+  - **Cálculo de Presupuesto en Tiempo Real:** El total en Soles (S/.) se recalcula al instante ante cualquier cambio sin recargar la pantalla.
+  - **Notificaciones Nativas de Android:** Al confirmar la reserva se dispara una alerta nativa en la barra de estado del dispositivo (`NotificationChannel` + `NotificationCompat`).
+- **Generación de Voucher y "Mis Reservas":** Al confirmar la reserva, se crea un comprobante con RUC de la agencia y código único (`PV-2026-XXXX`) persistido en `SharedPreferences` y visible en *"Mis Reservas"*.
 
 ### 2.3 Rol 2: Administrador / Agente Turístico (Operador de la Agencia)
+- **Gestión Fiscal y Corporativa de la Empresa:** Módulo para editar la Razón Social (*PerúViajero Tours & Travel S.A.C.*), RUC (*20608945123*), dirección y teléfono comercial de la agencia.
 - **Dashboard de Métricas del Negocio:**
   - 📊 **Total de Reservas:** Cantidad global de contrataciones recibidas.
   - 💰 **Ingresos Totales Acumulados:** Monto en Soles (S/.) facturado por la agencia.
   - 🏆 **Destino Más Popular:** Destino con mayor volumen de reservas.
-- **Gestión de Reservas de Clientes:** Listado administrativo con opción para cambiar el estado de las reservas (*"Confirmada"* ➔ *"En Ruta"* ➔ *"Completada"*).
-- **Conmutador Rápido de Rol (Para Sustentación):** Selector en Ajustes que permite alternar entre `[ Modo Turista ]` y `[ Modo Administrador ]` con 1 solo toque, ideal para demostrar ambos roles ante el profesor sin perder tiempo.
+- **Gestión de Reservas de Clientes:** Listado administrativo con opción para despachar reservas (*"Confirmada"* ➔ *"En Ruta"* ➔ *"Completada"*) con disparo de notificación de actualización.
+- **Conmutador Rápido de Rol (Para Sustentación):** Selector en Perfil que permite alternar entre `[ Modo Turista ]` y `[ Modo Administrador ]` con 1 solo toque.
 
 ---
 

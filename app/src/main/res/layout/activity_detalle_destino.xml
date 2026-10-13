@@ -158,6 +158,20 @@
                     app:icon="@drawable/ic_receipt"
                     app:iconGravity="textStart" />
 
+                <!-- Botón Planear en Mi Itinerario -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPlanearItinerario"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Planear en Mi Itinerario"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_calendar"
+                    app:iconGravity="textStart" />
+
                 <!-- Botón ¿Cómo llegar y Ubicación? -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnComoLlegar"

@@ -25,6 +25,13 @@ class GuiaViajeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val btnLlamarIperu: MaterialButton = view.findViewById(R.id.btnLlamarIperu)
+        val btnAbrirItinerario: MaterialButton = view.findViewById(R.id.btnAbrirItinerario)
+
+        // Abrir el Planificador interactivo de actividades turísticas
+        btnAbrirItinerario.setOnClickListener {
+            val intent = Intent(requireContext(), ItinerarioActivity::class.java)
+            startActivity(intent)
+        }
 
         // Intent Implícito para abrir el marcador telefónico con el número oficial de IPERÚ
         btnLlamarIperu.setOnClickListener {
