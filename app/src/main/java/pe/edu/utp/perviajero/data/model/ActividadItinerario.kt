@@ -11,3 +11,4 @@ data class ActividadItinerario(
     val descripcion: String, // Notas personales escritas por el turista
     var completada: Boolean = false
 ) : Serializable
+

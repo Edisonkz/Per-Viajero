@@ -4,8 +4,14 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RadioGroup
+import android.widget.ScrollView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +22,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Destino
+import pe.edu.utp.perviajero.data.model.Pasajero
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.util.NotificationHelper
 import java.util.Calendar
 import java.util.Locale
 
-// Cotizador interactivo con cálculo dinámico en tiempo real, selección de guía, notificaciones nativas y voucher
+// Cotizador interactivo con selección de terminal, horario de salida, manifiesto oficial de pasajeros y voucher
 class ReservaTourActivity : AppCompatActivity() {
 
     companion object {
@@ -35,9 +42,15 @@ class ReservaTourActivity : AppCompatActivity() {
     private lateinit var tvReservaDepartamento: TextView
     private lateinit var tvFechaSeleccionada: TextView
     private lateinit var btnElegirFecha: MaterialButton
+
+    private lateinit var spTerminalEmbarque: Spinner
+    private lateinit var spHorarioSalida: Spinner
+
     private lateinit var btnMenosPasajeros: MaterialButton
     private lateinit var btnMasPasajeros: MaterialButton
     private lateinit var tvCantidadPasajeros: TextView
+    private lateinit var btnRegistrarPasajeros: MaterialButton
+
     private lateinit var rgMovilidad: RadioGroup
     private lateinit var rgHotel: RadioGroup
     private lateinit var rgGuia: RadioGroup
@@ -53,6 +66,9 @@ class ReservaTourActivity : AppCompatActivity() {
     private var nombreHotel: String = "Solo Tour"
     private var extraGuia: Double = 0.0
     private var nombreGuia: String = "Sin Guía Privado"
+
+    // Manifiesto de pasajeros (normativa SUTRAN / MTC)
+    private val listaManifiesto = mutableListOf<Pasajero>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +89,8 @@ class ReservaTourActivity : AppCompatActivity() {
 
         inicializarVistas()
         configurarDatosDestino()
+        configurarSpinnersTerminalYHorario()
+        sincronizarListaManifiesto()
         configurarEventos()
         actualizarCalculoCosto()
     }
@@ -84,9 +102,15 @@ class ReservaTourActivity : AppCompatActivity() {
         tvReservaDepartamento = findViewById(R.id.tvReservaDepartamento)
         tvFechaSeleccionada = findViewById(R.id.tvFechaSeleccionada)
         btnElegirFecha = findViewById(R.id.btnElegirFecha)
+
+        spTerminalEmbarque = findViewById(R.id.spTerminalEmbarque)
+        spHorarioSalida = findViewById(R.id.spHorarioSalida)
+
         btnMenosPasajeros = findViewById(R.id.btnMenosPasajeros)
         btnMasPasajeros = findViewById(R.id.btnMasPasajeros)
         tvCantidadPasajeros = findViewById(R.id.tvCantidadPasajeros)
+        btnRegistrarPasajeros = findViewById(R.id.btnRegistrarPasajeros)
+
         rgMovilidad = findViewById(R.id.rgMovilidad)
         rgHotel = findViewById(R.id.rgHotel)
         rgGuia = findViewById(R.id.rgGuia)
@@ -111,7 +135,6 @@ class ReservaTourActivity : AppCompatActivity() {
             .error(android.R.drawable.ic_dialog_alert)
             .into(ivReservaFoto)
 
-        // Por defecto, fecha sugerida a 3 días en el futuro
         val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 3) }
         val dia = cal.get(Calendar.DAY_OF_MONTH)
         val mes = cal.get(Calendar.MONTH) + 1
@@ -120,8 +143,51 @@ class ReservaTourActivity : AppCompatActivity() {
         tvFechaSeleccionada.text = fechaSeleccionada
     }
 
+    private fun configurarSpinnersTerminalYHorario() {
+        val terminales = arrayOf(
+            "Terminal Javier Prado (La Victoria, Lima)",
+            "Terminal Terrestre Plaza Norte (Independencia, Lima)",
+            "Estación de Tren San Pedro (Cusco)",
+            "Terminal Terrestre de Cusco (Wanchaq)",
+            "Terminal Terrestre de Arequipa (Jacobo Hunter)",
+            "Recojo directo en Hotel (Centro Histórico)"
+        )
+        val adapterTerminal = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, terminales)
+        spTerminalEmbarque.adapter = adapterTerminal
+
+        val horarios = arrayOf(
+            "04:30 AM (Madrugada - Tour Amanecer)",
+            "06:30 AM (Primer Turno Oficial)",
+            "08:30 AM (Turno Mañana Estándar)",
+            "01:30 PM (Turno Tarde)",
+            "08:00 PM (Servicio Nocturno / Bus Cama)"
+        )
+        val adapterHorarios = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, horarios)
+        spHorarioSalida.adapter = adapterHorarios
+        spHorarioSalida.setSelection(1) // Por defecto: 06:30 AM
+    }
+
+    private fun sincronizarListaManifiesto() {
+        val prefs = PreferencesHelper.getInstance(this)
+        val usuario = prefs.getUsuarioActual()
+        val nombreTitular = usuario?.nombre ?: "Kevin Turista Quispe"
+
+        while (listaManifiesto.size < cantidadPasajeros) {
+            val num = listaManifiesto.size + 1
+            if (num == 1) {
+                listaManifiesto.add(Pasajero(nombreTitular, "DNI", "74891234", 23, "984112233"))
+            } else {
+                listaManifiesto.add(Pasajero("Acompañante $num", "DNI", "7000000$num", 25, ""))
+            }
+        }
+        while (listaManifiesto.size > cantidadPasajeros) {
+            listaManifiesto.removeAt(listaManifiesto.size - 1)
+        }
+
+        btnRegistrarPasajeros.text = "📝 Manifiesto: ${listaManifiesto.size} pasajero(s) registrado(s)"
+    }
+
     private fun configurarEventos() {
-        // Selector de fecha mediante DatePickerDialog
         btnElegirFecha.setOnClickListener {
             val cal = Calendar.getInstance()
             val dpd = DatePickerDialog(
@@ -138,11 +204,11 @@ class ReservaTourActivity : AppCompatActivity() {
             dpd.show()
         }
 
-        // Contador de pasajeros
         btnMenosPasajeros.setOnClickListener {
             if (cantidadPasajeros > 1) {
                 cantidadPasajeros--
                 tvCantidadPasajeros.text = cantidadPasajeros.toString()
+                sincronizarListaManifiesto()
                 actualizarCalculoCosto()
             }
         }
@@ -151,11 +217,15 @@ class ReservaTourActivity : AppCompatActivity() {
             if (cantidadPasajeros < 10) {
                 cantidadPasajeros++
                 tvCantidadPasajeros.text = cantidadPasajeros.toString()
+                sincronizarListaManifiesto()
                 actualizarCalculoCosto()
             }
         }
 
-        // Selector de Movilidad
+        btnRegistrarPasajeros.setOnClickListener {
+            mostrarDialogoManifiestoPasajeros()
+        }
+
         rgMovilidad.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rbMovilidadVan -> {
@@ -178,7 +248,6 @@ class ReservaTourActivity : AppCompatActivity() {
             actualizarCalculoCosto()
         }
 
-        // Selector de Hotel
         rgHotel.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rbHotelNinguno -> {
@@ -201,7 +270,6 @@ class ReservaTourActivity : AppCompatActivity() {
             actualizarCalculoCosto()
         }
 
-        // Selector de Guía Turístico Oficial
         rgGuia.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rbGuiaNinguno -> {
@@ -224,10 +292,84 @@ class ReservaTourActivity : AppCompatActivity() {
             actualizarCalculoCosto()
         }
 
-        // Confirmar y generar reserva
         btnConfirmarReserva.setOnClickListener {
             confirmarYGuardarReserva()
         }
+    }
+
+    private fun mostrarDialogoManifiestoPasajeros() {
+        val scrollView = ScrollView(this)
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 20, 40, 20)
+        }
+
+        val inputsNombres = mutableListOf<EditText>()
+        val inputsDni = mutableListOf<EditText>()
+        val inputsEdad = mutableListOf<EditText>()
+
+        for (i in 0 until cantidadPasajeros) {
+            val pasajeroActual = listaManifiesto.getOrNull(i)
+
+            val tvTitulo = TextView(this).apply {
+                text = "👤 Pasajero #${i + 1}"
+                textSize = 15f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+                setPadding(0, if (i == 0) 0 else 24, 0, 4)
+            }
+            val etNombre = EditText(this).apply {
+                hint = "Nombres y Apellidos Completos"
+                setText(pasajeroActual?.nombresApellidos ?: "")
+            }
+            val etDni = EditText(this).apply {
+                hint = "DNI / Pasaporte (8 dígitos)"
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                setText(pasajeroActual?.numeroDocumento ?: "")
+            }
+            val etEdad = EditText(this).apply {
+                hint = "Edad"
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                setText((pasajeroActual?.edad ?: 25).toString())
+            }
+
+            inputsNombres.add(etNombre)
+            inputsDni.add(etDni)
+            inputsEdad.add(etEdad)
+
+            layout.addView(tvTitulo)
+            layout.addView(etNombre)
+            layout.addView(etDni)
+            layout.addView(etEdad)
+        }
+
+        scrollView.addView(layout)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Manifiesto Oficial de Pasajeros")
+            .setView(scrollView)
+            .setPositiveButton("Guardar Datos") { dialog, _ ->
+                listaManifiesto.clear()
+                for (i in 0 until cantidadPasajeros) {
+                    val nom = inputsNombres[i].text.toString().trim()
+                    val dni = inputsDni[i].text.toString().trim()
+                    val edadStr = inputsEdad[i].text.toString().trim()
+                    val edad = edadStr.toIntOrNull() ?: 25
+
+                    listaManifiesto.add(
+                        Pasajero(
+                            nombresApellidos = if (nom.isNotEmpty()) nom else "Pasajero ${i + 1}",
+                            tipoDocumento = "DNI",
+                            numeroDocumento = if (dni.isNotEmpty()) dni else "0000000${i + 1}",
+                            edad = edad
+                        )
+                    )
+                }
+                btnRegistrarPasajeros.text = "📝 Manifiesto: ${listaManifiesto.size} pasajero(s) registrado(s)"
+                Toast.makeText(this, "Datos de los pasajeros guardados", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun calcularCostoTotal(): Double {
@@ -256,13 +398,19 @@ class ReservaTourActivity : AppCompatActivity() {
         val codigoGenerado = "PV-2026-" + (1000..9999).random()
         val total = calcularCostoTotal()
 
+        val terminalElegido = spTerminalEmbarque.selectedItem.toString()
+        val horarioElegido = spHorarioSalida.selectedItem.toString()
+
         val nuevaReserva = Reserva(
             codigoReserva = codigoGenerado,
             destinoId = dest.id,
             destinoNombre = dest.nombre,
             destinoFoto = dest.imageUrl,
             fechaSalida = fechaSeleccionada,
+            terminalEmbarque = terminalElegido,
+            horarioSalida = horarioElegido,
             cantidadPersonas = cantidadPasajeros,
+            listaPasajeros = listaManifiesto.toList(),
             tipoMovilidad = nombreMovilidad,
             categoriaHotel = nombreHotel,
             guiaTuristico = nombreGuia,
@@ -274,25 +422,28 @@ class ReservaTourActivity : AppCompatActivity() {
 
         prefs.guardarReserva(nuevaReserva)
 
-        // Lanzar Notificación Nativa de Android en la Barra de Estado
         NotificationHelper.notificarReservaConfirmada(this, nuevaReserva)
 
-        // Diálogo de confirmación con voucher generado e Intent para compartir
+        // Resumen formateado para mostrar y compartir
+        val resumenPasajeros = listaManifiesto.joinToString("\n") { "   • ${it.nombresApellidos} (DNI: ${it.numeroDocumento}, ${it.edad} años)" }
+
         MaterialAlertDialogBuilder(this)
-            .setTitle("¡Voucher Oficial Generado!")
+            .setTitle("¡Boleto y Voucher Emitido!")
             .setMessage(
                 "${empresa.razonSocial}\n" +
                 "RUC: ${empresa.ruc} • Reg. ${empresa.registroMincetur}\n" +
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                 "• Código: $codigoGenerado\n" +
                 "• Destino: ${dest.nombre}\n" +
-                "• Salida: $fechaSeleccionada\n" +
-                "• Pasajeros: $cantidadPasajeros persona(s)\n" +
-                "• Transporte: $nombreMovilidad\n" +
+                "• Fecha: $fechaSeleccionada\n" +
+                "• Horario de Salida: $horarioElegido\n" +
+                "• Terminal de Embarque: $terminalElegido\n" +
+                "• Movilidad: $nombreMovilidad\n" +
                 "• Alojamiento: $nombreHotel\n" +
-                "• Servicio de Guía: $nombreGuia\n" +
-                "• Total Pagado: S/ ${String.format(Locale.US, "%.2f", total)}\n\n" +
-                "Se ha enviado una notificación a tu dispositivo. Revisa tu voucher en 'Mis Reservas'."
+                "• Guía Oficial: $nombreGuia\n\n" +
+                "👥 Manifiesto de Pasajeros:\n$resumenPasajeros\n\n" +
+                "💰 Total Pagado: S/ ${String.format(Locale.US, "%.2f", total)} (Inc. IGV)\n\n" +
+                "Toca 'Aceptar' o pulsa en 'Mis Reservas' para ver el ticket detallado."
             )
             .setIcon(R.drawable.ic_check_circle)
             .setPositiveButton("Aceptar") { dialog, _ ->
@@ -308,22 +459,26 @@ class ReservaTourActivity : AppCompatActivity() {
     }
 
     private fun compartirVoucher(reserva: Reserva, razonSocial: String, ruc: String) {
-        val mensaje = "🎟️ VOUCHER DE VIAJE OFICIAL - $razonSocial (RUC: $ruc)\n\n" +
-                "¡Hola! He reservado el tour a ${reserva.destinoNombre}.\n" +
-                "• Código: ${reserva.codigoReserva}\n" +
-                "• Fecha de salida: ${reserva.fechaSalida}\n" +
-                "• Pasajeros: ${reserva.cantidadPersonas}\n" +
+        val listaStr = reserva.listaPasajeros.joinToString("\n") { "   - ${it.nombresApellidos} (DNI: ${it.numeroDocumento})" }
+        val mensaje = "🎟️ VOUCHER OFICIAL DE EMBARQUE - $razonSocial\n" +
+                "RUC: $ruc • Reg. Oficial MINCETUR\n\n" +
+                "• Código de Reserva: ${reserva.codigoReserva}\n" +
+                "• Tour: ${reserva.destinoNombre}\n" +
+                "• Fecha de Salida: ${reserva.fechaSalida}\n" +
+                "• Horario: ${reserva.horarioSalida}\n" +
+                "• Terminal de Embarque: ${reserva.terminalEmbarque}\n" +
                 "• Transporte: ${reserva.tipoMovilidad}\n" +
                 "• Alojamiento: ${reserva.categoriaHotel}\n" +
-                "• Guía Oficial: ${reserva.guiaTuristico}\n" +
-                "• Monto Total: S/ ${String.format(Locale.US, "%.2f", reserva.costoTotal)}\n\n" +
-                "Gestionado con la aplicación PerúViajero."
+                "• Guía Acreditado: ${reserva.guiaTuristico}\n\n" +
+                "👥 Pasajeros Registrados:\n$listaStr\n\n" +
+                "💰 Monto Total: S/ ${String.format(Locale.US, "%.2f", reserva.costoTotal)} (Inc. IGV)\n\n" +
+                "Emitido por PerúViajero."
 
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, mensaje)
         }
-        val chooser = Intent.createChooser(sendIntent, "Compartir Voucher de Tour")
+        val chooser = Intent.createChooser(sendIntent, "Compartir Voucher de Embarque")
         startActivity(chooser)
     }
 }

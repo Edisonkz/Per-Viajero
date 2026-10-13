@@ -17,7 +17,8 @@ import java.util.Locale
 class ReservaAdapter(
     private var listaReservas: List<Reserva>,
     private val esModoAdmin: Boolean = false,
-    private val onCambiarEstadoClicked: ((Reserva) -> Unit)? = null
+    private val onCambiarEstadoClicked: ((Reserva) -> Unit)? = null,
+    private val onItemClicked: ((Reserva) -> Unit)? = null
 ) : RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder>() {
 
     fun actualizarLista(nuevaLista: List<Reserva>) {
@@ -32,7 +33,7 @@ class ReservaAdapter(
 
     override fun onBindViewHolder(holder: ReservaViewHolder, position: Int) {
         val reserva = listaReservas[position]
-        holder.bind(reserva, esModoAdmin, onCambiarEstadoClicked)
+        holder.bind(reserva, esModoAdmin, onCambiarEstadoClicked, onItemClicked)
     }
 
     override fun getItemCount(): Int = listaReservas.size
@@ -51,12 +52,13 @@ class ReservaAdapter(
         fun bind(
             reserva: Reserva,
             esModoAdmin: Boolean,
-            onCambiarEstado: ((Reserva) -> Unit)?
+            onCambiarEstado: ((Reserva) -> Unit)?,
+            onItemClicked: ((Reserva) -> Unit)?
         ) {
             tvDestino.text = reserva.destinoNombre
             tvCodigo.text = reserva.codigoReserva
-            tvFecha.text = "Salida: ${reserva.fechaSalida}"
-            tvDetalles.text = "${reserva.cantidadPersonas} pers • ${reserva.tipoMovilidad} • ${reserva.categoriaHotel} • ${reserva.guiaTuristico}"
+            tvFecha.text = "Salida: ${reserva.fechaSalida} • ${reserva.horarioSalida}"
+            tvDetalles.text = "${reserva.cantidadPersonas} pers • ${reserva.terminalEmbarque}\n${reserva.tipoMovilidad} • ${reserva.guiaTuristico}"
             tvTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
             tvEstado.text = reserva.estado
 
@@ -89,7 +91,10 @@ class ReservaAdapter(
                 tvUsuario.visibility = View.GONE
                 btnCambiarEstado.visibility = View.GONE
             }
+
+            itemView.setOnClickListener {
+                onItemClicked?.invoke(reserva)
+            }
         }
     }
 }
-

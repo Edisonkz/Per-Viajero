@@ -167,7 +167,13 @@ class PreferencesHelper private constructor(context: Context) {
                 destinoNombre = "Santuario Histórico de Machu Picchu",
                 destinoFoto = "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
                 fechaSalida = "15/11/2026",
+                terminalEmbarque = "Estación San Pedro (Cusco)",
+                horarioSalida = "06:30 AM (Primer Turno)",
                 cantidadPersonas = 2,
+                listaPasajeros = listOf(
+                    pe.edu.utp.perviajero.data.model.Pasajero("Kevin Turista Quispe", "DNI", "74891234", 23, "984112233"),
+                    pe.edu.utp.perviajero.data.model.Pasajero("Andrea Morales Soto", "DNI", "76123456", 22, "984445566")
+                ),
                 tipoMovilidad = "Minibús Panorámico",
                 categoriaHotel = "Hotel Turista 3★",
                 guiaTuristico = "Guía Oficial en Español",
@@ -182,7 +188,15 @@ class PreferencesHelper private constructor(context: Context) {
                 destinoNombre = "Líneas de Nazca",
                 destinoFoto = "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?w=800",
                 fechaSalida = "20/11/2026",
+                terminalEmbarque = "Terminal Javier Prado (La Victoria)",
+                horarioSalida = "04:30 AM (Salida Madrugada)",
                 cantidadPersonas = 4,
+                listaPasajeros = listOf(
+                    pe.edu.utp.perviajero.data.model.Pasajero("Gerson Administrador Flores", "DNI", "71239845", 24, "956123456"),
+                    pe.edu.utp.perviajero.data.model.Pasajero("Lucía Ramos Valdivia", "DNI", "72456789", 25, "956987654"),
+                    pe.edu.utp.perviajero.data.model.Pasajero("Carlos Benítez Prado", "DNI", "45678912", 30, "956112233"),
+                    pe.edu.utp.perviajero.data.model.Pasajero("Mariana Torres Vega", "DNI", "73891245", 21, "956778899")
+                ),
                 tipoMovilidad = "Camioneta 4x4 Privada",
                 categoriaHotel = "Hotel Superior 4★",
                 guiaTuristico = "Guía Bilingüe Certificado",
