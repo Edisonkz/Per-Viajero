@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarItinerario"
@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:navigationIconTint="#FFFFFF"
-        app:title="Planificador de Viaje"
+        app:title="Planificador de Viaje Semanal"
         app:titleTextColor="#FFFFFF" />
 
     <!-- Encabezado con Progreso del Itinerario -->
@@ -22,8 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="6dp"
         app:cardCornerRadius="14dp"
         app:cardElevation="2dp"
         app:strokeColor="#20000000"
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,20 +42,20 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="Itinerario"
                     android:src="@drawable/ic_calendar"
-                    app:tint="@color/colorPrimary"
-                    android:contentDescription="Itinerario" />
+                    app:tint="@color/colorPrimary" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:text="Progreso de tu Itinerario"
+                    android:text="Progreso de Actividades del Viaje"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -72,145 +72,277 @@
                 android:id="@+id/pbProgresoItinerario"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="7dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
                 android:progress="33"
                 android:progressTint="@color/colorPrimary" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Barra de Filtros por Día -->
-    <HorizontalScrollView
+    <!-- Selector de Modo de Visualización: Lista por Días vs Calendario Interactivo -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleGrupoVistas"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:paddingHorizontal="12dp">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupDias"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleSelection="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipTodos"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Todos los días" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDia1"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Día 1" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDia2"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Día 2" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDia3"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Día 3" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDia4"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Día 4" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDia5"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Día 5" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-
-    <!-- Fila de Sugerencias Rápidas de Lugares -->
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="2dp"
-        android:text="💡 Sugerencias rápidas (Toca para agregar):"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="6dp"
+        app:checkedButton="@id/btnModoDias"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
-    <HorizontalScrollView
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModoDias"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Vista por Días"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_receipt" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModoCalendario"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="📅 Calendario Interactivo"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_calendar" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- SECCIÓN 1: VISTA POR DÍAS (Filtros y Chips) -->
+    <LinearLayout
+        android:id="@+id/contenedorVistaDias"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:paddingHorizontal="14dp">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/layoutSugerenciasChips"
-            android:layout_width="wrap_content"
+        <!-- Barra de Filtros por Día -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupDias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipTodos"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Todos los días" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia1"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 1" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia2"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 2" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia3"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 3" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia4"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 4" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia5"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 5" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia6"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 6" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDia7"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día 7" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <!-- Tarjeta de Sugerencias Rápidas Semanales -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugMachuPicchu"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Machu Picchu" />
+                android:layout_weight="1"
+                android:text="💡 Sugerencias a lo largo de la semana:"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugVinicunca"
-                style="@style/Widget.MaterialComponents.Chip.Action"
+            <TextView
+                android:id="@+id/tvAbrirSugerenciasSemanales"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Montaña 7 Colores" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugValleSagrado"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Valle Sagrado" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugHuacachina"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Oasis Huacachina" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugColca"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Cañón del Colca" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipSugTiticaca"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:text="Lago Titicaca" />
+                android:background="?attr/selectableItemBackground"
+                android:padding="4dp"
+                android:text="Ver Todas ➜"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
-    </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/layoutSugerenciasChips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugMachuPicchu"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Machu Picchu" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugVinicunca"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Montaña 7 Colores" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugValleSagrado"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Valle Sagrado" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugHuacachina"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Oasis Huacachina" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugColca"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Cañón del Colca" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSugTiticaca"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Lago Titicaca" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <!-- SECCIÓN 2: VISTA CALENDARIO INTERACTIVO -->
+    <LinearLayout
+        android:id="@+id/contenedorVistaCalendario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#20000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <CalendarView
+                    android:id="@+id/calendarViewItinerario"
+                    android:layout_width="match_parent"
+                    android:layout_height="290dp" />
+
+                <!-- Barra de Fecha Seleccionada y Botón Rápido -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tvFechaSeleccionadaCalendario"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="📅 15/10/2026" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAgregarAFechaCalendario"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+ Programar aquí"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
     <!-- Lista de Actividades -->
     <androidx.recyclerview.widget.RecyclerView
@@ -219,7 +351,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingVertical="6dp"
+        android:paddingVertical="4dp"
         tools:listitem="@layout/item_actividad_itinerario" />
 
     <!-- Estado Vacío -->
@@ -234,17 +366,17 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:contentDescription="Sin actividades"
             android:src="@drawable/ic_calendar"
-            app:tint="?android:attr/textColorSecondary"
-            android:contentDescription="Sin actividades" />
+            app:tint="?android:attr/textColorSecondary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="No hay actividades para este día"
+            android:layout_marginTop="10dp"
+            android:text="No hay actividades programadas"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -253,26 +385,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Agrega tus planes manualmente o toca una sugerencia rápida."
+            android:gravity="center"
+            android:text="Agrega un plan personalizado o elige una de las sugerencias semanales."
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp" />
     </LinearLayout>
 
-    <!-- Botón Inferior para Agregar Nueva Actividad -->
+    <!-- Barra Inferior de Acciones -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/colorBackground"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="?android:attr/colorBackground">
+        android:padding="12dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCompartirItinerario"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginEnd="8dp"
+            android:layout_weight="1"
             android:text="Compartir Plan"
             android:textAllCaps="false"
             app:cornerRadius="12dp"
@@ -290,4 +423,3 @@
     </LinearLayout>
 
 </LinearLayout>
-

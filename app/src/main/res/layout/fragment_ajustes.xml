@@ -97,10 +97,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Mi Planificador de Itinerario"
+                    android:text="Mi Planificador de Itinerario Semanal"
                     android:textAllCaps="false"
                     app:cornerRadius="10dp"
                     app:icon="@drawable/ic_calendar"
+                    app:iconGravity="textStart" />
+
+                <!-- Botón de Bienvenida y Tutorial Inicial -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerOnboarding"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="Ver Bienvenida &amp; Guía de la App"
+                    android:textAllCaps="false"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_logo_peruviajero_agency"
                     app:iconGravity="textStart" />
 
                 <!-- Botón de Alternancia Rápida de Rol -->

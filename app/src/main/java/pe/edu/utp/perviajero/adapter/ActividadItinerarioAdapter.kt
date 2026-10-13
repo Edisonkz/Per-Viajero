@@ -38,6 +38,7 @@ class ActividadItinerarioAdapter(
     class ActividadViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvDia: TextView = itemView.findViewById(R.id.tvItemActividadDia)
         private val tvHorario: TextView = itemView.findViewById(R.id.tvItemActividadHorario)
+        private val tvFecha: TextView = itemView.findViewById(R.id.tvItemActividadFecha)
         private val cbCompletada: CheckBox = itemView.findViewById(R.id.cbItemActividadCompletada)
         private val tvLugar: TextView = itemView.findViewById(R.id.tvItemActividadLugar)
         private val tvNotas: TextView = itemView.findViewById(R.id.tvItemActividadNotas)
@@ -50,6 +51,12 @@ class ActividadItinerarioAdapter(
         ) {
             tvDia.text = item.dia
             tvHorario.text = item.horario
+            if (item.fecha.isNotEmpty()) {
+                tvFecha.visibility = View.VISIBLE
+                tvFecha.text = "📅 ${item.fecha}"
+            } else {
+                tvFecha.visibility = View.GONE
+            }
             tvLugar.text = item.lugar
             tvNotas.text = item.descripcion
 

@@ -10,3 +10,4 @@ data class Pasajero(
     val edad: Int = 25,
     val telefonoContacto: String = ""
 ) : Serializable
+

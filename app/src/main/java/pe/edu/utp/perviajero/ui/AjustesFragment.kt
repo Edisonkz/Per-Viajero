@@ -25,6 +25,7 @@ class AjustesFragment : Fragment() {
     private lateinit var tvPerfilRol: TextView
     private lateinit var btnCambiarRol: MaterialButton
     private lateinit var btnMiItinerario: MaterialButton
+    private lateinit var btnVerOnboarding: MaterialButton
     private lateinit var btnLoginLogout: MaterialButton
     private lateinit var switchModoOscuro: SwitchMaterial
 
@@ -44,11 +45,17 @@ class AjustesFragment : Fragment() {
         tvPerfilRol = view.findViewById(R.id.tvPerfilRol)
         btnCambiarRol = view.findViewById(R.id.btnCambiarRol)
         btnMiItinerario = view.findViewById(R.id.btnMiItinerario)
+        btnVerOnboarding = view.findViewById(R.id.btnVerOnboarding)
         btnLoginLogout = view.findViewById(R.id.btnLoginLogout)
         switchModoOscuro = view.findViewById(R.id.switchModoOscuro)
 
         btnMiItinerario.setOnClickListener {
             val intent = Intent(requireContext(), ItinerarioActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnVerOnboarding.setOnClickListener {
+            val intent = Intent(requireContext(), OnboardingActivity::class.java)
             startActivity(intent)
         }
 

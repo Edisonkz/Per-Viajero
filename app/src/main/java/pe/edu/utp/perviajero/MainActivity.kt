@@ -31,6 +31,13 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
+        // Si es el primer inicio, mostrar pantalla de bienvenida / Onboarding
+        if (prefs.isFirstRun()) {
+            startActivity(android.content.Intent(this, pe.edu.utp.perviajero.ui.OnboardingActivity::class.java))
+            finish()
+            return
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

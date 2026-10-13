@@ -38,6 +38,9 @@ class PreferencesHelper private constructor(context: Context) {
         // Planificador de Itinerario de Viaje
         private const val KEY_ITINERARIO = "key_itinerario"
 
+        // Bienvenida / Onboarding Inicial
+        private const val KEY_FIRST_RUN = "key_first_run"
+
         @Volatile
         private var instance: PreferencesHelper? = null
 
@@ -249,14 +252,36 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putString(KEY_LAST_SEARCH, query).apply()
     }
 
+    // --- Bienvenida / Onboarding Inicial ---
+    fun isFirstRun(): Boolean {
+        return prefs.getBoolean(KEY_FIRST_RUN, true)
+    }
+
+    fun setFirstRunCompleted() {
+        prefs.edit().putBoolean(KEY_FIRST_RUN, false).apply()
+    }
+
+    fun resetFirstRun() {
+        prefs.edit().putBoolean(KEY_FIRST_RUN, true).apply()
+    }
+
     // --- Gestión de Planificador de Itinerario (Turista) ---
     fun getItinerario(): List<pe.edu.utp.perviajero.data.model.ActividadItinerario> {
         val json = prefs.getString(KEY_ITINERARIO, null)
         if (json.isNullOrEmpty()) {
+            val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            val cal = java.util.Calendar.getInstance()
+            val fechaHoy = sdf.format(cal.time)
+            cal.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            val fechaManana = sdf.format(cal.time)
+            cal.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            val fechaPasado = sdf.format(cal.time)
+
             val demo = listOf(
                 pe.edu.utp.perviajero.data.model.ActividadItinerario(
                     id = "act_01",
                     dia = "Día 1",
+                    fecha = fechaHoy,
                     horario = "Mañana (09:00 AM)",
                     lugar = "Plaza de Armas y Centro de Cusco",
                     descripcion = "Llegada, check-in en el hotel y aclimatación con mate de coca.",
@@ -265,6 +290,7 @@ class PreferencesHelper private constructor(context: Context) {
                 pe.edu.utp.perviajero.data.model.ActividadItinerario(
                     id = "act_02",
                     dia = "Día 2",
+                    fecha = fechaManana,
                     horario = "Mañana (06:00 AM)",
                     lugar = "Santuario Histórico de Machu Picchu",
                     descripcion = "Tour guiado por la ciudadela inca y sesión de fotos en el mirador.",
@@ -273,6 +299,7 @@ class PreferencesHelper private constructor(context: Context) {
                 pe.edu.utp.perviajero.data.model.ActividadItinerario(
                     id = "act_03",
                     dia = "Día 3",
+                    fecha = fechaPasado,
                     horario = "Tarde (01:00 PM)",
                     lugar = "Mercado de San Pedro",
                     descripcion = "Almuerzo gastronómico y compra de artesanías y souvenirs.",

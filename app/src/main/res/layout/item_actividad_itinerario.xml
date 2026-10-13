@@ -46,6 +46,21 @@
                 android:textSize="13sp"
                 tools:text="Mañana (09:00 AM)" />
 
+            <TextView
+                android:id="@+id/tvItemActividadFecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="#15006837"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="15/10/2026"
+                tools:visibility="visible" />
+
             <ImageView
                 android:id="@+id/btnItemActividadEliminar"
                 android:layout_width="28dp"
