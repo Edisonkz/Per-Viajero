@@ -56,7 +56,7 @@ class ReservaAdapter(
             tvDestino.text = reserva.destinoNombre
             tvCodigo.text = reserva.codigoReserva
             tvFecha.text = "Salida: ${reserva.fechaSalida}"
-            tvDetalles.text = "${reserva.cantidadPersonas} pers • ${reserva.tipoMovilidad} • ${reserva.categoriaHotel}"
+            tvDetalles.text = "${reserva.cantidadPersonas} pers • ${reserva.tipoMovilidad} • ${reserva.categoriaHotel} • ${reserva.guiaTuristico}"
             tvTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
             tvEstado.text = reserva.estado
 

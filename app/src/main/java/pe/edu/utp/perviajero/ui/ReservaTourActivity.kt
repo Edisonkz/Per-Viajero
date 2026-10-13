@@ -1,6 +1,7 @@
 package pe.edu.utp.perviajero.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
@@ -16,10 +17,11 @@ import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.util.NotificationHelper
 import java.util.Calendar
 import java.util.Locale
 
-// Cotizador interactivo con cálculo dinámico en tiempo real y generación de vouchers
+// Cotizador interactivo con cálculo dinámico en tiempo real, selección de guía, notificaciones nativas y voucher
 class ReservaTourActivity : AppCompatActivity() {
 
     companion object {
@@ -38,6 +40,7 @@ class ReservaTourActivity : AppCompatActivity() {
     private lateinit var tvCantidadPasajeros: TextView
     private lateinit var rgMovilidad: RadioGroup
     private lateinit var rgHotel: RadioGroup
+    private lateinit var rgGuia: RadioGroup
     private lateinit var tvCostoTotal: TextView
     private lateinit var btnConfirmarReserva: MaterialButton
 
@@ -48,6 +51,8 @@ class ReservaTourActivity : AppCompatActivity() {
     private var nombreMovilidad: String = "Van Turística Compartida"
     private var extraHotel: Double = 0.0
     private var nombreHotel: String = "Solo Tour"
+    private var extraGuia: Double = 0.0
+    private var nombreGuia: String = "Sin Guía Privado"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +89,7 @@ class ReservaTourActivity : AppCompatActivity() {
         tvCantidadPasajeros = findViewById(R.id.tvCantidadPasajeros)
         rgMovilidad = findViewById(R.id.rgMovilidad)
         rgHotel = findViewById(R.id.rgHotel)
+        rgGuia = findViewById(R.id.rgGuia)
         tvCostoTotal = findViewById(R.id.tvCostoTotal)
         btnConfirmarReserva = findViewById(R.id.btnConfirmarReserva)
 
@@ -195,6 +201,29 @@ class ReservaTourActivity : AppCompatActivity() {
             actualizarCalculoCosto()
         }
 
+        // Selector de Guía Turístico Oficial
+        rgGuia.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rbGuiaNinguno -> {
+                    extraGuia = 0.0
+                    nombreGuia = "Sin Guía Privado"
+                }
+                R.id.rbGuiaEspanol -> {
+                    extraGuia = 45.0
+                    nombreGuia = "Guía Oficial en Español"
+                }
+                R.id.rbGuiaBilingue -> {
+                    extraGuia = 80.0
+                    nombreGuia = "Guía Bilingüe Certificado"
+                }
+                R.id.rbGuiaExperto -> {
+                    extraGuia = 130.0
+                    nombreGuia = "Guía Experto de Montaña"
+                }
+            }
+            actualizarCalculoCosto()
+        }
+
         // Confirmar y generar reserva
         btnConfirmarReserva.setOnClickListener {
             confirmarYGuardarReserva()
@@ -203,7 +232,7 @@ class ReservaTourActivity : AppCompatActivity() {
 
     private fun calcularCostoTotal(): Double {
         val costoPorPersona = PRECIO_BASE_POR_PERSONA + extraMovilidad + extraHotel
-        return costoPorPersona * cantidadPasajeros
+        return (costoPorPersona * cantidadPasajeros) + extraGuia
     }
 
     private fun actualizarCalculoCosto() {
@@ -220,6 +249,7 @@ class ReservaTourActivity : AppCompatActivity() {
 
         val prefs = PreferencesHelper.getInstance(this)
         val usuario = prefs.getUsuarioActual()
+        val empresa = prefs.getEmpresaInfo()
         val nombreUsuario = usuario?.nombre ?: "Kevin Turista"
         val emailUsuario = usuario?.email ?: "kevin@peruviajero.pe"
 
@@ -235,6 +265,7 @@ class ReservaTourActivity : AppCompatActivity() {
             cantidadPersonas = cantidadPasajeros,
             tipoMovilidad = nombreMovilidad,
             categoriaHotel = nombreHotel,
+            guiaTuristico = nombreGuia,
             costoTotal = total,
             estado = "Confirmada",
             usuarioNombre = nombreUsuario,
@@ -243,27 +274,56 @@ class ReservaTourActivity : AppCompatActivity() {
 
         prefs.guardarReserva(nuevaReserva)
 
-        // Diálogo de confirmación con voucher generado
+        // Lanzar Notificación Nativa de Android en la Barra de Estado
+        NotificationHelper.notificarReservaConfirmada(this, nuevaReserva)
+
+        // Diálogo de confirmación con voucher generado e Intent para compartir
         MaterialAlertDialogBuilder(this)
-            .setTitle("¡Voucher Generado con Éxito!")
+            .setTitle("¡Voucher Oficial Generado!")
             .setMessage(
-                "Tu reserva ha sido registrada en el sistema de PerúViajero:\n\n" +
+                "${empresa.razonSocial}\n" +
+                "RUC: ${empresa.ruc} • Reg. ${empresa.registroMincetur}\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                 "• Código: $codigoGenerado\n" +
                 "• Destino: ${dest.nombre}\n" +
-                "• Fecha de salida: $fechaSeleccionada\n" +
-                "• Pasajeros: $cantidadPasajeros\n" +
+                "• Salida: $fechaSeleccionada\n" +
+                "• Pasajeros: $cantidadPasajeros persona(s)\n" +
                 "• Transporte: $nombreMovilidad\n" +
                 "• Alojamiento: $nombreHotel\n" +
+                "• Servicio de Guía: $nombreGuia\n" +
                 "• Total Pagado: S/ ${String.format(Locale.US, "%.2f", total)}\n\n" +
-                "Puedes consultar el estado de tu voucher en la pestaña 'Mis Reservas'."
+                "Se ha enviado una notificación a tu dispositivo. Revisa tu voucher en 'Mis Reservas'."
             )
             .setIcon(R.drawable.ic_check_circle)
             .setPositiveButton("Aceptar") { dialog, _ ->
                 dialog.dismiss()
                 finish()
             }
+            .setNeutralButton("Compartir") { _, _ ->
+                compartirVoucher(nuevaReserva, empresa.razonSocial, empresa.ruc)
+                finish()
+            }
             .setCancelable(false)
             .show()
     }
-}
 
+    private fun compartirVoucher(reserva: Reserva, razonSocial: String, ruc: String) {
+        val mensaje = "🎟️ VOUCHER DE VIAJE OFICIAL - $razonSocial (RUC: $ruc)\n\n" +
+                "¡Hola! He reservado el tour a ${reserva.destinoNombre}.\n" +
+                "• Código: ${reserva.codigoReserva}\n" +
+                "• Fecha de salida: ${reserva.fechaSalida}\n" +
+                "• Pasajeros: ${reserva.cantidadPersonas}\n" +
+                "• Transporte: ${reserva.tipoMovilidad}\n" +
+                "• Alojamiento: ${reserva.categoriaHotel}\n" +
+                "• Guía Oficial: ${reserva.guiaTuristico}\n" +
+                "• Monto Total: S/ ${String.format(Locale.US, "%.2f", reserva.costoTotal)}\n\n" +
+                "Gestionado con la aplicación PerúViajero."
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, mensaje)
+        }
+        val chooser = Intent.createChooser(sendIntent, "Compartir Voucher de Tour")
+        startActivity(chooser)
+    }
+}

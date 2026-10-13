@@ -37,6 +37,14 @@ class MainActivity : AppCompatActivity() {
         // Inicializar cliente HTTP
         ApiClient.initialize(this)
 
+        // Inicializar canal de notificaciones para reservas y despacho
+        pe.edu.utp.perviajero.util.NotificationHelper.crearCanalNotificaciones(this)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
         // Configuración de Toolbar
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

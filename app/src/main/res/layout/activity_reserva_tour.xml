@@ -346,6 +346,64 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Sección: Guía Oficial de Turismo -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:strokeColor="#20000000"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5. Guía Oficial de Turismo (MINCETUR)"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/rgGuia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+
+                        <RadioButton
+                            android:id="@+id/rbGuiaNinguno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Sin Guía Privado (Tour Libre)" />
+
+                        <RadioButton
+                            android:id="@+id/rbGuiaEspanol"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Guía Oficial en Español (+S/ 45.00 por grupo)" />
+
+                        <RadioButton
+                            android:id="@+id/rbGuiaBilingue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Guía Bilingüe Certificado Inglés/Español (+S/ 80.00)" />
+
+                        <RadioButton
+                            android:id="@+id/rbGuiaExperto"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Guía Experto de Alta Montaña / Historiador (+S/ 130.00)" />
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </ScrollView>
 

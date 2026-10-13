@@ -1,0 +1,62 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+  <!-- Círculo Exterior Base Dorado / Solar -->
+  <path
+      android:fillColor="#FDB813"
+      android:pathData="M48,4A44,44 0,1 0,92,48,44.05,44.05 0,0 0,48,4z"/>
+
+  <!-- Anillo Decorativo Rojo Carmesí Peruano -->
+  <path
+      android:fillColor="#C1272D"
+      android:pathData="M48,8A40,40 0,1 0,88,48,40.05,40.05 0,0 0,48,8zM48,84A36,36 0,1 1,84,48,36.04,36.04 0,0 1,48,84z"/>
+
+  <!-- Fondo Interior Cielo Azul Andino -->
+  <path
+      android:fillColor="#1565C0"
+      android:pathData="M48,12A36,36 0,1 0,84,48,36.04,36.04 0,0 0,48,12z"/>
+
+  <!-- Sol Inti Incaico (Rayos Superiores) -->
+  <path
+      android:fillColor="#FFE082"
+      android:pathData="M48,18a10,10 0,0 1,10,10,10,10 0,0 1,-20,0A10,10 0,0 1,48,18z"/>
+  <path
+      android:fillColor="#FFD54F"
+      android:pathData="M46,14h4v6h-4zM46,36h4v6h-4zM32,26h6v4h-6zM58,26h6v4h-6z"/>
+
+  <!-- Montañas Andinas Nevadas / Machu Picchu -->
+  <!-- Montaña Principal Izquierda (Verde Bosque) -->
+  <path
+      android:fillColor="#004D25"
+      android:pathData="M20,68L38,36L56,68Z"/>
+  <!-- Montaña Secundaria Derecha (Verde Esmeralda) -->
+  <path
+      android:fillColor="#006837"
+      android:pathData="M42,68L60,42L76,68Z"/>
+
+  <!-- Cumbres Nevadas (Puntas Blancas) -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M38,36L44,47L38,44L32,47Z"/>
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M60,42L65,51L60,49L55,51Z"/>
+
+  <!-- Base Verde y Camino Inca -->
+  <path
+      android:fillColor="#2E7D32"
+      android:pathData="M16,68C22,78 34,84 48,84C62,84 74,78 80,68L16,68Z"/>
+
+  <!-- Pin de Ubicación / Brújula de Agencia de Viajes -->
+  <path
+      android:fillColor="#C1272D"
+      android:pathData="M48,50c-4.4,0 -8,3.6 -8,8c0,6 8,14 8,14s8,-8 8,-14c0,-4.4 -3.6,-8 -8,-8z"/>
+  <!-- Centro Blanco del Pin -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M48,55a3,3 0,1 0,3,3,3,3 0,0 0,-3,-3z"/>
+
+</vector>

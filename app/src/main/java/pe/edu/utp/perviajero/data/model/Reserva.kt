@@ -12,9 +12,9 @@ data class Reserva(
     val cantidadPersonas: Int,
     val tipoMovilidad: String,
     val categoriaHotel: String,
+    val guiaTuristico: String = "Sin Guía Privado",
     val costoTotal: Double,
-    var estado: String = "Confirmada", // "Confirmada", "En Ruta", "Finalizada"
+    var estado: String = "Confirmada", // "Confirmada", "En Ruta", "Completada"
     val usuarioNombre: String,
     val usuarioEmail: String
 ) : Serializable
-

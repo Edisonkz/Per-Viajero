@@ -13,7 +13,7 @@
         android:background="@color/colorPrimary"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:navigationIconTint="#FFFFFF"
-        app:title="Iniciar Sesión"
+        app:title="Autenticación y Registro"
         app:titleTextColor="#FFFFFF" />
 
     <ScrollView
@@ -26,42 +26,57 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Logo Personalizado de la Empresa -->
             <ImageView
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/ic_logo_peruviajero_agency"
                 android:contentDescription="@string/app_name" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:text="PerúViajero Agencia"
+                android:layout_marginTop="10dp"
+                android:text="PerúViajero Tours &amp; Travel"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="22sp"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="3dp"
                 android:gravity="center"
-                android:text="Inicia sesión para cotizar paquetes y gestionar tus tours turísticos."
+                android:text="Operador Turístico Oficial • RUC: 20608945123"
                 android:textColor="?android:attr/textColorSecondary"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
+
+            <!-- Opción 1: Continuar como Invitado (Modo Libre) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnInvitado"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Ingresar como Invitado (Navegación Libre)"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_destinos"
+                app:iconGravity="textStart" />
 
             <!-- Accesos rápidos para la sustentación oral -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Acceso Rápido para Demostración"
+                android:layout_marginTop="20dp"
+                android:text="Acceso Rápido por Rol (Demostración)"
                 android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.button.MaterialButton
@@ -73,7 +88,7 @@
                 app:strokeColor="@color/colorPrimary"
                 app:strokeWidth="1.5dp"
                 android:textColor="@color/colorPrimary"
-                android:text="Acceder como Turista (Kevin)"
+                android:text="Ingresar como Turista (Kevin)"
                 android:textAllCaps="false"
                 app:cornerRadius="12dp"
                 app:icon="@drawable/ic_person"
@@ -89,7 +104,7 @@
                 app:strokeColor="#1976D2"
                 app:strokeWidth="1.5dp"
                 android:textColor="#1976D2"
-                android:text="Acceder como Administrador (Gerson)"
+                android:text="Ingresar como Administrador (Gerson)"
                 android:textAllCaps="false"
                 app:cornerRadius="12dp"
                 app:icon="@drawable/ic_dashboard"
@@ -99,15 +114,24 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginVertical="20dp"
+                android:layout_marginVertical="18dp"
                 android:background="#20000000" />
 
             <!-- Formulario estándar -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ingreso con Cuenta Registrada"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmail"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:hint="Correo Electrónico">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -123,7 +147,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:hint="Contraseña"
                 app:passwordToggleEnabled="true">
 
@@ -139,24 +163,24 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                android:text="Ingresar con Credenciales"
+                android:text="Iniciar Sesión"
                 android:textAllCaps="false"
                 app:cornerRadius="12dp" />
 
+            <!-- Opción para registrarse -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnInvitado"
+                android:id="@+id/btnRegistrarme"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Continuar como Invitado (Modo Libre)"
+                android:layout_marginTop="6dp"
+                android:text="¿No tienes cuenta? Regístrate aquí"
                 android:textAllCaps="false"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:textColor="@color/colorPrimary" />
 
         </LinearLayout>
     </ScrollView>
 
 </LinearLayout>
-

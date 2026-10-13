@@ -7,13 +7,15 @@
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <!-- Tarjeta de Métricas de Negocio -->
+    <!-- Tarjeta de Datos Corporativos y Fiscales de la Empresa -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
         app:cardCornerRadius="16dp"
-        app:cardElevation="3dp"
+        app:cardElevation="2dp"
         app:strokeColor="#20000000"
         app:strokeWidth="1dp">
 
@@ -21,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -30,8 +32,89 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_logo_peruviajero_agency"
+                    android:contentDescription="Logo Agencia" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvAdminRazonSocial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        tools:text="PerúViajero Tours &amp; Travel S.A.C." />
+
+                    <TextView
+                        android:id="@+id/tvAdminRuc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="12sp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        tools:text="RUC: 20608945123 • Reg. MINCETUR" />
+
+                    <TextView
+                        android:id="@+id/tvAdminDireccion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:textSize="11sp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        tools:text="Av. El Sol 845, Wanchaq, Cusco" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditarEmpresa"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Editar"
+                    android:textSize="12sp"
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Tarjeta de Métricas de Negocio (KPIs) -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#20000000"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@drawable/ic_dashboard"
                     app:tint="@color/colorPrimary"
                     android:contentDescription="Dashboard" />
@@ -39,17 +122,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="Métricas de la Agencia"
+                    android:layout_marginStart="8dp"
+                    android:text="Métricas de Ventas"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
+                android:layout_marginVertical="8dp"
                 android:background="#15000000" />
 
             <!-- Fila de Indicadores Clave (KPIs) -->
@@ -71,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         tools:text="12" />
 
@@ -81,12 +164,12 @@
                         android:layout_marginTop="2dp"
                         android:text="Reservas"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="40dp"
+                    android:layout_height="36dp"
                     android:background="#20000000" />
 
                 <!-- KPI: Ingresos Totales -->
@@ -102,7 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#1976D2"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         tools:text="S/ 4,850.00" />
 
@@ -112,12 +195,12 @@
                         android:layout_marginTop="2dp"
                         android:text="Ingresos S/."
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="40dp"
+                    android:layout_height="36dp"
                     android:background="#20000000" />
 
                 <!-- KPI: Top Destino -->
@@ -135,7 +218,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="#F57C00"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         tools:text="Machu Picchu" />
 
@@ -145,7 +228,7 @@
                         android:layout_marginTop="2dp"
                         android:text="Tour Top"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -158,10 +241,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Gestión de Estados y Pasajeros"
+        android:layout_marginVertical="4dp"
+        android:text="Gestión de Estados y Despacho de Tours"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <!-- RecyclerView de Gestión de Reservas -->
@@ -175,4 +258,3 @@
         tools:listitem="@layout/item_reserva" />
 
 </LinearLayout>
-

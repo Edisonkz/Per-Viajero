@@ -4,11 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import pe.edu.utp.perviajero.data.model.EmpresaInfo
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.data.model.Usuario
 
-// REQ-09 / REQ-10: Persistencia local con SharedPreferences (Sesiones, Roles, Favoritos y Reservas)
+// REQ-09 / REQ-10: Persistencia local con SharedPreferences (Sesiones, Roles, Favoritos, Reservas y Datos de Agencia)
 class PreferencesHelper private constructor(context: Context) {
 
     private val prefs: SharedPreferences =
@@ -30,6 +31,9 @@ class PreferencesHelper private constructor(context: Context) {
 
         // Reservas de Agencia
         private const val KEY_RESERVAS = "key_reservas"
+
+        // Datos Fiscales y Corporativos de la Agencia
+        private const val KEY_EMPRESA_INFO = "key_empresa_info"
 
         @Volatile
         private var instance: PreferencesHelper? = null
@@ -93,6 +97,27 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putString(KEY_USER_ROL, nuevoRol.name).apply()
     }
 
+    // --- Gestión de Datos Fiscales de la Empresa (Modo Administrador) ---
+    fun getEmpresaInfo(): EmpresaInfo {
+        val json = prefs.getString(KEY_EMPRESA_INFO, null)
+        return if (json.isNullOrEmpty()) {
+            val porDefecto = EmpresaInfo()
+            guardarEmpresaInfo(porDefecto)
+            porDefecto
+        } else {
+            try {
+                gson.fromJson(json, EmpresaInfo::class.java) ?: EmpresaInfo()
+            } catch (_: Exception) {
+                EmpresaInfo()
+            }
+        }
+    }
+
+    fun guardarEmpresaInfo(info: EmpresaInfo) {
+        val json = gson.toJson(info)
+        prefs.edit().putString(KEY_EMPRESA_INFO, json).apply()
+    }
+
     // --- Gestión de Reservas (Módulo Agencia de Turismo) ---
     fun getReservas(): List<Reserva> {
         val json = prefs.getString(KEY_RESERVAS, null)
@@ -142,7 +167,8 @@ class PreferencesHelper private constructor(context: Context) {
                 cantidadPersonas = 2,
                 tipoMovilidad = "Minibús Panorámico",
                 categoriaHotel = "Hotel Turista 3★",
-                costoTotal = 560.0,
+                guiaTuristico = "Guía Oficial en Español",
+                costoTotal = 605.0,
                 estado = "Confirmada",
                 usuarioNombre = "Kevin Turista",
                 usuarioEmail = "kevin@peruviajero.pe"
@@ -156,7 +182,8 @@ class PreferencesHelper private constructor(context: Context) {
                 cantidadPersonas = 4,
                 tipoMovilidad = "Camioneta 4x4 Privada",
                 categoriaHotel = "Hotel Superior 4★",
-                costoTotal = 1760.0,
+                guiaTuristico = "Guía Bilingüe Certificado",
+                costoTotal = 1840.0,
                 estado = "En Ruta",
                 usuarioNombre = "Gerson Turista",
                 usuarioEmail = "gerson@peruviajero.pe"
