@@ -2,7 +2,7 @@ package pe.edu.utp.perviajero.data.model
 
 import java.io.Serializable
 
-// Modelo completo para reservas y comprobantes de tours turísticos en el Perú
+// Modelo completo para reservas, pasarela de pago y comprobantes de tours turísticos en el Perú
 data class Reserva(
     val codigoReserva: String,
     val destinoId: String,
@@ -17,6 +17,8 @@ data class Reserva(
     val categoriaHotel: String,
     val guiaTuristico: String = "Sin Guía Privado",
     val costoTotal: Double,
+    val metodoPago: String = "Tarjeta Débito Visa",
+    val numeroOperacion: String = "OP-98421",
     var estado: String = "Confirmada", // "Confirmada", "En Ruta", "Completada"
     val usuarioNombre: String,
     val usuarioEmail: String

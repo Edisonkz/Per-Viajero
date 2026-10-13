@@ -8,3 +8,4 @@ data class OnboardingItem(
     val descripcion: String,
     val iconoResId: Int
 )
+

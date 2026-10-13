@@ -218,6 +218,7 @@ class AdminDashboardFragment : Fragment() {
         val tvTicketGuia: TextView = dialogView.findViewById(R.id.tvTicketGuia)
         val tvTicketPasajerosLista: TextView = dialogView.findViewById(R.id.tvTicketPasajerosLista)
         val tvTicketTotal: TextView = dialogView.findViewById(R.id.tvTicketTotal)
+        val tvTicketMetodoPago: TextView = dialogView.findViewById(R.id.tvTicketMetodoPago)
         val btnTicketMaps: MaterialButton = dialogView.findViewById(R.id.btnTicketMaps)
         val btnTicketCompartir: MaterialButton = dialogView.findViewById(R.id.btnTicketCompartir)
 
@@ -231,6 +232,7 @@ class AdminDashboardFragment : Fragment() {
         tvTicketTransporte.text = "🚐 Transporte: ${reserva.tipoMovilidad} • ${reserva.categoriaHotel}"
         tvTicketGuia.text = "👤 Guía Oficial: ${reserva.guiaTuristico}"
         tvTicketTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
+        tvTicketMetodoPago.text = "${reserva.metodoPago} • ${reserva.numeroOperacion}"
 
         Glide.with(requireContext())
             .load(reserva.destinoFoto)

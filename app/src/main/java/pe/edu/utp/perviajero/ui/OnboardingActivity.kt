@@ -142,3 +142,4 @@ class OnboardingActivity : AppCompatActivity() {
         finish()
     }
 }
+

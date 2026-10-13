@@ -293,7 +293,7 @@ class ReservaTourActivity : AppCompatActivity() {
         }
 
         btnConfirmarReserva.setOnClickListener {
-            confirmarYGuardarReserva()
+            iniciarPasarelaDePago()
         }
     }
 
@@ -382,13 +382,144 @@ class ReservaTourActivity : AppCompatActivity() {
         tvCostoTotal.text = String.format(Locale.US, "S/ %.2f", total)
     }
 
-    private fun confirmarYGuardarReserva() {
+    private fun iniciarPasarelaDePago() {
         val dest = destino ?: return
         if (fechaSeleccionada.isEmpty()) {
             Toast.makeText(this, "Por favor selecciona una fecha de salida", Toast.LENGTH_SHORT).show()
             return
         }
 
+        val total = calcularCostoTotal()
+        val subtotal = total / 1.18
+        val igv = total - subtotal
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_pasarela_pago, null)
+        val tvPasarelaDestinoResumen: TextView = dialogView.findViewById(R.id.tvPasarelaDestinoResumen)
+        val tvPasarelaDesgloseIgv: TextView = dialogView.findViewById(R.id.tvPasarelaDesgloseIgv)
+        val tvPasarelaTotal: TextView = dialogView.findViewById(R.id.tvPasarelaTotal)
+
+        val rgMetodosPago: RadioGroup = dialogView.findViewById(R.id.rgMetodosPago)
+        val layoutFormularioTarjeta: LinearLayout = dialogView.findViewById(R.id.layoutFormularioTarjeta)
+        val layoutFormularioYape: LinearLayout = dialogView.findViewById(R.id.layoutFormularioYape)
+        val layoutFormularioTransferencia: LinearLayout = dialogView.findViewById(R.id.layoutFormularioTransferencia)
+
+        val chipDemoTarjeta: com.google.android.material.chip.Chip = dialogView.findViewById(R.id.chipDemoTarjeta)
+        val etNumeroTarjeta: EditText = dialogView.findViewById(R.id.etNumeroTarjeta)
+        val etVencimientoTarjeta: EditText = dialogView.findViewById(R.id.etVencimientoTarjeta)
+        val etCvvTarjeta: EditText = dialogView.findViewById(R.id.etCvvTarjeta)
+        val etTitularTarjeta: EditText = dialogView.findViewById(R.id.etTitularTarjeta)
+
+        val chipDemoYape: com.google.android.material.chip.Chip = dialogView.findViewById(R.id.chipDemoYape)
+        val etCodigoOperacionYape: EditText = dialogView.findViewById(R.id.etCodigoOperacionYape)
+        val tvCodigoCip: TextView = dialogView.findViewById(R.id.tvCodigoCip)
+
+        val layoutProcesandoPago: LinearLayout = dialogView.findViewById(R.id.layoutProcesandoPago)
+        val tvEstadoProcesando: TextView = dialogView.findViewById(R.id.tvEstadoProcesando)
+
+        val btnEjecutarPago: MaterialButton = dialogView.findViewById(R.id.btnEjecutarPago)
+        val btnCancelarPago: MaterialButton = dialogView.findViewById(R.id.btnCancelarPago)
+
+        tvPasarelaDestinoResumen.text = "${dest.nombre} • $cantidadPasajeros pasajero(s)"
+        tvPasarelaDesgloseIgv.text = String.format(Locale.US, "Subtotal: S/ %.2f • IGV (18%%): S/ %.2f", subtotal, igv)
+        tvPasarelaTotal.text = String.format(Locale.US, "S/ %.2f", total)
+        btnEjecutarPago.text = String.format(Locale.US, "Pagar S/ %.2f con Cifrado SSL", total)
+
+        val prefs = PreferencesHelper.getInstance(this)
+        val usuario = prefs.getUsuarioActual()
+        if (usuario != null && usuario.nombre.isNotEmpty()) {
+            etTitularTarjeta.setText(usuario.nombre.uppercase(Locale.US))
+        }
+
+        val cipAleatorio = "CIP: " + (8000000..8999999).random() + " (Vence en 24h)"
+        tvCodigoCip.text = cipAleatorio
+
+        rgMetodosPago.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rbMetodoTarjeta -> {
+                    layoutFormularioTarjeta.visibility = View.VISIBLE
+                    layoutFormularioYape.visibility = View.GONE
+                    layoutFormularioTransferencia.visibility = View.GONE
+                }
+                R.id.rbMetodoYape -> {
+                    layoutFormularioTarjeta.visibility = View.GONE
+                    layoutFormularioYape.visibility = View.VISIBLE
+                    layoutFormularioTransferencia.visibility = View.GONE
+                }
+                R.id.rbMetodoTransferencia -> {
+                    layoutFormularioTarjeta.visibility = View.GONE
+                    layoutFormularioYape.visibility = View.GONE
+                    layoutFormularioTransferencia.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        chipDemoTarjeta.setOnClickListener {
+            etNumeroTarjeta.setText("4557 8912 3456 7890")
+            etVencimientoTarjeta.setText("12/28")
+            etCvvTarjeta.setText("742")
+            Toast.makeText(this, "Datos de tarjeta de prueba cargados", Toast.LENGTH_SHORT).show()
+        }
+
+        chipDemoYape.setOnClickListener {
+            val op = "" + (100000..999999).random()
+            etCodigoOperacionYape.setText(op)
+            Toast.makeText(this, "Código de aprobación Yape simulado: $op", Toast.LENGTH_SHORT).show()
+        }
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancelarPago.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnEjecutarPago.setOnClickListener {
+            val metodoSeleccionado = when (rgMetodosPago.checkedRadioButtonId) {
+                R.id.rbMetodoYape -> "📱 Yape Móvil"
+                R.id.rbMetodoTransferencia -> "🏦 Transferencia / CIP"
+                else -> "💳 Tarjeta Débito / Crédito"
+            }
+
+            val numOperacion = when (rgMetodosPago.checkedRadioButtonId) {
+                R.id.rbMetodoYape -> "YAPE-" + etCodigoOperacionYape.text.toString().trim().ifEmpty { (100000..999999).random().toString() }
+                R.id.rbMetodoTransferencia -> "CIP-" + (8000000..8999999).random()
+                else -> "VISA-OP-" + (10000..99999).random()
+            }
+
+            // Simular validación bancaria con estados dinámicos
+            layoutFormularioTarjeta.visibility = View.GONE
+            layoutFormularioYape.visibility = View.GONE
+            layoutFormularioTransferencia.visibility = View.GONE
+            rgMetodosPago.visibility = View.GONE
+            btnEjecutarPago.isEnabled = false
+            btnCancelarPago.isEnabled = false
+            layoutProcesandoPago.visibility = View.VISIBLE
+
+            val handler = android.os.Handler(android.os.Looper.getMainLooper())
+
+            tvEstadoProcesando.text = "1/3 Conectando con la pasarela bancaria..."
+
+            handler.postDelayed({
+                tvEstadoProcesando.text = "2/3 Validando fondos y token de seguridad..."
+            }, 800)
+
+            handler.postDelayed({
+                tvEstadoProcesando.text = "3/3 ¡Pago aprobado con éxito! Generando voucher..."
+            }, 1600)
+
+            handler.postDelayed({
+                dialog.dismiss()
+                guardarReservaExitosa(metodoSeleccionado, numOperacion)
+            }, 2300)
+        }
+
+        dialog.show()
+    }
+
+    private fun guardarReservaExitosa(metodoPago: String, numeroOperacion: String) {
+        val dest = destino ?: return
         val prefs = PreferencesHelper.getInstance(this)
         val usuario = prefs.getUsuarioActual()
         val empresa = prefs.getEmpresaInfo()
@@ -415,6 +546,8 @@ class ReservaTourActivity : AppCompatActivity() {
             categoriaHotel = nombreHotel,
             guiaTuristico = nombreGuia,
             costoTotal = total,
+            metodoPago = metodoPago,
+            numeroOperacion = numeroOperacion,
             estado = "Confirmada",
             usuarioNombre = nombreUsuario,
             usuarioEmail = emailUsuario
@@ -424,23 +557,24 @@ class ReservaTourActivity : AppCompatActivity() {
 
         NotificationHelper.notificarReservaConfirmada(this, nuevaReserva)
 
-        // Resumen formateado para mostrar y compartir
         val resumenPasajeros = listaManifiesto.joinToString("\n") { "   • ${it.nombresApellidos} (DNI: ${it.numeroDocumento}, ${it.edad} años)" }
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("¡Boleto y Voucher Emitido!")
+            .setTitle("¡Pago Aprobado y Voucher Emitido! 💳✅")
             .setMessage(
                 "${empresa.razonSocial}\n" +
                 "RUC: ${empresa.ruc} • Reg. ${empresa.registroMincetur}\n" +
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                 "• Código: $codigoGenerado\n" +
                 "• Destino: ${dest.nombre}\n" +
-                "• Fecha: $fechaSeleccionada\n" +
-                "• Horario de Salida: $horarioElegido\n" +
-                "• Terminal de Embarque: $terminalElegido\n" +
-                "• Movilidad: $nombreMovilidad\n" +
+                "• Fecha de Salida: $fechaSeleccionada\n" +
+                "• Horario: $horarioElegido\n" +
+                "• Terminal: $terminalElegido\n" +
+                "• Transporte: $nombreMovilidad\n" +
                 "• Alojamiento: $nombreHotel\n" +
                 "• Guía Oficial: $nombreGuia\n\n" +
+                "💳 Medio de Pago: $metodoPago\n" +
+                "🔢 N° Operación: $numeroOperacion\n\n" +
                 "👥 Manifiesto de Pasajeros:\n$resumenPasajeros\n\n" +
                 "💰 Total Pagado: S/ ${String.format(Locale.US, "%.2f", total)} (Inc. IGV)\n\n" +
                 "Toca 'Aceptar' o pulsa en 'Mis Reservas' para ver el ticket detallado."

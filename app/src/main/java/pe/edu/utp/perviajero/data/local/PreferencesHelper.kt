@@ -181,6 +181,8 @@ class PreferencesHelper private constructor(context: Context) {
                 categoriaHotel = "Hotel Turista 3★",
                 guiaTuristico = "Guía Oficial en Español",
                 costoTotal = 605.0,
+                metodoPago = "Tarjeta Débito Visa",
+                numeroOperacion = "OP-98421",
                 estado = "Confirmada",
                 usuarioNombre = "Kevin Turista",
                 usuarioEmail = "kevin@peruviajero.pe"
@@ -204,6 +206,8 @@ class PreferencesHelper private constructor(context: Context) {
                 categoriaHotel = "Hotel Superior 4★",
                 guiaTuristico = "Guía Bilingüe Certificado",
                 costoTotal = 1840.0,
+                metodoPago = "Yape Móvil",
+                numeroOperacion = "OP-33129",
                 estado = "En Ruta",
                 usuarioNombre = "Gerson Turista",
                 usuarioEmail = "gerson@peruviajero.pe"
