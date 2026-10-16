@@ -18,7 +18,8 @@ import kotlin.getValue
 // REQ-05 / REQ-07: Cliente HTTP Retrofit con soporte para simulación de estados de red
 object ApiClient {
 
-    private const val BASE_URL = "https://api.peruviajero.utp.pe/v1/"
+    // API REST pública oficial en la nube (GitHub Raw CDN)
+    private const val BASE_URL = "https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/"
     private var appContext: Context? = null
 
     fun initialize(context: Context) {
@@ -34,23 +35,31 @@ object ApiClient {
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    // Interceptor para gestionar conexión y proveer datos estructurados
+    // Interceptor: verifica conectividad y ejecuta petición HTTP real hacia la API pública
     private val networkInterceptor = Interceptor { chain ->
         if (!isOnline()) {
-            throw IOException("No hay conexión a internet")
+            throw IOException("No hay conexión a internet (dispositivo offline)")
         }
 
-        val jsonMediaType = "application/json; charset=utf-8".toMediaType()
-        val responseBody = MockData.DESTINOS_JSON.toResponseBody(jsonMediaType)
-
-        // Respuesta HTTP 200 con el catálogo de destinos turísticos
-        Response.Builder()
-            .request(chain.request())
-            .protocol(Protocol.HTTP_1_1)
-            .code(200)
-            .message("OK")
-            .body(responseBody)
-            .build()
+        try {
+            val response = chain.proceed(chain.request())
+            if (!response.isSuccessful) {
+                // Respaldo de contingencia si el servidor responde con error HTTP
+                val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+                val responseBody = MockData.DESTINOS_JSON.toResponseBody(jsonMediaType)
+                Response.Builder()
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_1_1)
+                    .code(200)
+                    .message("OK (Contingencia)")
+                    .body(responseBody)
+                    .build()
+            } else {
+                response
+            }
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     private val okHttpClient by lazy {
