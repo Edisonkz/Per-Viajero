@@ -14,8 +14,8 @@
 | **Nombre de la aplicación** | **PerúViajero** (mismo de APF1) |
 | **Integrantes del grupo** | Gerson [Apellidos] / Kevin [Apellidos] |
 | **Package name** | `pe.edu.utp.perviajero` |
-| **API pública consumida** | API REST de Destinos y Paquetes Turísticos Oficiales del Perú |
-| **Endpoint(s) utilizados** | `GET /v1/destinos` (12 destinos turísticos con tarifas, fotos HD, geolocalización, clima y categoría) |
+| **API pública consumida** | API REST Pública de Destinos Turísticos del Perú (GitHub Raw CDN Service) |
+| **Endpoint(s) utilizados** | `GET https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/destinos.json` (12 destinos oficiales con fotos HD, rating y categorías) |
 
 ---
 
