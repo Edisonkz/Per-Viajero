@@ -106,6 +106,10 @@ class DestinosFragment : Fragment() {
             override fun onResponse(call: Call<List<Destino>>, response: Response<List<Destino>>) {
                 if (response.isSuccessful && response.body() != null) {
                     listaDestinos = response.body()!!
+
+                    // Guardar en memoria local (SharedPreferences) para soporte offline
+                    PreferencesHelper.getInstance(requireContext()).guardarDestinosEnCache(listaDestinos)
+
                     destinoAdapter.updateData(listaDestinos)
 
                     // Restaurar última búsqueda si existe
@@ -116,14 +120,31 @@ class DestinosFragment : Fragment() {
 
                     mostrarEstado(EstadoUi.EXITO)
                 } else {
-                    mostrarEstado(EstadoUi.ERROR)
+                    manejarFalloDeConexion()
                 }
             }
 
             override fun onFailure(call: Call<List<Destino>>, t: Throwable) {
-                mostrarEstado(EstadoUi.ERROR)
+                manejarFalloDeConexion()
             }
         })
+    }
+
+    // Si se corta el internet, intenta recuperar la copia guardada en memoria local
+    private fun manejarFalloDeConexion() {
+        val destinosEnMemoria = PreferencesHelper.getInstance(requireContext()).obtenerDestinosEnCache()
+        if (destinosEnMemoria.isNotEmpty()) {
+            listaDestinos = destinosEnMemoria
+            destinoAdapter.updateData(destinosEnMemoria)
+            mostrarEstado(EstadoUi.EXITO)
+            android.widget.Toast.makeText(
+                requireContext(),
+                "Modo Offline: Mostrando catálogo guardado en memoria local.",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            mostrarEstado(EstadoUi.ERROR)
+        }
     }
 
     // REQ-07: Control explícito de los 3 estados de interfaz

@@ -4,21 +4,16 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Response
-import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import kotlin.getValue
 
-// REQ-05 / REQ-07: Cliente HTTP Retrofit con soporte para simulación de estados de red
+// REQ-05 / REQ-07: Cliente HTTP Retrofit oficial conectado a la API REST pública real
 object ApiClient {
 
-    // API REST pública oficial en la nube (GitHub Raw CDN)
+    // API REST pública oficial alojada en la nube (GitHub Raw CDN)
     private const val BASE_URL = "https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/"
     private var appContext: Context? = null
 
@@ -35,38 +30,20 @@ object ApiClient {
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    // Interceptor: verifica conectividad y ejecuta petición HTTP real hacia la API pública
+    // Interceptor de red: verifica conectividad real y ejecuta llamada HTTP por internet
     private val networkInterceptor = Interceptor { chain ->
         if (!isOnline()) {
             throw IOException("No hay conexión a internet (dispositivo offline)")
         }
-
-        try {
-            val response = chain.proceed(chain.request())
-            if (!response.isSuccessful) {
-                // Respaldo de contingencia si el servidor responde con error HTTP
-                val jsonMediaType = "application/json; charset=utf-8".toMediaType()
-                val responseBody = MockData.DESTINOS_JSON.toResponseBody(jsonMediaType)
-                Response.Builder()
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_1_1)
-                    .code(200)
-                    .message("OK (Contingencia)")
-                    .body(responseBody)
-                    .build()
-            } else {
-                response
-            }
-        } catch (e: Exception) {
-            throw e
-        }
+        chain.proceed(chain.request())
     }
 
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(networkInterceptor)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
             .build()
     }
 
@@ -82,4 +59,3 @@ object ApiClient {
         retrofit.create(TourismApiService::class.java)
     }
 }
-

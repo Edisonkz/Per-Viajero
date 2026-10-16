@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.EmpresaInfo
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.data.model.RolUsuario
@@ -21,6 +22,7 @@ class PreferencesHelper private constructor(context: Context) {
         private const val KEY_FAVORITOS = "key_favoritos"
         private const val KEY_DARK_MODE = "key_dark_mode"
         private const val KEY_LAST_SEARCH = "key_last_search"
+        private const val KEY_CACHED_DESTINOS = "key_cached_destinos"
 
         // Sesión y Rol
         private const val KEY_IS_LOGGED_IN = "key_is_logged_in"
@@ -351,6 +353,22 @@ class PreferencesHelper private constructor(context: Context) {
     private fun guardarListaItinerario(lista: List<pe.edu.utp.perviajero.data.model.ActividadItinerario>) {
         val json = gson.toJson(lista)
         prefs.edit().putString(KEY_ITINERARIO, json).apply()
+    }
+
+    // --- Respaldo y Persistencia Local de Destinos de la API (Soporte Offline) ---
+    fun guardarDestinosEnCache(lista: List<Destino>) {
+        val json = gson.toJson(lista)
+        prefs.edit().putString(KEY_CACHED_DESTINOS, json).apply()
+    }
+
+    fun obtenerDestinosEnCache(): List<Destino> {
+        val json = prefs.getString(KEY_CACHED_DESTINOS, null) ?: return emptyList()
+        return try {
+            val type = object : TypeToken<List<Destino>>() {}.type
+            gson.fromJson(json, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 }
 
