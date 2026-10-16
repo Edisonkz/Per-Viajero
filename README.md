@@ -12,7 +12,7 @@
 | Campo | Detalle Real del Proyecto |
 | :--- | :--- |
 | **Nombre de la aplicación** | **PerúViajero** (mismo de APF1) |
-| **Integrantes del grupo** | Gerson [Apellidos] / Kevin [Apellidos] |
+| **Integrantes del grupo** | • Kevin Salazar de Jesús<br>• Edison Edgar Sivipaucar Quispe<br>• Gerson Osmar Machuca Abanto |
 | **Package name** | `pe.edu.utp.perviajero` |
 | **API pública consumida** | API REST Pública de Destinos Turísticos del Perú (GitHub Raw CDN Service) |
 | **Endpoint(s) utilizados** | `GET https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/destinos.json` (12 destinos oficiales con fotos HD, rating y categorías) |

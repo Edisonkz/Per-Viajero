@@ -100,32 +100,20 @@ class DestinosFragment : Fragment() {
 
     // REQ-05 / REQ-07: Llamada asíncrona mediante Retrofit y manejo visible de 3 estados
     private fun cargarDestinosDesdeApi() {
-        mostrarEstado(EstadoUi.CARGANDO)
-
+        mostrarEstado(EstadoUi.CARGANDO) // 1. Estado Cargando (ProgressBar visible)
         ApiClient.service.getDestinos().enqueue(object : Callback<List<Destino>> {
             override fun onResponse(call: Call<List<Destino>>, response: Response<List<Destino>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    listaDestinos = response.body()!!
-
-                    // Guardar en memoria local (SharedPreferences) para soporte offline
-                    PreferencesHelper.getInstance(requireContext()).guardarDestinosEnCache(listaDestinos)
-
-                    destinoAdapter.updateData(listaDestinos)
-
-                    // Restaurar última búsqueda si existe
-                    val ultimaBusqueda = PreferencesHelper.getInstance(requireContext()).getLastSearch()
-                    if (ultimaBusqueda.isNotEmpty() && etBuscar.text.isEmpty()) {
-                        etBuscar.setText(ultimaBusqueda)
-                    }
-
-                    mostrarEstado(EstadoUi.EXITO)
+                    val destinos = response.body()!!
+                    PreferencesHelper.getInstance(requireContext()).guardarDestinosEnCache(destinos)
+                    destinoAdapter.updateData(destinos)
+                    mostrarEstado(EstadoUi.EXITO) // 2. Estado Éxito (RecyclerView visible)
                 } else {
                     manejarFalloDeConexion()
                 }
             }
-
             override fun onFailure(call: Call<List<Destino>>, t: Throwable) {
-                manejarFalloDeConexion()
+                manejarFalloDeConexion() // 3. Estado Error / Offline
             }
         })
     }
@@ -185,4 +173,3 @@ class DestinosFragment : Fragment() {
         ERROR
     }
 }
-
