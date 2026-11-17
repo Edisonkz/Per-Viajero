@@ -1,0 +1,86 @@
+[
+  {
+    "codigoReserva": "PV-2026-8412",
+    "destinoId": "1",
+    "destinoNombre": "Machu Picchu",
+    "destinoFoto": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+    "fechaSalida": "15/11/2026",
+    "terminalEmbarque": "Estación San Pedro (Cusco)",
+    "horarioSalida": "06:30 AM",
+    "cantidadPersonas": 2,
+    "listaPasajeros": [
+      {
+        "nombresApellidos": "Kevin Turista Quispe",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "74891234",
+        "edad": 23,
+        "telefono": "984112233"
+      },
+      {
+        "nombresApellidos": "Andrea Morales Soto",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "76123456",
+        "edad": 22,
+        "telefono": "984445566"
+      }
+    ],
+    "tipoMovilidad": "Minibús Panorámico",
+    "categoriaHotel": "Hotel Turista 3★",
+    "guiaTuristico": "Guía Oficial en Español",
+    "costoTotal": 605.0,
+    "metodoPago": "Tarjeta Débito Visa",
+    "numeroOperacion": "OP-98421",
+    "estado": "Confirmada",
+    "usuarioNombre": "Kevin Turista",
+    "usuarioEmail": "kevin@peruviajero.pe"
+  },
+  {
+    "codigoReserva": "PV-2026-3190",
+    "destinoId": "6",
+    "destinoNombre": "Líneas de Nazca",
+    "destinoFoto": "https://images.unsplash.com/photo-1544986581-efac024faf62?w=800",
+    "fechaSalida": "20/11/2026",
+    "terminalEmbarque": "Terminal Javier Prado (La Victoria)",
+    "horarioSalida": "04:30 AM",
+    "cantidadPersonas": 4,
+    "listaPasajeros": [
+      {
+        "nombresApellidos": "Gerson Administrador Flores",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "71239845",
+        "edad": 24,
+        "telefono": "956123456"
+      },
+      {
+        "nombresApellidos": "Lucía Ramos Valdivia",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "72456789",
+        "edad": 25,
+        "telefono": "956987654"
+      },
+      {
+        "nombresApellidos": "Carlos Benítez Prado",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "45678912",
+        "edad": 30,
+        "telefono": "956112233"
+      },
+      {
+        "nombresApellidos": "Mariana Torres Vega",
+        "tipoDocumento": "DNI",
+        "numeroDocumento": "73891245",
+        "edad": 21,
+        "telefono": "956778899"
+      }
+    ],
+    "tipoMovilidad": "Camioneta 4x4 Privada",
+    "categoriaHotel": "Hotel Superior 4★",
+    "guiaTuristico": "Guía Bilingüe Certificado",
+    "costoTotal": 1840.0,
+    "metodoPago": "Yape Móvil",
+    "numeroOperacion": "OP-33129",
+    "estado": "En Ruta",
+    "usuarioNombre": "Kevin Turista",
+    "usuarioEmail": "kevin@peruviajero.pe"
+  }
+]

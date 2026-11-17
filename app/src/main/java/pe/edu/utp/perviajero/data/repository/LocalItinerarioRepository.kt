@@ -1,13 +1,16 @@
 package pe.edu.utp.perviajero.data.repository
 
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.ActividadItinerario
+import pe.edu.utp.perviajero.services.ItinerarioService
+import pe.edu.utp.perviajero.services.SugerenciaViajeDto
 
 class LocalItinerarioRepository(
-    private val prefs: PreferencesHelper
+    private val itinerarioService: ItinerarioService
 ) : ItinerarioRepository {
-    override fun getItinerario(): List<ActividadItinerario> = prefs.getItinerario()
-    override fun guardarActividad(actividad: ActividadItinerario) = prefs.guardarActividad(actividad)
-    override fun eliminarActividad(id: String): Boolean = prefs.eliminarActividad(id)
-    override fun toggleActividadCompletada(id: String): Boolean = prefs.toggleActividadCompletada(id)
+    override fun getItinerario(): List<ActividadItinerario> = itinerarioService.getActividades()
+    override fun guardarActividad(actividad: ActividadItinerario) = itinerarioService.guardarActividad(actividad)
+    override fun eliminarActividad(id: String): Boolean = itinerarioService.eliminarActividad(id)
+    override fun toggleActividadCompletada(id: String): Boolean = itinerarioService.toggleCompletada(id)
+    override fun getSugerenciasSemanales(): Map<String, List<SugerenciaViajeDto>> =
+        itinerarioService.getSugerenciasSemanales()
 }

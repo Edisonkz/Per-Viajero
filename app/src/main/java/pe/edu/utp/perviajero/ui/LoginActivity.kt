@@ -12,10 +12,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.RolUsuario
-import pe.edu.utp.perviajero.data.model.Usuario
 import pe.edu.utp.perviajero.di.ServiceLocator
 
-// Autenticación de usuarios, modo invitado, roles (Turista / Administrador) y registro de cuentas
+// Autenticación de usuarios contra UsuarioService (assets/services/usuarios.json), modo invitado y registro
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var toolbarLogin: MaterialToolbar
@@ -31,9 +30,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val prefs = ServiceLocator.getSessionRepository(this)
+        val sessionRepo = ServiceLocator.getSessionRepository(this)
 
         toolbarLogin = findViewById(R.id.toolbarLogin)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbarLogin)
         btnInvitado = findViewById(R.id.btnInvitado)
         btnQuickCliente = findViewById(R.id.btnQuickCliente)
         btnQuickAdmin = findViewById(R.id.btnQuickAdmin)
@@ -44,47 +44,31 @@ class LoginActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbarLogin)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbarLogin.setNavigationOnClickListener {
-            finish()
-        }
+        toolbarLogin.setNavigationOnClickListener { finish() }
 
-        // Opción 1: Continuar como Invitado (Modo Libre sin registro)
         btnInvitado.setOnClickListener {
-            prefs.logout()
+            sessionRepo.logout()
             Toast.makeText(this, "Navegando como Invitado (Modo Libre)", Toast.LENGTH_SHORT).show()
             setResult(Activity.RESULT_OK)
             finish()
         }
 
-        // Acceso rápido: Turista (Kevin)
         btnQuickCliente.setOnClickListener {
-            val usuario = Usuario(
-                id = "usr_kevin_01",
-                nombre = "Kevin Turista",
-                email = "kevin@peruviajero.pe",
-                rol = RolUsuario.CLIENTE
-            )
-            prefs.login(usuario)
-            Toast.makeText(this, "Bienvenido, Kevin (Modo Turista)", Toast.LENGTH_SHORT).show()
+            val usuario = sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE)
+            sessionRepo.login(usuario)
+            Toast.makeText(this, "Bienvenido, ${usuario.nombre} (Modo Turista)", Toast.LENGTH_SHORT).show()
             setResult(Activity.RESULT_OK)
             finish()
         }
 
-        // Acceso rápido: Administrador (Gerson)
         btnQuickAdmin.setOnClickListener {
-            val usuario = Usuario(
-                id = "usr_gerson_admin",
-                nombre = "Gerson Administrador",
-                email = "gerson@peruviajero.pe",
-                rol = RolUsuario.ADMIN
-            )
-            prefs.login(usuario)
-            Toast.makeText(this, "Panel de Administración activado (Gerson)", Toast.LENGTH_SHORT).show()
+            val usuario = sessionRepo.getQuickAccessUser(RolUsuario.ADMIN)
+            sessionRepo.login(usuario)
+            Toast.makeText(this, "Panel de Administración activado (${usuario.nombre})", Toast.LENGTH_SHORT).show()
             setResult(Activity.RESULT_OK)
             finish()
         }
 
-        // Login tradicional con credenciales
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -94,37 +78,34 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val rol = if (email.contains("admin", ignoreCase = true)) {
-                RolUsuario.ADMIN
+            val autenticado = sessionRepo.authenticate(email, password)
+            if (autenticado != null) {
+                sessionRepo.login(autenticado)
+                Toast.makeText(this, "Bienvenido, ${autenticado.nombre}", Toast.LENGTH_SHORT).show()
+                setResult(Activity.RESULT_OK)
+                finish()
             } else {
-                RolUsuario.CLIENTE
+                Toast.makeText(
+                    this,
+                    "Credenciales inválidas. Usa el acceso rápido o regístrate.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-
-            val nombre = if (rol == RolUsuario.ADMIN) "Administrador Agencia" else "Viajero Registrado"
-            val usuario = Usuario("usr_${System.currentTimeMillis()}", nombre, email, rol)
-            prefs.login(usuario)
-
-            Toast.makeText(this, "Sesión iniciada correctamente", Toast.LENGTH_SHORT).show()
-            setResult(Activity.RESULT_OK)
-            finish()
         }
 
-        // Opción: Registrarse como nuevo turista
         btnRegistrarme.setOnClickListener {
             mostrarDialogoRegistro()
         }
     }
 
     private fun mostrarDialogoRegistro() {
-        val prefs = ServiceLocator.getSessionRepository(this)
+        val sessionRepo = ServiceLocator.getSessionRepository(this)
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(50, 20, 50, 10)
         }
 
-        val etRegNombre = EditText(this).apply {
-            hint = "Nombre Completo"
-        }
+        val etRegNombre = EditText(this).apply { hint = "Nombre Completo" }
         val etRegEmail = EditText(this).apply {
             hint = "Correo Electrónico"
             inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
@@ -133,9 +114,7 @@ class LoginActivity : AppCompatActivity() {
             hint = "Teléfono Celular"
             inputType = android.text.InputType.TYPE_CLASS_PHONE
         }
-        val etRegDocumento = EditText(this).apply {
-            hint = "DNI o Pasaporte"
-        }
+        val etRegDocumento = EditText(this).apply { hint = "DNI o Pasaporte" }
         val etRegPass = EditText(this).apply {
             hint = "Contraseña"
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -156,13 +135,8 @@ class LoginActivity : AppCompatActivity() {
                 val pass = etRegPass.text.toString().trim()
 
                 if (nombre.isNotEmpty() && email.isNotEmpty() && pass.isNotEmpty()) {
-                    val nuevoUsuario = Usuario(
-                        id = "usr_${System.currentTimeMillis()}",
-                        nombre = nombre,
-                        email = email,
-                        rol = RolUsuario.CLIENTE
-                    )
-                    prefs.login(nuevoUsuario)
+                    val nuevoUsuario = sessionRepo.registerUser(nombre, email, pass)
+                    sessionRepo.login(nuevoUsuario)
                     Toast.makeText(this, "¡Cuenta creada exitosamente! Bienvenido, $nombre", Toast.LENGTH_LONG).show()
                     setResult(Activity.RESULT_OK)
                     finish()

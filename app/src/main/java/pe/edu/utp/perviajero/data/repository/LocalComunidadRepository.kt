@@ -1,31 +1,30 @@
 package pe.edu.utp.perviajero.data.repository
 
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.ComentarioPublicacion
 import pe.edu.utp.perviajero.data.model.PublicacionViajero
+import pe.edu.utp.perviajero.services.ComunidadService
 
 /**
- * Implementación local de ComunidadRepository respaldada por PreferencesHelper.
- * Reemplazable por Firestore/Room sin modificar ComunidadActivity ni PublicarExperienciaActivity.
+ * Implementación local de ComunidadRepository respaldada por ComunidadService (assets/services/comunidad.json).
  */
 class LocalComunidadRepository(
-    private val prefs: PreferencesHelper
+    private val comunidadService: ComunidadService
 ) : ComunidadRepository {
 
-    override fun obtenerPublicaciones(): List<PublicacionViajero> = prefs.getPublicaciones()
+    override fun obtenerPublicaciones(): List<PublicacionViajero> = comunidadService.getPublicaciones()
 
     override fun filtrarPublicaciones(region: String?, destinoId: String?): List<PublicacionViajero> {
-        return filterPosts(prefs.getPublicaciones(), region, destinoId)
+        return filterPosts(comunidadService.getPublicaciones(), region, destinoId)
     }
 
     override fun agregarPublicacion(publicacion: PublicacionViajero) {
-        val lista = prefs.getPublicaciones().toMutableList()
+        val lista = comunidadService.getPublicaciones().toMutableList()
         lista.add(0, publicacion)
-        prefs.guardarListaPublicaciones(lista)
+        comunidadService.guardarLista(lista)
     }
 
     override fun toggleLike(publicacionId: String): PublicacionViajero? {
-        val lista = prefs.getPublicaciones().toMutableList()
+        val lista = comunidadService.getPublicaciones().toMutableList()
         val index = lista.indexOfFirst { it.id == publicacionId }
         if (index == -1) return null
 
@@ -36,30 +35,27 @@ class LocalComunidadRepository(
             likes = (actual.likes + if (nuevoLike) 1 else -1).coerceAtLeast(0)
         )
         lista[index] = actualizado
-        prefs.guardarListaPublicaciones(lista)
+        comunidadService.guardarLista(lista)
         return actualizado
     }
 
     override fun agregarComentario(publicacionId: String, comentario: ComentarioPublicacion): PublicacionViajero? {
-        val lista = prefs.getPublicaciones().toMutableList()
+        val lista = comunidadService.getPublicaciones().toMutableList()
         val index = lista.indexOfFirst { it.id == publicacionId }
         if (index == -1) return null
 
         val actual = lista[index]
         val actualizado = actual.copy(comentarios = actual.comentarios + comentario)
         lista[index] = actualizado
-        prefs.guardarListaPublicaciones(lista)
+        comunidadService.guardarLista(lista)
         return actualizado
     }
 
     override fun contarPorDestino(destinoId: String): Int {
-        return prefs.getPublicaciones().count { it.destinoId == destinoId }
+        return comunidadService.getPublicaciones().count { it.destinoId == destinoId }
     }
 
     companion object {
-        /**
-         * Lógica pura de filtrado reutilizable y testeable unitariamente en JVM.
-         */
         fun filterPosts(
             posts: List<PublicacionViajero>,
             region: String? = null,

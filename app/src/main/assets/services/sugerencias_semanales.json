@@ -1,0 +1,86 @@
+{
+  "Día 1 (Lunes - Lima)": [
+    {
+      "lugar": "Centro Histórico & Catacumbas de San Francisco",
+      "horario": "Mañana (09:00 AM)",
+      "descripcion": "Recorrido por la Plaza Mayor, Palacio de Gobierno e iglesias virreinales."
+    },
+    {
+      "lugar": "Malecón de Miraflores & Larcomar",
+      "horario": "Tarde (04:30 PM)",
+      "descripcion": "Paseo con vista al Océano Pacífico y degustación de ceviche tradicional."
+    }
+  ],
+  "Día 2 (Martes - Ica)": [
+    {
+      "lugar": "Islas Ballestas & Reserva de Paracas",
+      "horario": "Mañana (08:00 AM)",
+      "descripcion": "Navegación marina para ver lobos de mar, pingüinos y el Candelabro."
+    },
+    {
+      "lugar": "Oasis de la Huacachina & Buggies",
+      "horario": "Tarde (03:30 PM)",
+      "descripcion": "Tubulares en las dunas y sesión de sandboarding al atardecer."
+    }
+  ],
+  "Día 3 (Miér - Arequipa)": [
+    {
+      "lugar": "Monasterio de Santa Catalina",
+      "horario": "Mañana (09:30 AM)",
+      "descripcion": "Ciudadela religiosa de arquitectura barroca construida en sillar blanco."
+    },
+    {
+      "lugar": "Mirador de Yanahuara & Gastronomía",
+      "horario": "Tarde (03:00 PM)",
+      "descripcion": "Vista panorámica al volcán Misti y comida típica en picantería."
+    }
+  ],
+  "Día 4 (Juev - Cusco)": [
+    {
+      "lugar": "Plaza de Armas & Templo de Qorikancha",
+      "horario": "Mañana (09:00 AM)",
+      "descripcion": "Cimientos incas del templo del Sol y arquitectura virreinal cusqueña."
+    },
+    {
+      "lugar": "Complejo Arqueológico de Sacsayhuamán",
+      "horario": "Tarde (02:30 PM)",
+      "descripcion": "Imponentes murallas megalíticas de piedra tallada y vista panorámica."
+    }
+  ],
+  "Día 5 (Vier - Valle Sagrado)": [
+    {
+      "lugar": "Parque Arqueológico de Písac",
+      "horario": "Mañana (08:30 AM)",
+      "descripcion": "Terrazas agrícolas andinas, observatorio solar y mercado artesanal."
+    },
+    {
+      "lugar": "Ollantaytambo & Salineras de Maras",
+      "horario": "Tarde (02:00 PM)",
+      "descripcion": "Fortaleza inca viva y pozas milenarias de sal rosada natural."
+    }
+  ],
+  "Día 6 (Sáb - Machu Picchu)": [
+    {
+      "lugar": "Santuario Histórico de Machu Picchu",
+      "horario": "Mañana (07:00 AM)",
+      "descripcion": "Visita guiada al circuito clásico de la ciudadela sagrada de los incas."
+    },
+    {
+      "lugar": "Machupicchu Pueblo & Aguas Termales",
+      "horario": "Noche (06:30 PM)",
+      "descripcion": "Relajo en baños termales naturales y cena típica andina."
+    }
+  ],
+  "Día 7 (Dom - Vinicunca/Puno)": [
+    {
+      "lugar": "Montaña de 7 Colores (Vinicunca)",
+      "horario": "Madrugada (05:00 AM)",
+      "descripcion": "Trekking andino de alta montaña a más de 5,000 m s. n. m."
+    },
+    {
+      "lugar": "Lago Titicaca & Islas de los Uros (Puno)",
+      "horario": "Mañana (08:30 AM)",
+      "descripcion": "Navegación lacustre en balsas de totora y convivencia comunitaria."
+    }
+  ]
+}

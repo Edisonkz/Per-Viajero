@@ -15,6 +15,7 @@ import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.data.model.Usuario
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.util.WindowInsetsHelper
 
 // Pantalla de Detalle con acceso directo a Cotizador, Mapa con Ruta GPS, Comunidad de Viajeros e Itinerario
 class DetalleDestinoActivity : AppCompatActivity() {
@@ -45,6 +46,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detalle_destino)
 
         toolbarDetalle = findViewById(R.id.toolbarDetalle)
+        WindowInsetsHelper.applyToolbarActivityInsets(this, toolbarDetalle)
         ivDetalleFoto = findViewById(R.id.ivDetalleFoto)
         tvDetalleCategoria = findViewById(R.id.tvDetalleCategoria)
         tvDetalleCalificacion = findViewById(R.id.tvDetalleCalificacion)
@@ -93,8 +95,8 @@ class DetalleDestinoActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(destino.imageUrl)
-            .placeholder(android.R.drawable.ic_menu_gallery)
-            .error(android.R.drawable.ic_dialog_alert)
+            .placeholder(R.drawable.bg_destino_placeholder)
+            .error(R.drawable.bg_destino_placeholder)
             .into(ivDetalleFoto)
 
         val sessionRepo = ServiceLocator.getSessionRepository(this)
@@ -109,9 +111,7 @@ class DetalleDestinoActivity : AppCompatActivity() {
                         startActivity(Intent(this, LoginActivity::class.java))
                     }
                     .setNeutralButton("Continuar como Turista") { _, _ ->
-                        sessionRepo.login(
-                            Usuario("usr_kevin_01", "Kevin Turista", "kevin@peruviajero.pe", RolUsuario.CLIENTE)
-                        )
+                        sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE))
                         abrirCotizador(destino)
                     }
                     .setNegativeButton("Cancelar", null)

@@ -237,14 +237,10 @@ class AjustesFragment : Fragment() {
 
         btnCambiarRol.setOnClickListener {
             if (rolActual == RolUsuario.CLIENTE) {
-                sessionRepo.login(
-                    Usuario("usr_gerson_admin", "Gerson Administrador", "gerson@peruviajero.pe", RolUsuario.ADMIN)
-                )
+                sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.ADMIN))
                 Toast.makeText(requireContext(), "Modo Administrador de Agencia Activado", Toast.LENGTH_SHORT).show()
             } else {
-                sessionRepo.login(
-                    Usuario("usr_kevin_01", "Kevin Turista", "kevin@peruviajero.pe", RolUsuario.CLIENTE)
-                )
+                sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE))
                 Toast.makeText(requireContext(), "Modo Turista Activado", Toast.LENGTH_SHORT).show()
             }
             configurarPerfilYRoles()

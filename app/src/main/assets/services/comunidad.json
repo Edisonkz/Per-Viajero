@@ -1,0 +1,73 @@
+[
+  {
+    "id": "pub_01",
+    "autorNombre": "Camila Mendoza",
+    "autorEmail": "camila.m@viajero.pe",
+    "autorFotoUri": "",
+    "region": "Cusco",
+    "destinoId": "1",
+    "destinoNombre": "Santuario Histórico de Machu Picchu",
+    "fotoUri": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+    "calificacion": 5.0,
+    "comentario": "Subir en el primer bus de las 5:30 a. m. vale totalmente la pena para ver despejar la neblina sobre el Huayna Picchu. Lleven poncho de lluvia y agua.",
+    "fechaPublicacion": "12/11/2026",
+    "likes": 24,
+    "dioLike": false,
+    "comentarios": [
+      {
+        "id": "c1",
+        "autorNombre": "Diego Paredes",
+        "texto": "¡Gran consejo! ¿Con cuánta anticipación compraste la entrada?",
+        "fecha": "13/11/2026"
+      }
+    ]
+  },
+  {
+    "id": "pub_02",
+    "autorNombre": "Mateo Quispe",
+    "autorEmail": "mateo.q@viajero.pe",
+    "autorFotoUri": "",
+    "region": "Arequipa",
+    "destinoId": "2",
+    "destinoNombre": "Cañón del Colca",
+    "fotoUri": "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=800",
+    "calificacion": 4.8,
+    "comentario": "En la Cruz del Cóndor vimos 7 cóndores planeando a las 7:40 a. m. Recomendado dormir en Chivay y probar las aguas termales La Calera.",
+    "fechaPublicacion": "10/11/2026",
+    "likes": 18,
+    "dioLike": false,
+    "comentarios": []
+  },
+  {
+    "id": "pub_03",
+    "autorNombre": "Valeria Rojas",
+    "autorEmail": "valeria.r@viajero.pe",
+    "autorFotoUri": "",
+    "region": "Ica",
+    "destinoId": "3",
+    "destinoNombre": "Oasis de la Huacachina",
+    "fotoUri": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800",
+    "calificacion": 4.7,
+    "comentario": "El tour de tubulares a las 4:30 p. m. te deja justo arriba de la duna grande para el atardecer. Lleven lentes cerrados por la arena.",
+    "fechaPublicacion": "08/11/2026",
+    "likes": 15,
+    "dioLike": false,
+    "comentarios": []
+  },
+  {
+    "id": "pub_04",
+    "autorNombre": "Andrés Castillo",
+    "autorEmail": "andres.c@viajero.pe",
+    "autorFotoUri": "",
+    "region": "Áncash",
+    "destinoId": "8",
+    "destinoNombre": "Laguna 69 y Parque Nac. Huascarán",
+    "fotoUri": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+    "calificacion": 5.0,
+    "comentario": "Caminata exigente sobre los 4,600 m s. n. m., pero el azul turquesa de la laguna frente al Chacraraju es inolvidable. Aclimatarse mínimo 2 días en Huaraz.",
+    "fechaPublicacion": "05/11/2026",
+    "likes": 31,
+    "dioLike": false,
+    "comentarios": []
+  }
+]

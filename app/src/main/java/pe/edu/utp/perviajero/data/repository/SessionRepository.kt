@@ -5,9 +5,13 @@ import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.data.model.Usuario
 
 /**
- * Contrato para sesión de usuario, preferencias visuales, datos de empresa y telemetría local.
+ * Contrato para sesión de usuario, autenticación contra servicio, preferencias visuales y datos de empresa.
  */
 interface SessionRepository {
+    fun authenticate(email: String, password: String): Usuario?
+    fun registerUser(nombre: String, email: String, password: String): Usuario
+    fun getQuickAccessUser(rol: RolUsuario): Usuario
+
     fun login(usuario: Usuario)
     fun logout()
     fun isLoggedIn(): Boolean

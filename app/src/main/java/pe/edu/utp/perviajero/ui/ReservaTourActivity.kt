@@ -99,6 +99,7 @@ class ReservaTourActivity : AppCompatActivity() {
 
     private fun inicializarVistas() {
         toolbarReserva = findViewById(R.id.toolbarReserva)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbarReserva)
         ivReservaFoto = findViewById(R.id.ivReservaFoto)
         tvReservaDestino = findViewById(R.id.tvReservaDestino)
         tvReservaDepartamento = findViewById(R.id.tvReservaDepartamento)
@@ -133,8 +134,8 @@ class ReservaTourActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(dest.imageUrl)
-            .placeholder(android.R.drawable.ic_menu_gallery)
-            .error(android.R.drawable.ic_dialog_alert)
+            .placeholder(R.drawable.bg_destino_placeholder)
+            .error(R.drawable.bg_destino_placeholder)
             .into(ivReservaFoto)
 
         val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 3) }
@@ -170,8 +171,9 @@ class ReservaTourActivity : AppCompatActivity() {
     }
 
     private fun sincronizarListaManifiesto() {
-        val usuario = ServiceLocator.getSessionRepository(this).getUsuarioActual()
-        val nombreTitular = usuario?.nombre ?: "Kevin Turista Quispe"
+        val sessionRepo = ServiceLocator.getSessionRepository(this)
+        val usuario = sessionRepo.getUsuarioActual() ?: sessionRepo.getQuickAccessUser(pe.edu.utp.perviajero.data.model.RolUsuario.CLIENTE)
+        val nombreTitular = usuario.nombre
 
         while (listaManifiesto.size < cantidadPasajeros) {
             val num = listaManifiesto.size + 1
@@ -526,10 +528,10 @@ class ReservaTourActivity : AppCompatActivity() {
         val dest = destino ?: return
         val sessionRepo = ServiceLocator.getSessionRepository(this)
         val reservaRepo = ServiceLocator.getReservaRepository(this)
-        val usuario = sessionRepo.getUsuarioActual()
+        val usuario = sessionRepo.getUsuarioActual() ?: sessionRepo.getQuickAccessUser(pe.edu.utp.perviajero.data.model.RolUsuario.CLIENTE)
         val empresa = sessionRepo.getEmpresaInfo()
-        val nombreUsuario = usuario?.nombre ?: "Kevin Turista"
-        val emailUsuario = usuario?.email ?: "kevin@peruviajero.pe"
+        val nombreUsuario = usuario.nombre
+        val emailUsuario = usuario.email
 
         val codigoGenerado = "PV-2026-" + (1000..9999).random()
         val total = calcularCostoTotal()

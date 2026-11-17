@@ -16,31 +16,23 @@ import pe.edu.utp.perviajero.data.repository.ReservaRepository
 import pe.edu.utp.perviajero.data.repository.SessionRepository
 import pe.edu.utp.perviajero.network.ApiClient
 import pe.edu.utp.perviajero.network.RoutingService
+import pe.edu.utp.perviajero.services.ComunidadService
+import pe.edu.utp.perviajero.services.ItinerarioService
+import pe.edu.utp.perviajero.services.ReservaService
+import pe.edu.utp.perviajero.services.UsuarioService
 
 /**
  * Punto único de composición (Dependency Inversion / Service Locator).
- * Para migrar a Room o Firebase en el futuro, basta sustituir la implementación devuelta aquí
- * sin modificar Activities, Fragments ni Adapters.
+ * Los repositorios locales consumen las clases de la capa services/ (respaldadas por JSON en assets/services/).
  */
 object ServiceLocator {
 
-    @Volatile
-    private var destinoRepo: DestinoRepository? = null
-
-    @Volatile
-    private var favoritoRepo: FavoritoRepository? = null
-
-    @Volatile
-    private var reservaRepo: ReservaRepository? = null
-
-    @Volatile
-    private var itinerarioRepo: ItinerarioRepository? = null
-
-    @Volatile
-    private var comunidadRepo: ComunidadRepository? = null
-
-    @Volatile
-    private var sessionRepo: SessionRepository? = null
+    @Volatile private var destinoRepo: DestinoRepository? = null
+    @Volatile private var favoritoRepo: FavoritoRepository? = null
+    @Volatile private var reservaRepo: ReservaRepository? = null
+    @Volatile private var itinerarioRepo: ItinerarioRepository? = null
+    @Volatile private var comunidadRepo: ComunidadRepository? = null
+    @Volatile private var sessionRepo: SessionRepository? = null
 
     private val routingServiceInstance: RoutingService by lazy { RoutingService() }
 
@@ -64,7 +56,7 @@ object ServiceLocator {
     fun getReservaRepository(context: Context): ReservaRepository {
         return reservaRepo ?: synchronized(this) {
             reservaRepo ?: LocalReservaRepository(
-                prefs = PreferencesHelper.getInstance(context)
+                reservaService = ReservaService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { reservaRepo = it }
         }
     }
@@ -72,7 +64,7 @@ object ServiceLocator {
     fun getItinerarioRepository(context: Context): ItinerarioRepository {
         return itinerarioRepo ?: synchronized(this) {
             itinerarioRepo ?: LocalItinerarioRepository(
-                prefs = PreferencesHelper.getInstance(context)
+                itinerarioService = ItinerarioService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { itinerarioRepo = it }
         }
     }
@@ -80,7 +72,7 @@ object ServiceLocator {
     fun getComunidadRepository(context: Context): ComunidadRepository {
         return comunidadRepo ?: synchronized(this) {
             comunidadRepo ?: LocalComunidadRepository(
-                prefs = PreferencesHelper.getInstance(context)
+                comunidadService = ComunidadService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { comunidadRepo = it }
         }
     }
@@ -88,7 +80,8 @@ object ServiceLocator {
     fun getSessionRepository(context: Context): SessionRepository {
         return sessionRepo ?: synchronized(this) {
             sessionRepo ?: LocalSessionRepository(
-                prefs = PreferencesHelper.getInstance(context)
+                prefs = PreferencesHelper.getInstance(context),
+                usuarioService = UsuarioService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { sessionRepo = it }
         }
     }

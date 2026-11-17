@@ -1,13 +1,13 @@
 package pe.edu.utp.perviajero.data.repository
 
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.services.ReservaService
 
 class LocalReservaRepository(
-    private val prefs: PreferencesHelper
+    private val reservaService: ReservaService
 ) : ReservaRepository {
-    override fun getReservas(): List<Reserva> = prefs.getReservas()
-    override fun guardarReserva(reserva: Reserva) = prefs.guardarReserva(reserva)
+    override fun getReservas(): List<Reserva> = reservaService.getReservas()
+    override fun guardarReserva(reserva: Reserva) = reservaService.guardarReserva(reserva)
     override fun actualizarEstadoReserva(codigoReserva: String, nuevoEstado: String): Boolean =
-        prefs.actualizarEstadoReserva(codigoReserva, nuevoEstado)
+        reservaService.actualizarEstadoReserva(codigoReserva, nuevoEstado)
 }

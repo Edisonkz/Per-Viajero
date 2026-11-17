@@ -1,7 +1,8 @@
 # Reglas R8 / ProGuard para builds Release de PerúViajero
 
-# Conservar modelos de datos serializados con Gson / Serializable
+# Conservar modelos y DTOs de servicios serializados con Gson / Serializable
 -keep class pe.edu.utp.perviajero.data.model.** { *; }
+-keep class pe.edu.utp.perviajero.services.** { *; }
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes *Annotation*
 

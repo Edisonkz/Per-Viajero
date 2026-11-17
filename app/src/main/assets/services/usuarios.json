@@ -1,0 +1,23 @@
+[
+  {
+    "id": "usr_kevin_01",
+    "nombre": "Kevin Turista",
+    "email": "kevin@peruviajero.pe",
+    "password": "123456",
+    "rol": "CLIENTE"
+  },
+  {
+    "id": "usr_gerson_admin",
+    "nombre": "Gerson Administrador",
+    "email": "gerson@peruviajero.pe",
+    "password": "admin123",
+    "rol": "ADMIN"
+  },
+  {
+    "id": "usr_edison_02",
+    "nombre": "Edison Viajero",
+    "email": "edison@peruviajero.pe",
+    "password": "123456",
+    "rol": "CLIENTE"
+  }
+]

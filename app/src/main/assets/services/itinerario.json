@@ -1,0 +1,52 @@
+[
+  {
+    "id": "act_01",
+    "dia": "Día 1",
+    "dayOffset": 0,
+    "horario": "09:00 AM",
+    "lugar": "Plaza de Armas de Cusco",
+    "descripcion": "Aclimatación con mate de coca",
+    "completada": true,
+    "fotoUri": ""
+  },
+  {
+    "id": "act_02",
+    "dia": "Día 2",
+    "dayOffset": 1,
+    "horario": "06:00 AM",
+    "lugar": "Machu Picchu",
+    "descripcion": "Tour guiado ciudadela inca",
+    "completada": false,
+    "fotoUri": ""
+  },
+  {
+    "id": "act_03",
+    "dia": "Día 3",
+    "dayOffset": 2,
+    "horario": "01:00 PM",
+    "lugar": "Mercado de San Pedro",
+    "descripcion": "Almuerzo gastronómico y artesanías",
+    "completada": false,
+    "fotoUri": ""
+  },
+  {
+    "id": "act_04",
+    "dia": "Día 4",
+    "dayOffset": 3,
+    "horario": "08:30 AM",
+    "lugar": "Valle Sagrado y Ollantaytambo",
+    "descripcion": "Recorrido por andenes y fortaleza inca",
+    "completada": false,
+    "fotoUri": ""
+  },
+  {
+    "id": "act_05",
+    "dia": "Día 5",
+    "dayOffset": 4,
+    "horario": "05:00 AM",
+    "lugar": "Montaña de Siete Colores",
+    "descripcion": "Caminata temprana en Vinicunca",
+    "completada": true,
+    "fotoUri": ""
+  }
+]
