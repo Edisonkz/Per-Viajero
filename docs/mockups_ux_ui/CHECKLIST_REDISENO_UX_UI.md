@@ -41,7 +41,7 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 ## Fase F — Pantalla 5: `Favoritos`
 - [x] **Actualizar `FavoritosFragment.kt`:** Franja resumen offline, filtros por región (`Todas`, `Sierra`, `Costa`, `Selva` vía `RegionPeruHelper`), tarjetas con corazón rojo relleno, distancia GPS y botones rápidos `Ruta GPS` y `Reservar`.
 
-## Fase G — Pantalla 6: `Detalle de Destino` Hero (`06_detalle_destino_hero.jpg`) *(Siguiente paso)*
-- [ ] **Hero `CollapsingToolbarLayout`:** Foto a sangre arriba con botones circulares flotantes (atrás, favorito, compartir).
-- [ ] **Grid 4-en-1 sin scroll:** `Ruta GPS`, `Brújula`, `Reseñas (N)`, `Itinerario`.
-- [ ] **Previa de Comunidad + Barra Sticky inferior:** `"Desde S/ 150 / pers"` + botón píldora `"Cotizar y Reservar"`.
+## Fase G — Pantalla 6: `Detalle de Destino` Hero (`06_detalle_destino_hero.jpg`)
+- [x] **Hero `CollapsingToolbarLayout`:** Foto a sangre arriba con parallax, scrim superior, insets Edge-to-Edge y botones circulares flotantes (atrás, favorito, compartir).
+- [x] **Grid 4-en-1 sin scroll:** `Ruta GPS`, `Brújula`, `Reseñas (N)`, `Itinerario` + distancia GPS en vivo (`GeoMath`).
+- [x] **Previa de Comunidad + Barra Sticky inferior:** Última reseña del destino desde `ComunidadRepository` con acceso a `+ Publicar foto` y barra fija inferior `"Desde S/ 150 / pers"` + botón píldora `"Cotizar y Reservar"`.
