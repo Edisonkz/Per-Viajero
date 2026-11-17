@@ -7,108 +7,259 @@
     android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 
-    <!-- Buscador en tiempo real -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilBuscar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="6dp"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="1dp"
-        app:endIconMode="clear_text"
-        app:hintEnabled="false"
-        app:startIconDrawable="@android:drawable/ic_menu_search">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etBuscar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/buscar_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Acceso directo a Comunidad Social por Región -->
+    <!-- Buscador tipo píldora -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardBannerComunidad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         app:cardBackgroundColor="@color/colorCardBackground"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="1dp"
-        app:strokeColor="@color/colorPrimary"
+        app:cardCornerRadius="26dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#1A000000"
         app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="10dp">
+            android:paddingHorizontal="14dp">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_community"
-                app:tint="@color/colorPrimary"
-                android:contentDescription="Comunidad de viajeros" />
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="?android:attr/textColorSecondary"
+                android:contentDescription="Buscar" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/etBuscar"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="@null"
+                android:hint="@string/buscar_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
+                android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Comunidad de Viajeros"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fotos y reseñas reales filtradas por región"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Explorar →"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+            <ImageButton
+                android:id="@+id/btnLimpiarBusqueda"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone"
+                app:tint="?android:attr/textColorSecondary"
+                android:contentDescription="Limpiar búsqueda" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- Fila de 4 Accesos Rápidos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
+
+        <!-- 1. Mapa GPS -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/qaMapaGps"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#14000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_map_route"
+                    app:tint="@color/colorPrimary"
+                    android:contentDescription="Mapa GPS" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="-1dp"
+                    android:text="Mapa\nGPS"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 2. Brújula Offline -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/qaBrujulaOffline"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#14000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_compass"
+                    app:tint="@color/colorPrimary"
+                    android:contentDescription="Brújula Offline" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="-1dp"
+                    android:text="Brújula\nOffline"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 3. Publicar Foto -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/qaPublicarFoto"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#14000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_camera"
+                    app:tint="@color/colorPrimary"
+                    android:contentDescription="Publicar Foto" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="-1dp"
+                    android:text="Publicar\nFoto"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 4. Guía IPERÚ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/qaGuiaIperu"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#14000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_book_guide"
+                    app:tint="@color/colorPrimary"
+                    android:contentDescription="Guía IPERÚ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="-1dp"
+                    android:text="Guía\nIPERÚ"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- Chips horizontales de categoría -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCategorias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
 
     <!-- Banner discreto de Modo Offline -->
     <TextView
         android:id="@+id/tvOfflineBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginBottom="4dp"
         android:background="#20F57C00"
         android:gravity="center"
         android:paddingHorizontal="10dp"
-        android:paddingVertical="6dp"
+        android:paddingVertical="5dp"
         android:text="Modo Offline: Mostrando catálogo guardado localmente"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="12sp"
         android:textStyle="bold"
         android:visibility="gone" />
@@ -150,7 +301,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="16dp"
+            android:paddingBottom="24dp"
             android:visibility="gone"
             tools:listitem="@layout/item_destino" />
 
@@ -199,7 +350,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:text="@string/reintentar"
                 android:textAllCaps="false"
-                app:cornerRadius="8dp" />
+                app:cornerRadius="10dp" />
         </LinearLayout>
 
         <!-- Estado vacío para búsqueda -->
@@ -221,7 +372,6 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="15sp" />
         </LinearLayout>
-
     </FrameLayout>
 
 </LinearLayout>

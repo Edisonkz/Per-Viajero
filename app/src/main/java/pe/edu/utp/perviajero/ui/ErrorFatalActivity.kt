@@ -20,6 +20,7 @@ class ErrorFatalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_error_fatal)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyEdgePadding(this)
 
         val detail = intent.getStringExtra(EXTRA_ERROR_DETAIL) ?: "Se produjo un error inesperado."
         findViewById<TextView>(R.id.tvErrorFatalDetalle).text = detail

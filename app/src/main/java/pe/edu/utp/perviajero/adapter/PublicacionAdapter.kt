@@ -60,16 +60,18 @@ class PublicacionAdapter(
             tvFecha.text = pub.fechaPublicacion
             tvRegionBadge.text = pub.region
             tvDestino.text = pub.destinoNombre
-            tvRating.text = String.format(Locale.US, "%.1f", pub.calificacion)
+            tvRating.text = String.format(Locale.US, "%.1f ★", pub.calificacion)
             tvComentario.text = pub.comentario
 
             if (pub.autorFotoUri.isNotEmpty()) {
+                ivAvatar.setPadding(0, 0, 0, 0)
                 Glide.with(ctx)
                     .load(Uri.parse(pub.autorFotoUri))
                     .circleCrop()
                     .placeholder(R.drawable.ic_person)
                     .into(ivAvatar)
             } else {
+                ivAvatar.setPadding(12, 12, 12, 12)
                 ivAvatar.setImageResource(R.drawable.ic_person)
             }
 
@@ -78,17 +80,15 @@ class PublicacionAdapter(
                 .load(imageModel)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .centerCrop()
-                .placeholder(android.R.drawable.ic_menu_gallery)
-                .error(android.R.drawable.ic_menu_report_image)
+                .placeholder(R.drawable.bg_destino_placeholder)
+                .error(R.drawable.bg_destino_placeholder)
                 .into(ivFoto)
 
             btnLike.text = "${pub.likes} Útil"
             if (pub.dioLike) {
-                btnLike.setIconResource(R.drawable.ic_favoritos)
-                btnLike.setIconTintResource(R.color.colorAccent)
-                btnLike.setTextColor(ContextCompat.getColor(ctx, R.color.colorAccent))
+                btnLike.setIconTintResource(R.color.colorPrimary)
+                btnLike.setTextColor(ContextCompat.getColor(ctx, R.color.colorPrimary))
             } else {
-                btnLike.setIconResource(R.drawable.ic_favoritos_border)
                 btnLike.setIconTintResource(R.color.colorTextSecondary)
                 btnLike.setTextColor(ContextCompat.getColor(ctx, R.color.colorTextSecondary))
             }

@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_comunidad"
-        android:icon="@drawable/ic_community"
-        android:title="Comunidad"
-        app:iconTint="#FFFFFF"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_brujula"
         android:icon="@drawable/ic_compass"
         android:title="Brújula Offline"
         app:iconTint="#FFFFFF"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_notificaciones"
+        android:icon="@drawable/ic_notifications"
+        android:title="Alertas y Diagnóstico"
+        app:iconTint="#FFFFFF"
+        app:showAsAction="always" />
 </menu>

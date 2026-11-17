@@ -78,6 +78,7 @@ class BrujulaActivity : AppCompatActivity() {
 
     private fun inicializarVistas() {
         toolbar = findViewById(R.id.toolbarBrujula)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
         tvGrados = findViewById(R.id.tvBrujulaGrados)
         tvPrecision = findViewById(R.id.tvBrujulaPrecision)
         compassView = findViewById(R.id.compassView)

@@ -112,6 +112,7 @@ class PublicarExperienciaActivity : AppCompatActivity() {
 
     private fun inicializarVistas() {
         toolbar = findViewById(R.id.toolbarPublicar)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
         spRegion = findViewById(R.id.spPubRegion)
         spDestino = findViewById(R.id.spPubDestino)
         ivPreviewFoto = findViewById(R.id.ivPreviewFotoPub)

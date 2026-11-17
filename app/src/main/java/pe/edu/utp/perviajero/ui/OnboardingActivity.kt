@@ -36,6 +36,7 @@ class OnboardingActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyEdgePadding(this)
 
         viewPager = findViewById(R.id.viewPagerOnboarding)
         layoutPuntos = findViewById(R.id.layoutIndicadorPuntos)

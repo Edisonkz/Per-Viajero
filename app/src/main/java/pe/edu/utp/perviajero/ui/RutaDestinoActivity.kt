@@ -12,6 +12,7 @@ import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.util.GeoMath
 import pe.edu.utp.perviajero.util.LocationHelper
+import pe.edu.utp.perviajero.util.WindowInsetsHelper
 
 // Pantalla para consultar cómo llegar, distancia GPS en vivo, mapa con ruta trazada y brújula offline
 class RutaDestinoActivity : AppCompatActivity() {
@@ -38,6 +39,7 @@ class RutaDestinoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_ruta_destino)
 
         toolbarRuta = findViewById(R.id.toolbarRuta)
+        WindowInsetsHelper.applyToolbarActivityInsets(this, toolbarRuta)
         tvRutaNombre = findViewById(R.id.tvRutaNombre)
         tvRutaDepartamento = findViewById(R.id.tvRutaDepartamento)
         tvRutaDistanciaGps = findViewById(R.id.tvRutaDistanciaGps)

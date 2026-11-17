@@ -108,6 +108,7 @@ class MapaRutaActivity : AppCompatActivity() {
 
     private fun inicializarVistas() {
         toolbar = findViewById(R.id.toolbarMapaRuta)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
         mapView = findViewById(R.id.mapViewRuta)
         tvEstadoRuta = findViewById(R.id.tvMapaEstadoRuta)
         tvDestinoNombre = findViewById(R.id.tvMapaDestinoNombre)

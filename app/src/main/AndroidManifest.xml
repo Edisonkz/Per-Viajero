@@ -88,6 +88,11 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
+            android:name=".ui.GuiaViajeActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
             android:name=".ui.ErrorFatalActivity"
             android:exported="false" />
 

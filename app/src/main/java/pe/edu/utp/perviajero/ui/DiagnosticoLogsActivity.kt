@@ -32,6 +32,7 @@ class DiagnosticoLogsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_diagnostico_logs)
 
         toolbar = findViewById(R.id.toolbarDiagnostico)
+        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
         tvResumen = findViewById(R.id.tvDiagResumen)
         tvLogs = findViewById(R.id.tvDiagLogsContenido)
         btnTestPush = findViewById(R.id.btnDiagTestPush)

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/group_herramientas">
+        <item
+            android:id="@+id/drawer_mapa_gps"
+            android:icon="@drawable/ic_location"
+            android:title="Mapa GPS y Rutas" />
+        <item
+            android:id="@+id/drawer_brujula"
+            android:icon="@drawable/ic_compass"
+            android:title="Brújula Offline" />
+        <item
+            android:id="@+id/drawer_itinerario"
+            android:icon="@drawable/ic_calendar"
+            android:title="Mi Itinerario Semanal" />
+        <item
+            android:id="@+id/drawer_guia_iperu"
+            android:icon="@drawable/ic_guia"
+            android:title="Guía e IPERÚ" />
+    </group>
+
+    <group android:id="@+id/group_cuenta_sistema">
+        <item
+            android:id="@+id/drawer_cambiar_rol"
+            android:icon="@drawable/ic_dashboard"
+            android:title="Cambiar a Modo Admin" />
+        <item
+            android:id="@+id/drawer_modo_oscuro"
+            android:icon="@drawable/ic_ajustes"
+            android:title="Modo Oscuro"
+            app:actionLayout="@layout/drawer_switch_dark_mode" />
+        <item
+            android:id="@+id/drawer_permisos_diagnostico"
+            android:icon="@drawable/ic_bug_report"
+            android:title="Permisos y Diagnóstico" />
+        <item
+            android:id="@+id/drawer_ajustes_perfil"
+            android:icon="@drawable/ic_person"
+            android:title="Mi Perfil y Cuenta" />
+        <item
+            android:id="@+id/drawer_onboarding"
+            android:icon="@drawable/ic_logo_peruviajero_agency"
+            android:title="Ver Bienvenida" />
+        <item
+            android:id="@+id/drawer_login_logout"
+            android:icon="@drawable/ic_check_circle"
+            android:title="Cerrar Sesión" />
+    </group>
+
+</menu>

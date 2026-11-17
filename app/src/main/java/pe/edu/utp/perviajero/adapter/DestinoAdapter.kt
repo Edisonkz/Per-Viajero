@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.util.GeoMath
 
 // Adaptador optimizado con ListAdapter + DiffUtil para el catálogo de destinos turísticos
 class DestinoAdapter(
@@ -26,6 +27,8 @@ class DestinoAdapter(
 
     private var listaBase: List<Destino> = listaOriginal
     private var currentQuery: String = ""
+    private var currentCategory: String = "Todos"
+    private var userOrigin: Pair<Double, Double>? = null
 
     init {
         if (listaOriginal.isNotEmpty()) {
@@ -39,7 +42,6 @@ class DestinoAdapter(
         val tvDepartamento: TextView = itemView.findViewById(R.id.tvDepartamento)
         val tvCategoria: TextView = itemView.findViewById(R.id.tvCategoria)
         val tvCalificacion: TextView = itemView.findViewById(R.id.tvCalificacion)
-        val tvDescripcionCorta: TextView = itemView.findViewById(R.id.tvDescripcionCorta)
         val btnFavorito: ImageButton = itemView.findViewById(R.id.btnFavorito)
         val cardDestino: View = itemView.findViewById(R.id.cardDestino)
     }
@@ -55,17 +57,23 @@ class DestinoAdapter(
         val favRepo = ServiceLocator.getFavoritoRepository(context)
 
         holder.tvNombre.text = destino.nombre
-        holder.tvDepartamento.text = "${destino.departamento}, Perú"
         holder.tvCategoria.text = destino.categoria
         holder.tvCalificacion.text = destino.calificacion.toString()
-        holder.tvDescripcionCorta.text = destino.descripcion
+
+        val origin = userOrigin
+        holder.tvDepartamento.text = if (origin != null && destino.latitud != null && destino.longitud != null) {
+            val km = GeoMath.haversineDistanceKm(origin.first, origin.second, destino.latitud, destino.longitud)
+            "${destino.departamento}, Perú • ${GeoMath.formatDistance(km)}"
+        } else {
+            "${destino.departamento}, Perú"
+        }
 
         Glide.with(context)
             .load(destino.imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(android.R.drawable.ic_menu_gallery)
-            .error(android.R.drawable.ic_dialog_alert)
+            .placeholder(R.drawable.bg_destino_placeholder)
+            .error(R.drawable.bg_destino_placeholder)
             .into(holder.ivDestino)
 
         val esFavorito = favRepo.isFavorito(destino.id)
@@ -88,31 +96,44 @@ class DestinoAdapter(
             btn.setColorFilter(ContextCompat.getColor(btn.context, R.color.colorAccent))
         } else {
             btn.setImageResource(R.drawable.ic_favoritos_border)
-            btn.setColorFilter(ContextCompat.getColor(btn.context, android.R.color.white))
+            btn.setColorFilter(ContextCompat.getColor(btn.context, R.color.colorTextSecondary))
         }
+    }
+
+    fun setUserOrigin(origin: Pair<Double, Double>?) {
+        userOrigin = origin
+        notifyDataSetChanged()
     }
 
     fun updateData(nuevaLista: List<Destino>) {
         listaBase = nuevaLista
-        val filtered = filterList(listaBase, currentQuery)
+        val filtered = filterList(listaBase, currentQuery, currentCategory)
         submitList(filtered)
     }
 
-    fun filter(query: String): Int {
+    fun filter(query: String, category: String = currentCategory): Int {
         currentQuery = query
-        val filtered = filterList(listaBase, query)
+        currentCategory = category
+        val filtered = filterList(listaBase, query, category)
         submitList(filtered)
         return filtered.size
     }
 
     companion object {
-        fun filterList(source: List<Destino>, query: String): List<Destino> {
+        fun filterList(
+            source: List<Destino>,
+            query: String,
+            category: String = "Todos"
+        ): List<Destino> {
             val texto = query.trim().lowercase()
-            if (texto.isEmpty()) return source.toList()
             return source.filter { destino ->
-                destino.nombre.lowercase().contains(texto) ||
+                val matchesCategory = category.equals("Todos", ignoreCase = true) ||
+                    destino.categoria.equals(category, ignoreCase = true)
+                val matchesQuery = texto.isEmpty() ||
+                    destino.nombre.lowercase().contains(texto) ||
                     destino.departamento.lowercase().contains(texto) ||
                     destino.categoria.lowercase().contains(texto)
+                matchesCategory && matchesQuery
             }
         }
     }
