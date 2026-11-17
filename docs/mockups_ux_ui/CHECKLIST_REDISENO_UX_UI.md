@@ -49,3 +49,7 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 ## Fase H — Filtros Geográficos en `Explorar` (Departamento y Provincia)
 - [x] **Selector en cascada `Depto` y `Prov`:** Pills interactivos en `fragment_destinos.xml` con selección dinámica desde `RegionPeruHelper` (`resolveProvincia`, `extractDepartamentos`, `extractProvincias`) y subtítulo de provincia en tarjetas (`DestinoAdapter`).
 - [x] **Soporte de modelo y tests:** Campo opcional `provincia` en `Destino.kt` y test unitario `filterList_byDepartmentAndProvince_filtersAccurately` en `DestinoFilterTest.kt`.
+
+## Fase I — Auditoría Global de Paleta y Temas (`Light` & `Dark`)
+- [x] **Temas base Material 3 (`values/themes.xml` y `values-night/themes.xml` + `colors.xml`):** Eliminado el púrpura por defecto de Material3 vinculando `colorPrimary`, `colorPrimaryDark`, `colorSecondary`, `colorControlActivated` y contraste AA+ en modo oscuro (`#007A42` con texto blanco).
+- [x] **Unificación en pantallas y adaptadores:** Reemplazados colores dispersos (azules `#1976D2`/`#0277BD`, morado `#6A1B9A` y naranjas `#F57C00`/`#D84315`) en `activity_login.xml`, `fragment_admin_dashboard.xml`, `dialog_pasarela_pago.xml`, `item_publicacion.xml`, `ReservaAdapter.kt` y `MapaRutaActivity.kt` hacia la paleta oficial PerúViajero (`@color/colorPrimary`, `@color/colorPrimaryDark`, `@color/colorAccent`, `@color/colorStar`).

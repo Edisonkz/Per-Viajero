@@ -101,14 +101,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/colorCardBackground"
-                app:strokeColor="#1976D2"
+                app:strokeColor="@color/colorAccent"
                 app:strokeWidth="1.5dp"
-                android:textColor="#1976D2"
+                android:textColor="@color/colorAccent"
                 android:text="Ingresar como Administrador (Gerson)"
                 android:textAllCaps="false"
                 app:cornerRadius="12dp"
                 app:icon="@drawable/ic_dashboard"
-                app:iconTint="#1976D2"
+                app:iconTint="@color/colorAccent"
                 app:iconGravity="textStart" />
 
             <View

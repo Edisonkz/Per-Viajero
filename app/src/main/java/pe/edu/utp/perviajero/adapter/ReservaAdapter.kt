@@ -1,11 +1,11 @@
 package pe.edu.utp.perviajero.adapter
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -79,12 +79,12 @@ class ReservaAdapter(
 
             val badgeBg = GradientDrawable().apply {
                 cornerRadius = 100f
-                val colorHex = when (reserva.estado) {
-                    "En Ruta" -> "#F57C00"
-                    "Completada", "Finalizada" -> "#006837"
-                    else -> "#2E7D32"
+                val colorRes = when (reserva.estado) {
+                    "En Ruta" -> R.color.colorAccent
+                    "Completada", "Finalizada" -> R.color.colorPrimaryDark
+                    else -> R.color.colorPrimary
                 }
-                setColor(Color.parseColor(colorHex))
+                setColor(ContextCompat.getColor(itemView.context, colorRes))
             }
             tvEstado.background = badgeBg
 

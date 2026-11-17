@@ -241,8 +241,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="#0D6A1B9A"
-                app:strokeColor="#306A1B9A"
+                app:cardBackgroundColor="#0D006837"
+                app:strokeColor="#30006837"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -255,7 +255,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="📱 Yape / Plin Oficial PerúViajero:"
-                        android:textColor="#6A1B9A"
+                        android:textColor="@color/colorPrimary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -307,8 +307,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="#0D0277BD"
-                app:strokeColor="#300277BD"
+                app:cardBackgroundColor="#0DC1272D"
+                app:strokeColor="#30C1272D"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -321,7 +321,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🏦 Código de Pago CIP (PagoEfectivo / BCP / BBVA):"
-                        android:textColor="#0277BD"
+                        android:textColor="@color/colorAccent"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 

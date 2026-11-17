@@ -256,7 +256,7 @@ class MapaRutaActivity : AppCompatActivity() {
             outlinePaint.color = if (isRoadRoute) {
                 ContextCompat.getColor(this@MapaRutaActivity, R.color.colorPrimary)
             } else {
-                Color.parseColor("#D84315")
+                ContextCompat.getColor(this@MapaRutaActivity, R.color.colorAccent)
             }
             outlinePaint.strokeWidth = 10f
         }

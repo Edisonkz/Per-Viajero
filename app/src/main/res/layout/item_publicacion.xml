@@ -99,7 +99,7 @@
                     android:background="@drawable/bg_pill_amber_soft"
                     android:paddingHorizontal="9dp"
                     android:paddingVertical="2dp"
-                    android:textColor="#D84315"
+                    android:textColor="@color/colorAccent"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     tools:text="5.0 ★" />
