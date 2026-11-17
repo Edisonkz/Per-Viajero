@@ -45,3 +45,7 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 - [x] **Hero `CollapsingToolbarLayout`:** Foto a sangre arriba con parallax, scrim superior, insets Edge-to-Edge y botones circulares flotantes (atrás, favorito, compartir).
 - [x] **Grid 4-en-1 sin scroll:** `Ruta GPS`, `Brújula`, `Reseñas (N)`, `Itinerario` + distancia GPS en vivo (`GeoMath`).
 - [x] **Previa de Comunidad + Barra Sticky inferior:** Última reseña del destino desde `ComunidadRepository` con acceso a `+ Publicar foto` y barra fija inferior `"Desde S/ 150 / pers"` + botón píldora `"Cotizar y Reservar"`.
+
+## Fase H — Filtros Geográficos en `Explorar` (Departamento y Provincia)
+- [x] **Selector en cascada `Depto` y `Prov`:** Pills interactivos en `fragment_destinos.xml` con selección dinámica desde `RegionPeruHelper` (`resolveProvincia`, `extractDepartamentos`, `extractProvincias`) y subtítulo de provincia en tarjetas (`DestinoAdapter`).
+- [x] **Soporte de modelo y tests:** Campo opcional `provincia` en `Destino.kt` y test unitario `filterList_byDepartmentAndProvince_filtersAccurately` en `DestinoFilterTest.kt`.

@@ -18,6 +18,7 @@ import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.di.ServiceLocator
 import pe.edu.utp.perviajero.util.GeoMath
+import pe.edu.utp.perviajero.util.RegionPeruHelper
 
 // Adaptador optimizado con ListAdapter + DiffUtil para el catálogo de destinos turísticos
 class DestinoAdapter(
@@ -32,6 +33,8 @@ class DestinoAdapter(
     private var listaBase: List<Destino> = listaOriginal
     private var currentQuery: String = ""
     private var currentCategory: String = "Todos"
+    private var currentDepartment: String = "Todos"
+    private var currentProvince: String = "Todas"
     private var userOrigin: Pair<Double, Double>? = null
 
     init {
@@ -67,12 +70,18 @@ class DestinoAdapter(
         holder.tvCategoria.text = destino.categoria
         holder.tvCalificacion.text = destino.calificacion.toString()
 
+        val provincia = RegionPeruHelper.resolveProvincia(destino)
+        val ubicacion = if (provincia.equals(destino.departamento, ignoreCase = true)) {
+            "${destino.departamento}, Perú"
+        } else {
+            "$provincia, ${destino.departamento}"
+        }
         val origin = userOrigin
         holder.tvDepartamento.text = if (origin != null && destino.latitud != null && destino.longitud != null) {
             val km = GeoMath.haversineDistanceKm(origin.first, origin.second, destino.latitud, destino.longitud)
-            "${destino.departamento}, Perú • ${GeoMath.formatDistance(km)}"
+            "$ubicacion • ${GeoMath.formatDistance(km)}"
         } else {
-            "${destino.departamento}, Perú"
+            ubicacion
         }
 
         Glide.with(context)
@@ -120,16 +129,25 @@ class DestinoAdapter(
         notifyDataSetChanged()
     }
 
+    fun getListaBase(): List<Destino> = listaBase
+
     fun updateData(nuevaLista: List<Destino>) {
         listaBase = nuevaLista
-        val filtered = filterList(listaBase, currentQuery, currentCategory)
+        val filtered = filterList(listaBase, currentQuery, currentCategory, currentDepartment, currentProvince)
         submitList(filtered)
     }
 
-    fun filter(query: String, category: String = currentCategory): Int {
+    fun filter(
+        query: String,
+        category: String = currentCategory,
+        department: String = currentDepartment,
+        province: String = currentProvince
+    ): Int {
         currentQuery = query
         currentCategory = category
-        val filtered = filterList(listaBase, query, category)
+        currentDepartment = department
+        currentProvince = province
+        val filtered = filterList(listaBase, query, category, department, province)
         submitList(filtered)
         return filtered.size
     }
@@ -138,17 +156,25 @@ class DestinoAdapter(
         fun filterList(
             source: List<Destino>,
             query: String,
-            category: String = "Todos"
+            category: String = "Todos",
+            department: String = "Todos",
+            province: String = "Todas"
         ): List<Destino> {
             val texto = query.trim().lowercase()
             return source.filter { destino ->
+                val resolvedProv = RegionPeruHelper.resolveProvincia(destino)
                 val matchesCategory = category.equals("Todos", ignoreCase = true) ||
                     destino.categoria.equals(category, ignoreCase = true)
+                val matchesDepartment = department.equals("Todos", ignoreCase = true) ||
+                    destino.departamento.equals(department, ignoreCase = true)
+                val matchesProvince = province.equals("Todas", ignoreCase = true) ||
+                    resolvedProv.equals(province, ignoreCase = true)
                 val matchesQuery = texto.isEmpty() ||
                     destino.nombre.lowercase().contains(texto) ||
                     destino.departamento.lowercase().contains(texto) ||
+                    resolvedProv.lowercase().contains(texto) ||
                     destino.categoria.lowercase().contains(texto)
-                matchesCategory && matchesQuery
+                matchesCategory && matchesDepartment && matchesProvince && matchesQuery
             }
         }
     }

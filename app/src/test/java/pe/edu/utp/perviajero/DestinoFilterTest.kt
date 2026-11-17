@@ -43,4 +43,17 @@ class DestinoFilterTest {
         assertEquals("Costa", RegionPeruHelper.resolveNaturalRegion("La Libertad"))
         assertEquals("Sierra", RegionPeruHelper.resolveNaturalRegion("Áncash"))
     }
+
+    @Test
+    fun filterList_byDepartmentAndProvince_filtersAccurately() {
+        val icaPlus = sample + Destino("5", "Líneas de Nazca", "Ica", "Arqueología", "Geoglifos", 4.7, "")
+        assertEquals(listOf("Ica", "Nazca"), RegionPeruHelper.extractProvincias(icaPlus, "Ica"))
+
+        val byDepto = DestinoAdapter.filterList(icaPlus, "", "Todos", department = "Ica", province = "Todas")
+        assertEquals(2, byDepto.size)
+
+        val byProv = DestinoAdapter.filterList(icaPlus, "", "Todos", department = "Ica", province = "Nazca")
+        assertEquals(1, byProv.size)
+        assertEquals("5", byProv.first().id)
+    }
 }

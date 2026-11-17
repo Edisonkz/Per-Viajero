@@ -247,6 +247,101 @@
             app:singleSelection="true" />
     </HorizontalScrollView>
 
+    <!-- Filtros geográficos por Departamento y Provincia -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFiltroDepartamento"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="1dp"
+            app:strokeColor="#22000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/ivFiltroDepartamento"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:contentDescription="Departamento"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvFiltroDepartamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Depto: Todos ▾"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFiltroProvincia"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="1dp"
+            app:strokeColor="#22000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/ivFiltroProvincia"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:contentDescription="Provincia"
+                    android:src="@drawable/ic_map_route"
+                    app:tint="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvFiltroProvincia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Prov: Todas ▾"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
     <!-- Banner discreto de Modo Offline -->
     <TextView
         android:id="@+id/tvOfflineBanner"
@@ -254,7 +349,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="14dp"
         android:layout_marginBottom="4dp"
-        android:background="#20F57C00"
+        android:background="#24FFB300"
         android:gravity="center"
         android:paddingHorizontal="10dp"
         android:paddingVertical="5dp"

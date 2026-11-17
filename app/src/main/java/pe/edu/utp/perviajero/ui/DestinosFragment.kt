@@ -1,7 +1,6 @@
 package pe.edu.utp.perviajero.ui
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -12,22 +11,27 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.MainActivity
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.adapter.DestinoAdapter
 import pe.edu.utp.perviajero.data.common.AppResult
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.ui.common.ChipStyleHelper
 import pe.edu.utp.perviajero.util.LocationHelper
+import pe.edu.utp.perviajero.util.RegionPeruHelper
 
-// Pantalla Explorar: Buscador, 4 Accesos Rápidos, Chips de categoría, tarjetas con distancia GPS y 3 estados
+// Pantalla Explorar: Buscador, 4 Accesos Rápidos, Categorías, Departamento/Provincia y distancia GPS
 class DestinosFragment : Fragment() {
 
     companion object {
@@ -41,6 +45,12 @@ class DestinosFragment : Fragment() {
     private lateinit var qaPublicarFoto: View
     private lateinit var qaGuiaIperu: View
     private lateinit var chipGroupCategorias: ChipGroup
+    private lateinit var cardFiltroDepartamento: MaterialCardView
+    private lateinit var tvFiltroDepartamento: TextView
+    private lateinit var ivFiltroDepartamento: ImageView
+    private lateinit var cardFiltroProvincia: MaterialCardView
+    private lateinit var tvFiltroProvincia: TextView
+    private lateinit var ivFiltroProvincia: ImageView
     private lateinit var tvOfflineBanner: TextView
     private lateinit var rvDestinos: RecyclerView
     private lateinit var layoutCargando: View
@@ -51,6 +61,8 @@ class DestinosFragment : Fragment() {
 
     private lateinit var destinoAdapter: DestinoAdapter
     private var selectedCategory: String = "Todos"
+    private var selectedDepartment: String = "Todos"
+    private var selectedProvince: String = "Todas"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,6 +82,12 @@ class DestinosFragment : Fragment() {
         qaPublicarFoto = view.findViewById(R.id.qaPublicarFoto)
         qaGuiaIperu = view.findViewById(R.id.qaGuiaIperu)
         chipGroupCategorias = view.findViewById(R.id.chipGroupCategorias)
+        cardFiltroDepartamento = view.findViewById(R.id.cardFiltroDepartamento)
+        tvFiltroDepartamento = view.findViewById(R.id.tvFiltroDepartamento)
+        ivFiltroDepartamento = view.findViewById(R.id.ivFiltroDepartamento)
+        cardFiltroProvincia = view.findViewById(R.id.cardFiltroProvincia)
+        tvFiltroProvincia = view.findViewById(R.id.tvFiltroProvincia)
+        ivFiltroProvincia = view.findViewById(R.id.ivFiltroProvincia)
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner)
         rvDestinos = view.findViewById(R.id.rvDestinos)
         layoutCargando = view.findViewById(R.id.layoutCargando)
@@ -86,6 +104,7 @@ class DestinosFragment : Fragment() {
 
         configurarAccesosRapidos()
         configurarChipsCategorias()
+        configurarFiltrosUbicacion()
         configurarBuscador()
         cargarDistanciaGpsSiDisponible()
         cargarDestinosDesdeApi()
@@ -114,15 +133,12 @@ class DestinosFragment : Fragment() {
     private fun configurarChipsCategorias() {
         chipGroupCategorias.removeAllViews()
         for (cat in CATEGORIAS) {
-            val chip = Chip(requireContext()).apply {
+            val chip = ChipStyleHelper.createFilterChip(
+                context = requireContext(),
+                label = cat,
+                isCheckedInitial = cat == selectedCategory,
                 id = View.generateViewId()
-                text = cat
-                isCheckable = true
-                isChecked = cat == selectedCategory
-                checkedIcon = null
-                shapeAppearanceModel = shapeAppearanceModel.toBuilder().setAllCornerSizes(100f).build()
-                aplicarEstiloChip(this, isChecked)
-            }
+            )
             chipGroupCategorias.addView(chip)
         }
 
@@ -130,7 +146,7 @@ class DestinosFragment : Fragment() {
             val checkedId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
             for (i in 0 until group.childCount) {
                 val c = group.getChildAt(i) as? Chip ?: continue
-                aplicarEstiloChip(c, c.id == checkedId)
+                ChipStyleHelper.applyStyle(requireContext(), c, c.id == checkedId)
             }
             val chip = group.findViewById<Chip>(checkedId) ?: return@setOnCheckedStateChangeListener
             selectedCategory = chip.text.toString()
@@ -138,19 +154,88 @@ class DestinosFragment : Fragment() {
         }
     }
 
-    private fun aplicarEstiloChip(chip: Chip, isSelected: Boolean) {
+    private fun configurarFiltrosUbicacion() {
+        actualizarEstilosFiltrosUbicacion()
+
+        cardFiltroDepartamento.setOnClickListener {
+            val catalog = destinoAdapter.getListaBase()
+            val opciones = listOf("Todos") + RegionPeruHelper.extractDepartamentos(catalog)
+            val checkedIndex = opciones.indexOfFirst { it.equals(selectedDepartment, ignoreCase = true) }.coerceAtLeast(0)
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Filtrar por Departamento")
+                .setSingleChoiceItems(opciones.toTypedArray(), checkedIndex) { dialog, which ->
+                    selectedDepartment = opciones[which]
+                    val provinciasDisponibles = RegionPeruHelper.extractProvincias(catalog, selectedDepartment)
+                    if (!selectedProvince.equals("Todas", ignoreCase = true) &&
+                        provinciasDisponibles.none { it.equals(selectedProvince, ignoreCase = true) }
+                    ) {
+                        selectedProvince = "Todas"
+                    }
+                    actualizarEstilosFiltrosUbicacion()
+                    aplicarFiltroYVisibilidad(etBuscar.text?.toString().orEmpty())
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+
+        cardFiltroProvincia.setOnClickListener {
+            val catalog = destinoAdapter.getListaBase()
+            val opciones = listOf("Todas") + RegionPeruHelper.extractProvincias(catalog, selectedDepartment)
+            val checkedIndex = opciones.indexOfFirst { it.equals(selectedProvince, ignoreCase = true) }.coerceAtLeast(0)
+
+            val titulo = if (selectedDepartment.equals("Todos", ignoreCase = true)) {
+                "Filtrar por Provincia"
+            } else {
+                "Provincias de $selectedDepartment"
+            }
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(titulo)
+                .setSingleChoiceItems(opciones.toTypedArray(), checkedIndex) { dialog, which ->
+                    selectedProvince = opciones[which]
+                    actualizarEstilosFiltrosUbicacion()
+                    aplicarFiltroYVisibilidad(etBuscar.text?.toString().orEmpty())
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+    }
+
+    private fun actualizarEstilosFiltrosUbicacion() {
+        val deptoActivo = !selectedDepartment.equals("Todos", ignoreCase = true)
+        val provActiva = !selectedProvince.equals("Todas", ignoreCase = true)
+
+        tvFiltroDepartamento.text = if (deptoActivo) "Depto: $selectedDepartment ▾" else "Depto: Todos ▾"
+        tvFiltroProvincia.text = if (provActiva) "Prov: $selectedProvince ▾" else "Prov: Todas ▾"
+
+        aplicarEstiloPillUbicacion(cardFiltroDepartamento, tvFiltroDepartamento, ivFiltroDepartamento, deptoActivo)
+        aplicarEstiloPillUbicacion(cardFiltroProvincia, tvFiltroProvincia, ivFiltroProvincia, provActiva)
+    }
+
+    private fun aplicarEstiloPillUbicacion(
+        card: MaterialCardView,
+        label: TextView,
+        icon: ImageView,
+        activo: Boolean
+    ) {
         val primary = ContextCompat.getColor(requireContext(), R.color.colorPrimary)
         val cardBg = ContextCompat.getColor(requireContext(), R.color.colorCardBackground)
         val textPrimary = ContextCompat.getColor(requireContext(), R.color.colorTextPrimary)
-        if (isSelected) {
-            chip.chipBackgroundColor = ColorStateList.valueOf(primary)
-            chip.setTextColor(Color.WHITE)
-            chip.chipStrokeWidth = 0f
+
+        if (activo) {
+            card.setCardBackgroundColor(primary)
+            card.strokeWidth = 0
+            label.setTextColor(Color.WHITE)
+            icon.setColorFilter(Color.WHITE)
         } else {
-            chip.chipBackgroundColor = ColorStateList.valueOf(cardBg)
-            chip.setTextColor(textPrimary)
-            chip.chipStrokeColor = ColorStateList.valueOf(Color.argb(40, 0, 0, 0))
-            chip.chipStrokeWidth = 2f
+            card.setCardBackgroundColor(cardBg)
+            card.strokeColor = Color.argb(35, 0, 0, 0)
+            card.strokeWidth = 2
+            label.setTextColor(textPrimary)
+            icon.setColorFilter(primary)
         }
     }
 
@@ -226,7 +311,7 @@ class DestinosFragment : Fragment() {
 
     private fun aplicarFiltroYVisibilidad(query: String) {
         if (layoutCargando.visibility == View.VISIBLE || layoutError.visibility == View.VISIBLE) return
-        val countResults = destinoAdapter.filter(query, selectedCategory)
+        val countResults = destinoAdapter.filter(query, selectedCategory, selectedDepartment, selectedProvince)
         if (countResults == 0) {
             layoutVacio.visibility = View.VISIBLE
             rvDestinos.visibility = View.GONE

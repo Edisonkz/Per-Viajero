@@ -41,6 +41,51 @@ object RegionPeruHelper {
         return destinos.filter { resolveNaturalRegion(it.departamento).equals(region, ignoreCase = true) }
     }
 
+    /**
+     * Resuelve la provincia oficial del destino turístico en Perú usando el campo explícito
+     * si viene de API o el catálogo de atractivos/departamentos peruanos.
+     */
+    fun resolveProvincia(destino: Destino): String {
+        val explicit = destino.provincia?.trim()
+        if (!explicit.isNullOrEmpty()) return explicit
+
+        val nombreNorm = normalize(destino.nombre)
+        return when {
+            nombreNorm.contains("machu picchu") -> "Urubamba"
+            nombreNorm.contains("vinicunca") || nombreNorm.contains("siete colores") -> "Canchis"
+            nombreNorm.contains("colca") -> "Caylloma"
+            nombreNorm.contains("huacachina") -> "Ica"
+            nombreNorm.contains("nazca") || nombreNorm.contains("nasca") -> "Nazca"
+            nombreNorm.contains("paracas") -> "Pisco"
+            nombreNorm.contains("titicaca") || nombreNorm.contains("uros") -> "Puno"
+            nombreNorm.contains("kuelap") -> "Luya"
+            nombreNorm.contains("laguna 69") || nombreNorm.contains("huascaran") -> "Yungay"
+            nombreNorm.contains("mancora") -> "Talara"
+            nombreNorm.contains("iquitos") || nombreNorm.contains("amazonas") -> "Maynas"
+            nombreNorm.contains("chan chan") -> "Trujillo"
+            else -> destino.departamento.ifBlank { "Perú" }
+        }
+    }
+
+    fun extractDepartamentos(destinos: List<Destino>): List<String> {
+        return destinos.map { it.departamento.trim() }
+            .filter { it.isNotEmpty() }
+            .distinct()
+            .sorted()
+    }
+
+    fun extractProvincias(destinos: List<Destino>, departamento: String): List<String> {
+        val scoped = if (departamento.isBlank() || departamento.equals("Todos", ignoreCase = true)) {
+            destinos
+        } else {
+            destinos.filter { it.departamento.equals(departamento, ignoreCase = true) }
+        }
+        return scoped.map { resolveProvincia(it) }
+            .filter { it.isNotEmpty() }
+            .distinct()
+            .sorted()
+    }
+
     private fun normalize(value: String): String {
         val decomposed = Normalizer.normalize(value.trim(), Normalizer.Form.NFD)
         return decomposed
