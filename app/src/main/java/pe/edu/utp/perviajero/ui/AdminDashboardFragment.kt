@@ -61,7 +61,9 @@ class AdminDashboardFragment : Fragment() {
         adapter = ReservaAdapter(
             esModoAdmin = true,
             onCambiarEstadoClicked = { reserva -> mostrarDialogoCambiarEstado(reserva) },
-            onItemClicked = { reserva -> VoucherDialogHelper.showVoucherDialog(requireContext(), reserva) }
+            onItemClicked = { reserva -> VoucherDialogHelper.showVoucherDialog(requireContext(), reserva) },
+            onRutaGpsClicked = { reserva -> VoucherDialogHelper.openMapaParaReserva(requireContext(), reserva) },
+            onBrujulaClicked = { reserva -> VoucherDialogHelper.openBrujulaParaReserva(requireContext(), reserva) }
         )
         rvAdminReservas.adapter = adapter
 

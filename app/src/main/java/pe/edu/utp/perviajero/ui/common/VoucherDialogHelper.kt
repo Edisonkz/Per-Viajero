@@ -11,9 +11,12 @@ import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.R
+import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.EmpresaInfo
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.ui.BrujulaActivity
+import pe.edu.utp.perviajero.ui.MapaRutaActivity
 import java.util.Locale
 
 /**
@@ -57,7 +60,8 @@ object VoucherDialogHelper {
         Glide.with(context)
             .load(reserva.destinoFoto)
             .centerCrop()
-            .placeholder(android.R.drawable.ic_menu_gallery)
+            .placeholder(R.drawable.bg_destino_placeholder)
+            .error(R.drawable.bg_destino_placeholder)
             .into(ivTicketFoto)
 
         tvTicketPasajerosLista.text = if (reserva.listaPasajeros.isNotEmpty()) {
@@ -118,5 +122,34 @@ object VoucherDialogHelper {
             putExtra(Intent.EXTRA_TEXT, mensaje)
         }
         context.startActivity(Intent.createChooser(sendIntent, "Compartir Boleto de Embarque"))
+    }
+
+    fun openMapaParaReserva(context: Context, reserva: Reserva) {
+        val destino = resolverDestinoDeReserva(context, reserva)
+        context.startActivity(Intent(context, MapaRutaActivity::class.java).apply {
+            putExtra(MapaRutaActivity.EXTRA_DESTINO, destino)
+        })
+    }
+
+    fun openBrujulaParaReserva(context: Context, reserva: Reserva) {
+        val destino = resolverDestinoDeReserva(context, reserva)
+        context.startActivity(Intent(context, BrujulaActivity::class.java).apply {
+            putExtra(BrujulaActivity.EXTRA_DESTINO, destino)
+        })
+    }
+
+    private fun resolverDestinoDeReserva(context: Context, reserva: Reserva): Destino {
+        val cached = ServiceLocator.getDestinoRepository(context).obtenerDestinosEnCache()
+        return cached.find { it.id == reserva.destinoId } ?: Destino(
+            id = reserva.destinoId,
+            nombre = reserva.destinoNombre,
+            departamento = "Perú",
+            categoria = "Tour",
+            descripcion = "",
+            calificacion = 4.8,
+            imageUrl = reserva.destinoFoto,
+            latitud = -13.1631,
+            longitud = -72.5450
+        )
     }
 }

@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="2dp"
-    app:strokeColor="#20000000"
-    app:strokeWidth="1dp">
+    android:layout_marginHorizontal="14dp"
+    android:layout_marginVertical="7dp"
+    android:elevation="3dp">
+
+    <pe.edu.utp.perviajero.ui.view.BoardingPassBgView
+        android:id="@+id/boardingPassBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:paddingHorizontal="18dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="12dp">
 
-        <!-- Fila superior: Voucher Code y Estado Badge -->
+        <!-- Cabecera: Código + Badge Estado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,142 +30,177 @@
 
             <TextView
                 android:id="@+id/tvItemReservaCodigo"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_categoria"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:layout_weight="1"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 tools:text="PV-2026-8412" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tvItemReservaEstado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_categoria"
-                android:paddingHorizontal="10dp"
+                android:paddingHorizontal="11dp"
                 android:paddingVertical="3dp"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 android:textStyle="bold"
-                tools:text="Confirmada" />
+                tools:text="CONFIRMADA" />
         </LinearLayout>
 
-        <!-- Fila central: Foto y Datos del Tour -->
+        <!-- Cuerpo central estilo Boarding Pass -->
+        <TextView
+            android:id="@+id/tvItemReservaDestino"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            tools:text="Machu Picchu" />
+
+        <TextView
+            android:id="@+id/tvItemReservaFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp"
+            tools:text="15/11/2026 • 06:30 AM • 2 pasajeros" />
+
+        <TextView
+            android:id="@+id/tvItemReservaDetalles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="Estación San Pedro • Minibús Panorámico" />
+
+        <TextView
+            android:id="@+id/tvItemReservaTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            tools:text="S/ 605.00" />
+
+        <TextView
+            android:id="@+id/tvItemReservaUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="Cliente: Kevin Turista" />
+
+        <!-- Espacio sobre la línea punteada -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <!-- Fila de 3 botones rápidos estilo pill -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:gravity="center"
             android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/ivItemReservaFoto"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/app_name"
-                tools:src="@tools:sample/backgrounds/scenic" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvItemReservaDestino"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?android:attr/textColorPrimary"
-                    tools:text="Machu Picchu" />
-
-                <TextView
-                    android:id="@+id/tvItemReservaFecha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textSize="13sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    tools:text="Salida: 15/11/2026" />
-
-                <TextView
-                    android:id="@+id/tvItemReservaDetalles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textSize="12sp"
-                    android:textColor="?android:attr/textColorSecondary"
-                    tools:text="2 pasajeros • Minibús • 3★" />
-
-                <TextView
-                    android:id="@+id/tvItemReservaUsuario"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textSize="12sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone"
-                    tools:text="Cliente: Kevin (kevin@peruviajero.pe)" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
-            android:background="#15000000" />
-
-        <!-- Fila inferior: Costo Total y Acciones -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total: "
-                android:textSize="14sp"
-                android:textColor="?android:attr/textColorSecondary" />
-
-            <TextView
-                android:id="@+id/tvItemReservaTotal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                tools:text="S/ 560.00" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnItemCambiarEstado"
+                android:id="@+id/btnReservaVerBoleto"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="0dp"
-                android:text="Cambiar Estado"
-                android:textSize="12sp"
+                android:paddingHorizontal="6dp"
+                android:text="Ver Boleto"
                 android:textAllCaps="false"
-                android:visibility="gone"
-                app:cornerRadius="8dp" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="11sp"
+                app:backgroundTint="#12006837"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_receipt"
+                app:iconPadding="4dp"
+                app:iconSize="14dp"
+                app:iconTint="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReservaRutaGps"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="3dp"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="6dp"
+                android:text="Ruta GPS"
+                android:textAllCaps="false"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="11sp"
+                app:backgroundTint="#0C000000"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_map_route"
+                app:iconPadding="4dp"
+                app:iconSize="14dp"
+                app:iconTint="?android:attr/textColorPrimary"
+                app:strokeColor="#28000000"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReservaBrujula"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="6dp"
+                android:text="Brújula"
+                android:textAllCaps="false"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="11sp"
+                app:backgroundTint="#0C000000"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_compass"
+                app:iconPadding="4dp"
+                app:iconSize="14dp"
+                app:iconTint="?android:attr/textColorPrimary"
+                app:strokeColor="#28000000"
+                app:strokeWidth="1dp" />
         </LinearLayout>
 
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+        <!-- Botón de Admin para cambiar estado -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnItemCambiarEstado"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginTop="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Actualizar Estado del Tour"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:cornerRadius="10dp" />
 
+    </LinearLayout>
+</FrameLayout>

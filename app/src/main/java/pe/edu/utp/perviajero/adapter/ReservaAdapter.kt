@@ -5,33 +5,32 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.ui.view.BoardingPassBgView
 import java.util.Locale
 
 class ReservaAdapter(
     listaInicial: List<Reserva> = emptyList(),
     private val esModoAdmin: Boolean = false,
     private val onCambiarEstadoClicked: ((Reserva) -> Unit)? = null,
-    private val onItemClicked: ((Reserva) -> Unit)? = null
+    private val onItemClicked: ((Reserva) -> Unit)? = null,
+    private val onRutaGpsClicked: ((Reserva) -> Unit)? = null,
+    private val onBrujulaClicked: ((Reserva) -> Unit)? = null
 ) : ListAdapter<Reserva, ReservaAdapter.ReservaViewHolder>(ReservaDiffCallback) {
 
     init {
         if (listaInicial.isNotEmpty()) {
-            submitList(listaInicial.toList())
+            submitList(listaInicial.map { it.copy() })
         }
     }
 
     fun actualizarLista(nuevaLista: List<Reserva>) {
-        // Copia defensiva con snapshot de estado para que DiffUtil detecte cambios en 'var estado'
         submitList(nuevaLista.map { it.copy() })
     }
 
@@ -41,66 +40,70 @@ class ReservaAdapter(
     }
 
     override fun onBindViewHolder(holder: ReservaViewHolder, position: Int) {
-        holder.bind(getItem(position), esModoAdmin, onCambiarEstadoClicked, onItemClicked)
+        holder.bind(
+            getItem(position),
+            esModoAdmin,
+            onCambiarEstadoClicked,
+            onItemClicked,
+            onRutaGpsClicked,
+            onBrujulaClicked
+        )
     }
 
     class ReservaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val ivFoto: ImageView = itemView.findViewById(R.id.ivItemReservaFoto)
+        private val boardingPassBg: BoardingPassBgView = itemView.findViewById(R.id.boardingPassBg)
         private val tvDestino: TextView = itemView.findViewById(R.id.tvItemReservaDestino)
         private val tvCodigo: TextView = itemView.findViewById(R.id.tvItemReservaCodigo)
         private val tvFecha: TextView = itemView.findViewById(R.id.tvItemReservaFecha)
-        private val tvDetalles: TextView = itemView.findViewById(R.id.tvItemReservaDetalles)
         private val tvUsuario: TextView = itemView.findViewById(R.id.tvItemReservaUsuario)
         private val tvTotal: TextView = itemView.findViewById(R.id.tvItemReservaTotal)
         private val tvEstado: TextView = itemView.findViewById(R.id.tvItemReservaEstado)
+        private val btnVerBoleto: MaterialButton = itemView.findViewById(R.id.btnReservaVerBoleto)
+        private val btnRutaGps: MaterialButton = itemView.findViewById(R.id.btnReservaRutaGps)
+        private val btnBrujula: MaterialButton = itemView.findViewById(R.id.btnReservaBrujula)
         private val btnCambiarEstado: MaterialButton = itemView.findViewById(R.id.btnItemCambiarEstado)
 
         fun bind(
             reserva: Reserva,
             esModoAdmin: Boolean,
             onCambiarEstado: ((Reserva) -> Unit)?,
-            onItemClicked: ((Reserva) -> Unit)?
+            onItemClicked: ((Reserva) -> Unit)?,
+            onRutaGps: ((Reserva) -> Unit)?,
+            onBrujula: ((Reserva) -> Unit)?
         ) {
-            tvDestino.text = reserva.destinoNombre
             tvCodigo.text = reserva.codigoReserva
-            tvFecha.text = "Salida: ${reserva.fechaSalida} • ${reserva.horarioSalida}"
-            tvDetalles.text = "${reserva.cantidadPersonas} pers • ${reserva.terminalEmbarque}\n${reserva.tipoMovilidad} • ${reserva.guiaTuristico}"
+            tvDestino.text = reserva.destinoNombre
+            tvFecha.text = "${reserva.fechaSalida} • ${reserva.horarioSalida} • ${reserva.cantidadPersonas} pasajeros"
             tvTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
-            tvEstado.text = reserva.estado
+            tvEstado.text = reserva.estado.uppercase(Locale.US)
 
             val badgeBg = GradientDrawable().apply {
-                cornerRadius = 16f
+                cornerRadius = 100f
                 val colorHex = when (reserva.estado) {
                     "En Ruta" -> "#F57C00"
-                    "Completada", "Finalizada" -> "#2E7D32"
-                    else -> "#1976D2"
+                    "Completada", "Finalizada" -> "#006837"
+                    else -> "#2E7D32"
                 }
                 setColor(Color.parseColor(colorHex))
             }
             tvEstado.background = badgeBg
 
-            Glide.with(itemView.context)
-                .load(reserva.destinoFoto)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .placeholder(android.R.drawable.ic_menu_gallery)
-                .error(android.R.drawable.ic_dialog_alert)
-                .into(ivFoto)
-
             if (esModoAdmin) {
+                boardingPassBg.setTearLineBottomOffsetRatio(0.41f)
                 tvUsuario.visibility = View.VISIBLE
                 tvUsuario.text = "Cliente: ${reserva.usuarioNombre} (${reserva.usuarioEmail})"
                 btnCambiarEstado.visibility = View.VISIBLE
-                btnCambiarEstado.setOnClickListener {
-                    onCambiarEstado?.invoke(reserva)
-                }
+                btnCambiarEstado.setOnClickListener { onCambiarEstado?.invoke(reserva) }
             } else {
+                boardingPassBg.setTearLineBottomOffsetRatio(0.28f)
                 tvUsuario.visibility = View.GONE
                 btnCambiarEstado.visibility = View.GONE
             }
 
-            itemView.setOnClickListener {
-                onItemClicked?.invoke(reserva)
-            }
+            itemView.setOnClickListener { onItemClicked?.invoke(reserva) }
+            btnVerBoleto.setOnClickListener { onItemClicked?.invoke(reserva) }
+            btnRutaGps.setOnClickListener { onRutaGps?.invoke(reserva) }
+            btnBrujula.setOnClickListener { onBrujula?.invoke(reserva) }
         }
     }
 
