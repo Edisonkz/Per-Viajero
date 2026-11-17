@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.di.ServiceLocator
@@ -21,8 +22,11 @@ import pe.edu.utp.perviajero.util.GeoMath
 // Adaptador optimizado con ListAdapter + DiffUtil para el catálogo de destinos turísticos
 class DestinoAdapter(
     listaOriginal: List<Destino> = emptyList(),
+    private val showQuickActions: Boolean = false,
     private val onItemClick: (Destino) -> Unit,
-    private val onFavoritoClick: ((Destino, Boolean) -> Unit)? = null
+    private val onFavoritoClick: ((Destino, Boolean) -> Unit)? = null,
+    private val onRutaGpsClick: ((Destino) -> Unit)? = null,
+    private val onReservarClick: ((Destino) -> Unit)? = null
 ) : ListAdapter<Destino, DestinoAdapter.DestinoViewHolder>(DestinoDiffCallback) {
 
     private var listaBase: List<Destino> = listaOriginal
@@ -44,6 +48,9 @@ class DestinoAdapter(
         val tvCalificacion: TextView = itemView.findViewById(R.id.tvCalificacion)
         val btnFavorito: ImageButton = itemView.findViewById(R.id.btnFavorito)
         val cardDestino: View = itemView.findViewById(R.id.cardDestino)
+        val layoutFavoritoAcciones: View = itemView.findViewById(R.id.layoutFavoritoAcciones)
+        val btnDestinoRutaGps: MaterialButton = itemView.findViewById(R.id.btnDestinoRutaGps)
+        val btnDestinoReservar: MaterialButton = itemView.findViewById(R.id.btnDestinoReservar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DestinoViewHolder {
@@ -87,6 +94,14 @@ class DestinoAdapter(
 
         holder.cardDestino.setOnClickListener {
             onItemClick(destino)
+        }
+
+        if (showQuickActions) {
+            holder.layoutFavoritoAcciones.visibility = View.VISIBLE
+            holder.btnDestinoRutaGps.setOnClickListener { onRutaGpsClick?.invoke(destino) }
+            holder.btnDestinoReservar.setOnClickListener { onReservarClick?.invoke(destino) }
+        } else {
+            holder.layoutFavoritoAcciones.visibility = View.GONE
         }
     }
 

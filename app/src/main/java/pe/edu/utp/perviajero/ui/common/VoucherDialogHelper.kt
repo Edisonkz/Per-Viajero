@@ -14,9 +14,12 @@ import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.EmpresaInfo
 import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.di.ServiceLocator
 import pe.edu.utp.perviajero.ui.BrujulaActivity
+import pe.edu.utp.perviajero.ui.LoginActivity
 import pe.edu.utp.perviajero.ui.MapaRutaActivity
+import pe.edu.utp.perviajero.ui.ReservaTourActivity
 import java.util.Locale
 
 /**
@@ -135,6 +138,32 @@ object VoucherDialogHelper {
         val destino = resolverDestinoDeReserva(context, reserva)
         context.startActivity(Intent(context, BrujulaActivity::class.java).apply {
             putExtra(BrujulaActivity.EXTRA_DESTINO, destino)
+        })
+    }
+
+    fun openCotizadorConValidacion(context: Context, destino: Destino) {
+        val sessionRepo = ServiceLocator.getSessionRepository(context)
+        if (!sessionRepo.isLoggedIn()) {
+            MaterialAlertDialogBuilder(context)
+                .setTitle("Acceso a Reservas")
+                .setMessage("Para cotizar y confirmar reservas en PerúViajero se requiere una cuenta. ¿Deseas iniciar sesión o usar acceso rápido?")
+                .setPositiveButton("Iniciar Sesión") { _, _ ->
+                    context.startActivity(Intent(context, LoginActivity::class.java))
+                }
+                .setNeutralButton("Continuar como Turista") { _, _ ->
+                    sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE))
+                    lanzarReservaTour(context, destino)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        } else {
+            lanzarReservaTour(context, destino)
+        }
+    }
+
+    private fun lanzarReservaTour(context: Context, destino: Destino) {
+        context.startActivity(Intent(context, ReservaTourActivity::class.java).apply {
+            putExtra(ReservaTourActivity.EXTRA_DESTINO, destino)
         })
     }
 

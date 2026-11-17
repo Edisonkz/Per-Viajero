@@ -38,8 +38,8 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 ## Capa de Datos Simulados / Servicios (`assets/services/*.json` + `services/`)
 - [x] **Migración total de mocks a JSON:** `usuarios.json`, `empresa.json`, `reservas.json`, `comunidad.json`, `itinerario.json`, `sugerencias_semanales.json` leídos vía `JsonAssetReader` y servidos desde `UsuarioService`, `ReservaService`, `ComunidadService` e `ItinerarioService`.
 
-## Fase F — Pantalla 5: `Favoritos` *(Siguiente paso)*
-- [ ] **Actualizar `FavoritosFragment.kt`:** Franja resumen offline, filtros por región (Sierra, Costa, Selva), tarjetas con corazón rojo relleno, distancia GPS y botones rápidos `Ruta GPS` y `Reservar`.
+## Fase F — Pantalla 5: `Favoritos`
+- [x] **Actualizar `FavoritosFragment.kt`:** Franja resumen offline, filtros por región (`Todas`, `Sierra`, `Costa`, `Selva` vía `RegionPeruHelper`), tarjetas con corazón rojo relleno, distancia GPS y botones rápidos `Ruta GPS` y `Reservar`.
 
 ## Fase G — Pantalla 6: `Detalle de Destino` Hero (`06_detalle_destino_hero.jpg`) *(Siguiente paso)*
 - [ ] **Hero `CollapsingToolbarLayout`:** Foto a sangre arriba con botones circulares flotantes (atrás, favorito, compartir).

@@ -1,47 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- REQ-09: Pantalla de favoritos persistidos en SharedPreferences -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFavoritos"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        tools:listitem="@layout/item_destino" />
-
+    <!-- Franja superior resumen offline -->
     <LinearLayout
-        android:id="@+id/layoutFavoritosVacio"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="32dp"
+        android:background="@color/colorCardBackground"
+        android:elevation="1dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp">
 
         <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_favoritos_border"
-            app:tint="?android:attr/textColorSecondary"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:contentDescription="@string/nav_favoritos" />
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="@string/nav_favoritos"
+            android:src="@drawable/ic_favoritos"
+            app:tint="@color/colorAccent" />
 
         <TextView
+            android:id="@+id/tvResumenFavoritos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:text="@string/sin_favoritos"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="15sp" />
+            android:layout_marginStart="8dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="0 destinos guardados • Disponible sin conexión" />
     </LinearLayout>
 
-</FrameLayout>
+    <!-- Chips de filtro por región natural (Todas, Sierra, Costa, Selva) -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:scrollbars="none">
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupRegionFavoritos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <!-- Contenido principal de favoritos -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFavoritos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="28dp"
+            tools:listitem="@layout/item_destino" />
+
+        <LinearLayout
+            android:id="@+id/layoutFavoritosVacio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@string/nav_favoritos"
+                android:src="@drawable/ic_favoritos_border"
+                app:tint="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tvFavoritosVacioTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Aún no tienes destinos favoritos"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvFavoritosVacioSubtitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/sin_favoritos"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExplorarDesdeFavoritos"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="20dp"
+                android:text="Explorar destinos"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="20dp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>
