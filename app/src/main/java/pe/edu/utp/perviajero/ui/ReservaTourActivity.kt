@@ -20,11 +20,13 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.R
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.Pasajero
 import pe.edu.utp.perviajero.data.model.Reserva
+import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.util.CotizadorCalculator
 import pe.edu.utp.perviajero.util.NotificationHelper
+import pe.edu.utp.perviajero.util.ReminderScheduler
 import java.util.Calendar
 import java.util.Locale
 
@@ -168,8 +170,7 @@ class ReservaTourActivity : AppCompatActivity() {
     }
 
     private fun sincronizarListaManifiesto() {
-        val prefs = PreferencesHelper.getInstance(this)
-        val usuario = prefs.getUsuarioActual()
+        val usuario = ServiceLocator.getSessionRepository(this).getUsuarioActual()
         val nombreTitular = usuario?.nombre ?: "Kevin Turista Quispe"
 
         while (listaManifiesto.size < cantidadPasajeros) {
@@ -373,8 +374,12 @@ class ReservaTourActivity : AppCompatActivity() {
     }
 
     private fun calcularCostoTotal(): Double {
-        val costoPorPersona = PRECIO_BASE_POR_PERSONA + extraMovilidad + extraHotel
-        return (costoPorPersona * cantidadPasajeros) + extraGuia
+        return CotizadorCalculator.calcularTotal(
+            cantidadPasajeros = cantidadPasajeros,
+            extraMovilidadPorPersona = extraMovilidad,
+            extraHotelPorPersona = extraHotel,
+            extraGuiaGrupo = extraGuia
+        )
     }
 
     private fun actualizarCalculoCosto() {
@@ -424,8 +429,7 @@ class ReservaTourActivity : AppCompatActivity() {
         tvPasarelaTotal.text = String.format(Locale.US, "S/ %.2f", total)
         btnEjecutarPago.text = String.format(Locale.US, "Pagar S/ %.2f con Cifrado SSL", total)
 
-        val prefs = PreferencesHelper.getInstance(this)
-        val usuario = prefs.getUsuarioActual()
+        val usuario = ServiceLocator.getSessionRepository(this).getUsuarioActual()
         if (usuario != null && usuario.nombre.isNotEmpty()) {
             etTitularTarjeta.setText(usuario.nombre.uppercase(Locale.US))
         }
@@ -520,9 +524,10 @@ class ReservaTourActivity : AppCompatActivity() {
 
     private fun guardarReservaExitosa(metodoPago: String, numeroOperacion: String) {
         val dest = destino ?: return
-        val prefs = PreferencesHelper.getInstance(this)
-        val usuario = prefs.getUsuarioActual()
-        val empresa = prefs.getEmpresaInfo()
+        val sessionRepo = ServiceLocator.getSessionRepository(this)
+        val reservaRepo = ServiceLocator.getReservaRepository(this)
+        val usuario = sessionRepo.getUsuarioActual()
+        val empresa = sessionRepo.getEmpresaInfo()
         val nombreUsuario = usuario?.nombre ?: "Kevin Turista"
         val emailUsuario = usuario?.email ?: "kevin@peruviajero.pe"
 
@@ -553,9 +558,14 @@ class ReservaTourActivity : AppCompatActivity() {
             usuarioEmail = emailUsuario
         )
 
-        prefs.guardarReserva(nuevaReserva)
-
+        reservaRepo.guardarReserva(nuevaReserva)
         NotificationHelper.notificarReservaConfirmada(this, nuevaReserva)
+        ReminderScheduler.programarRecordatorioViaje(
+            this,
+            "Recordatorio de Embarque • $codigoGenerado",
+            "Tu tour a ${dest.nombre} sale el $fechaSeleccionada ($horarioElegido) desde $terminalElegido.",
+            delaySeconds = 20L
+        )
 
         val resumenPasajeros = listaManifiesto.joinToString("\n") { "   • ${it.nombresApellidos} (DNI: ${it.numeroDocumento}, ${it.edad} años)" }
 

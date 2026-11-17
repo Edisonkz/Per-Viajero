@@ -20,12 +20,13 @@ En **PerúViajero**, SDD garantiza:
 
 | Archivo | Enfoque de la Especificación | Contenido Clave |
 | :--- | :--- | :--- |
-| [01_especificacion_requerimientos.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/01_especificacion_requerimientos.md) | **Requisitos del Sistema** | Requerimientos funcionales (RF) y no funcionales (RNF), trazabilidad curricular (Semana 1 a 10). |
-| [02_contrato_api_datos.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/02_contrato_api_datos.md) | **Contratos de Datos y API** | Esquema JSON formal, Endpoints REST, DTOs de Retrofit, esquema de almacenamiento local `SharedPreferences`. |
-| [03_especificacion_arquitectura_ui.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/03_especificacion_arquitectura_ui.md) | **Arquitectura y UI/UX** | Máquina de estados (Carga, Éxito, Error), jerarquía de pantallas, sistema de temas Claro/Oscuro y navegación. |
-| [04_plan_desarrollo_sdd_tareas.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/04_plan_desarrollo_sdd_tareas.md) | **Plan de Ejecución y DoD** | Desglose ordenado de tareas por fases, criterios de aceptación (*Definition of Done*) y checklist de verificación. |
-| [05_plan_agencia_turismo_servicios.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/05_plan_agencia_turismo_servicios.md) | **Modelo Comercial y Roles** | Modelo de negocio de agencia de turismo, cotizador multivariable y panel de métricas para la agencia. |
-| [06_catalogo_pantallas_y_roles.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20de%20aplicaciones/Proyecto%20APP/planeamiento/06_catalogo_pantallas_y_roles.md) | **Catálogo de Pantallas y Roles** | Especificación técnica de las 8 pantallas del sistema, permisos por rol (Invitado/Turista/Admin) y flujo de navegación. |
+| [01_especificacion_requerimientos.md](01_especificacion_requerimientos.md) | **Requisitos del Sistema** | Requerimientos funcionales (RF) y no funcionales (RNF), trazabilidad curricular (Semana 1 a 10). |
+| [02_contrato_api_datos.md](02_contrato_api_datos.md) | **Contratos de Datos y API** | Esquema JSON formal, Endpoints REST, DTOs de Retrofit, esquema de almacenamiento local `SharedPreferences`. |
+| [03_especificacion_arquitectura_ui.md](03_especificacion_arquitectura_ui.md) | **Arquitectura y UI/UX** | Máquina de estados (Carga, Éxito, Error), jerarquía de pantallas, sistema de temas Claro/Oscuro y navegación. |
+| [04_plan_desarrollo_sdd_tareas.md](04_plan_desarrollo_sdd_tareas.md) | **Plan de Ejecución y DoD** | Desglose ordenado de tareas por fases, criterios de aceptación (*Definition of Done*) y checklist de verificación. |
+| [05_plan_agencia_turismo_servicios.md](05_plan_agencia_turismo_servicios.md) | **Modelo Comercial y Roles** | Modelo de negocio de agencia de turismo, cotizador multivariable y panel de métricas para la agencia. |
+| [06_catalogo_pantallas_y_roles.md](06_catalogo_pantallas_y_roles.md) | **Catálogo de Pantallas y Roles** | Especificación técnica de las 8 pantallas del sistema, permisos por rol (Invitado/Turista/Admin) y flujo de navegación. |
+| [roadmap_s10_s16/README.md](roadmap_s10_s16/README.md) | **Roadmap Semanas 10 a 16** | Plan de mejora e implementación (Comunidad con Cámara, Mapa GPS + Ruta, Brújula Offline, Permisos, WorkManager/Push, Logging y APK Release). |
 
 ---
 

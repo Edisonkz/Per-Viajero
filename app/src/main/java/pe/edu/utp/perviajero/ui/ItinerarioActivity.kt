@@ -25,8 +25,9 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.adapter.ActividadItinerarioAdapter
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.ActividadItinerario
+import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.util.ReminderScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -125,8 +126,7 @@ class ItinerarioActivity : AppCompatActivity() {
         adapter = ActividadItinerarioAdapter(
             emptyList(),
             onToggleCompletada = { item ->
-                val prefs = PreferencesHelper.getInstance(this)
-                prefs.toggleActividadCompletada(item.id)
+                ServiceLocator.getItinerarioRepository(this).toggleActividadCompletada(item.id)
                 cargarItinerario()
             },
             onEliminar = { item ->
@@ -134,7 +134,7 @@ class ItinerarioActivity : AppCompatActivity() {
                     .setTitle("Eliminar Actividad")
                     .setMessage("¿Deseas quitar \"${item.lugar}\" de tu itinerario?")
                     .setPositiveButton("Eliminar") { _, _ ->
-                        PreferencesHelper.getInstance(this).eliminarActividad(item.id)
+                        ServiceLocator.getItinerarioRepository(this).eliminarActividad(item.id)
                         Toast.makeText(this, "Actividad eliminada", Toast.LENGTH_SHORT).show()
                         cargarItinerario()
                     }
@@ -194,7 +194,8 @@ class ItinerarioActivity : AppCompatActivity() {
         }
 
         // Filtro por Día
-        chipGroupDias.setOnCheckedChangeListener { _, checkedId ->
+        chipGroupDias.setOnCheckedStateChangeListener { _, checkedIds ->
+            val checkedId = checkedIds.firstOrNull() ?: View.NO_ID
             diaFiltroSeleccionado = when (checkedId) {
                 R.id.chipDia1 -> "Día 1"
                 R.id.chipDia2 -> "Día 2"
@@ -225,8 +226,7 @@ class ItinerarioActivity : AppCompatActivity() {
     }
 
     private fun cargarItinerario() {
-        val prefs = PreferencesHelper.getInstance(this)
-        val todasLasActividades = prefs.getItinerario()
+        val todasLasActividades = ServiceLocator.getItinerarioRepository(this).getItinerario()
 
         // Calcular Progreso Global
         val total = todasLasActividades.size
@@ -358,7 +358,13 @@ class ItinerarioActivity : AppCompatActivity() {
                             descripcion = desc,
                             completada = false
                         )
-                        PreferencesHelper.getInstance(this@ItinerarioActivity).guardarActividad(nuevaActividad)
+                        ServiceLocator.getItinerarioRepository(this@ItinerarioActivity).guardarActividad(nuevaActividad)
+                        ReminderScheduler.programarRecordatorioViaje(
+                            this@ItinerarioActivity,
+                            "Itinerario: $lugar",
+                            "Actividad planificada para $diaSimple ($horario).",
+                            delaySeconds = 30L
+                        )
                         Toast.makeText(this@ItinerarioActivity, "¡Agregado a tu $diaSimple!", Toast.LENGTH_SHORT).show()
                         cargarItinerario()
                         dialog?.dismiss()
@@ -373,7 +379,8 @@ class ItinerarioActivity : AppCompatActivity() {
             }
         }
 
-        chipGroupDiasSugerencias.setOnCheckedChangeListener { _, checkedId ->
+        chipGroupDiasSugerencias.setOnCheckedStateChangeListener { _, checkedIds ->
+            val checkedId = checkedIds.firstOrNull() ?: View.NO_ID
             val diaKey = when (checkedId) {
                 R.id.chipSugMartes -> "Día 2 (Martes - Ica)"
                 R.id.chipSugMiercoles -> "Día 3 (Miér - Arequipa)"
@@ -487,7 +494,13 @@ class ItinerarioActivity : AppCompatActivity() {
                         descripcion = if (notas.isNotEmpty()) notas else "Visita turística planificada.",
                         completada = false
                     )
-                    PreferencesHelper.getInstance(this).guardarActividad(nuevaActividad)
+                    ServiceLocator.getItinerarioRepository(this).guardarActividad(nuevaActividad)
+                    ReminderScheduler.programarRecordatorioViaje(
+                        this,
+                        "Itinerario: $lugar",
+                        "Recuerda tu actividad planificada para el $fechaSeleccionada ($horario).",
+                        delaySeconds = 30L
+                    )
                     Toast.makeText(this, "Actividad guardada para $dia ($fechaSeleccionada)", Toast.LENGTH_SHORT).show()
                     cargarItinerario()
                 } else {
@@ -500,8 +513,7 @@ class ItinerarioActivity : AppCompatActivity() {
     }
 
     private fun compartirItinerarioCompleto() {
-        val prefs = PreferencesHelper.getInstance(this)
-        val actividades = prefs.getItinerario()
+        val actividades = ServiceLocator.getItinerarioRepository(this).getItinerario()
 
         if (actividades.isEmpty()) {
             Toast.makeText(this, "No tienes actividades en tu itinerario aún", Toast.LENGTH_SHORT).show()

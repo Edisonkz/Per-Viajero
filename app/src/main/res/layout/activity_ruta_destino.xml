@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla de Rutas y Ubicación del Destino Turístico -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarRuta"
@@ -28,7 +27,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Tarjeta 1: Ficha de Ubicación y Coordenadas GPS -->
+            <!-- Tarjeta 1: Ficha de Ubicación, Distancia GPS y Mapa/Brújula -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,9 +47,9 @@
                         android:id="@+id/tvRutaNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary"
                         tools:text="Machu Picchu" />
 
                     <TextView
@@ -62,6 +61,19 @@
                         android:textSize="14sp"
                         android:textStyle="bold"
                         tools:text="Cusco, Perú" />
+
+                    <TextView
+                        android:id="@+id/tvRutaDistanciaGps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bg_pill_soft"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Distancia desde tu GPS: 502.4 km" />
 
                     <View
                         android:layout_width="match_parent"
@@ -91,17 +103,47 @@
                             tools:text="-13.1631, -72.5450" />
                     </LinearLayout>
 
-                    <!-- Botón de Intent Implícito hacia Maps -->
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAbrirGoogleMaps"
+                        android:id="@+id/btnRutaAbrirMapaEmbebido"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:backgroundTint="@color/colorPrimary"
-                        android:text="@string/abrir_en_mapa"
+                        android:text="Trazar Ruta en Mapa GPS"
                         android:textAllCaps="false"
                         app:cornerRadius="10dp"
-                        app:icon="@drawable/ic_location" />
+                        app:icon="@drawable/ic_map_route" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRutaAbrirBrujula"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:text="Brújula Offline"
+                            android:textAllCaps="false"
+                            app:cornerRadius="10dp"
+                            app:icon="@drawable/ic_compass" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAbrirGoogleMaps"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:text="Google Maps"
+                            android:textAllCaps="false"
+                            app:cornerRadius="10dp"
+                            app:icon="@drawable/ic_location" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -130,12 +172,11 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <!-- Vía Aérea -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="✈️ Vía Aérea"
+                        android:text="Vía Aérea"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -147,15 +188,13 @@
                         android:layout_marginTop="2dp"
                         android:lineSpacingExtra="2dp"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp"
-                        tools:text="Vuelos diarios desde Lima hacia el aeropuerto de la región..." />
+                        android:textSize="13sp" />
 
-                    <!-- Vía Terrestre -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="🚌 Vía Terrestre"
+                        android:text="Vía Terrestre"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -167,15 +206,13 @@
                         android:layout_marginTop="2dp"
                         android:lineSpacingExtra="2dp"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp"
-                        tools:text="Buses interprovinciales por la red vial nacional..." />
+                        android:textSize="13sp" />
 
-                    <!-- Acceso al atractivo -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="🥾 Acceso Local al Atractivo"
+                        android:text="Acceso Local al Atractivo"
                         android:textColor="@color/colorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -187,13 +224,12 @@
                         android:layout_marginTop="2dp"
                         android:lineSpacingExtra="2dp"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp"
-                        tools:text="Transporte turístico local o caminata recomendada..." />
+                        android:textSize="13sp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tarjeta 3: Consejos para este destino -->
+            <!-- Tarjeta 3: Consejos -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -212,7 +248,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💡 Recomendaciones de Ruta"
+                        android:text="Recomendaciones de Ruta"
                         android:textColor="@color/colorAccent"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -224,8 +260,7 @@
                         android:layout_marginTop="8dp"
                         android:lineSpacingExtra="3dp"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp"
-                        tools:text="Llevar calzado de trekking, repelente y ropa abrigadora..." />
+                        android:textSize="13sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -233,4 +268,3 @@
     </ScrollView>
 
 </LinearLayout>
-

@@ -4,13 +4,20 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import pe.edu.utp.perviajero.data.model.ActividadItinerario
+import pe.edu.utp.perviajero.data.model.ComentarioPublicacion
 import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.EmpresaInfo
+import pe.edu.utp.perviajero.data.model.Pasajero
+import pe.edu.utp.perviajero.data.model.PublicacionViajero
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.data.model.Usuario
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-// REQ-09 / REQ-10: Persistencia local con SharedPreferences (Sesiones, Roles, Favoritos, Reservas y Datos de Agencia)
+// Persistencia local con SharedPreferences (implementación base reemplazable vía interfaces Repository)
 class PreferencesHelper private constructor(context: Context) {
 
     private val prefs: SharedPreferences =
@@ -30,15 +37,18 @@ class PreferencesHelper private constructor(context: Context) {
         private const val KEY_USER_NOMBRE = "key_user_nombre"
         private const val KEY_USER_EMAIL = "key_user_email"
         private const val KEY_USER_ROL = "key_user_rol"
+        private const val KEY_USER_FOTO_URI = "key_user_foto_uri"
 
-        // Reservas de Agencia
+        // Reservas, Agencia, Itinerario y Comunidad Social
         private const val KEY_RESERVAS = "key_reservas"
-
-        // Datos Fiscales y Corporativos de la Agencia
         private const val KEY_EMPRESA_INFO = "key_empresa_info"
-
-        // Planificador de Itinerario de Viaje
         private const val KEY_ITINERARIO = "key_itinerario"
+        private const val KEY_PUBLICACIONES = "key_publicaciones"
+
+        // Ubicación GPS cacheada y Push FCM
+        private const val KEY_LAST_LAT = "key_last_lat"
+        private const val KEY_LAST_LNG = "key_last_lng"
+        private const val KEY_FCM_TOKEN = "key_fcm_token"
 
         // Bienvenida / Onboarding Inicial
         private const val KEY_FIRST_RUN = "key_first_run"
@@ -74,9 +84,7 @@ class PreferencesHelper private constructor(context: Context) {
             .apply()
     }
 
-    fun isLoggedIn(): Boolean {
-        return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
-    }
+    fun isLoggedIn(): Boolean = prefs.getBoolean(KEY_IS_LOGGED_IN, false)
 
     fun getUsuarioActual(): Usuario? {
         if (!isLoggedIn()) return null
@@ -105,6 +113,12 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putString(KEY_USER_ROL, nuevoRol.name).apply()
     }
 
+    fun getUserFotoUri(): String = prefs.getString(KEY_USER_FOTO_URI, "") ?: ""
+
+    fun setUserFotoUri(uri: String) {
+        prefs.edit().putString(KEY_USER_FOTO_URI, uri).apply()
+    }
+
     // --- Gestión de Datos Fiscales de la Empresa (Modo Administrador) ---
     fun getEmpresaInfo(): EmpresaInfo {
         val json = prefs.getString(KEY_EMPRESA_INFO, null)
@@ -122,11 +136,10 @@ class PreferencesHelper private constructor(context: Context) {
     }
 
     fun guardarEmpresaInfo(info: EmpresaInfo) {
-        val json = gson.toJson(info)
-        prefs.edit().putString(KEY_EMPRESA_INFO, json).apply()
+        prefs.edit().putString(KEY_EMPRESA_INFO, gson.toJson(info)).apply()
     }
 
-    // --- Gestión de Reservas (Módulo Agencia de Turismo) ---
+    // --- Gestión de Reservas ---
     fun getReservas(): List<Reserva> {
         val json = prefs.getString(KEY_RESERVAS, null)
         if (json.isNullOrEmpty()) {
@@ -144,7 +157,7 @@ class PreferencesHelper private constructor(context: Context) {
 
     fun guardarReserva(reserva: Reserva) {
         val lista = getReservas().toMutableList()
-        lista.add(0, reserva) // Se agrega al inicio para orden cronológico inverso
+        lista.add(0, reserva)
         guardarListaReservas(lista)
     }
 
@@ -160,15 +173,14 @@ class PreferencesHelper private constructor(context: Context) {
     }
 
     private fun guardarListaReservas(lista: List<Reserva>) {
-        val json = gson.toJson(lista)
-        prefs.edit().putString(KEY_RESERVAS, json).apply()
+        prefs.edit().putString(KEY_RESERVAS, gson.toJson(lista)).apply()
     }
 
     private fun obtenerReservasDemoIniciales(): List<Reserva> {
         return listOf(
             Reserva(
                 codigoReserva = "PV-2026-8412",
-                destinoId = "dest_01",
+                destinoId = "1",
                 destinoNombre = "Santuario Histórico de Machu Picchu",
                 destinoFoto = "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
                 fechaSalida = "15/11/2026",
@@ -176,8 +188,8 @@ class PreferencesHelper private constructor(context: Context) {
                 horarioSalida = "06:30 AM (Primer Turno)",
                 cantidadPersonas = 2,
                 listaPasajeros = listOf(
-                    pe.edu.utp.perviajero.data.model.Pasajero("Kevin Turista Quispe", "DNI", "74891234", 23, "984112233"),
-                    pe.edu.utp.perviajero.data.model.Pasajero("Andrea Morales Soto", "DNI", "76123456", 22, "984445566")
+                    Pasajero("Kevin Turista Quispe", "DNI", "74891234", 23, "984112233"),
+                    Pasajero("Andrea Morales Soto", "DNI", "76123456", 22, "984445566")
                 ),
                 tipoMovilidad = "Minibús Panorámico",
                 categoriaHotel = "Hotel Turista 3★",
@@ -191,18 +203,18 @@ class PreferencesHelper private constructor(context: Context) {
             ),
             Reserva(
                 codigoReserva = "PV-2026-3190",
-                destinoId = "dest_02",
-                destinoNombre = "Líneas de Nazca",
-                destinoFoto = "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?w=800",
+                destinoId = "6",
+                destinoNombre = "Líneas y Geoglifos de Nazca",
+                destinoFoto = "https://images.unsplash.com/photo-1544986581-efac024faf62?w=800",
                 fechaSalida = "20/11/2026",
                 terminalEmbarque = "Terminal Javier Prado (La Victoria)",
                 horarioSalida = "04:30 AM (Salida Madrugada)",
                 cantidadPersonas = 4,
                 listaPasajeros = listOf(
-                    pe.edu.utp.perviajero.data.model.Pasajero("Gerson Administrador Flores", "DNI", "71239845", 24, "956123456"),
-                    pe.edu.utp.perviajero.data.model.Pasajero("Lucía Ramos Valdivia", "DNI", "72456789", 25, "956987654"),
-                    pe.edu.utp.perviajero.data.model.Pasajero("Carlos Benítez Prado", "DNI", "45678912", 30, "956112233"),
-                    pe.edu.utp.perviajero.data.model.Pasajero("Mariana Torres Vega", "DNI", "73891245", 21, "956778899")
+                    Pasajero("Gerson Administrador Flores", "DNI", "71239845", 24, "956123456"),
+                    Pasajero("Lucía Ramos Valdivia", "DNI", "72456789", 25, "956987654"),
+                    Pasajero("Carlos Benítez Prado", "DNI", "45678912", 30, "956112233"),
+                    Pasajero("Mariana Torres Vega", "DNI", "73891245", 21, "956778899")
                 ),
                 tipoMovilidad = "Camioneta 4x4 Privada",
                 categoriaHotel = "Hotel Superior 4★",
@@ -213,6 +225,90 @@ class PreferencesHelper private constructor(context: Context) {
                 estado = "En Ruta",
                 usuarioNombre = "Gerson Turista",
                 usuarioEmail = "gerson@peruviajero.pe"
+            )
+        )
+    }
+
+    // --- Gestión de Comunidad Social de Viajeros ---
+    fun getPublicaciones(): List<PublicacionViajero> {
+        val json = prefs.getString(KEY_PUBLICACIONES, null)
+        if (json.isNullOrEmpty()) {
+            val iniciales = obtenerPublicacionesDemoIniciales()
+            guardarListaPublicaciones(iniciales)
+            return iniciales
+        }
+        return try {
+            val type = object : TypeToken<List<PublicacionViajero>>() {}.type
+            gson.fromJson(json, type) ?: obtenerPublicacionesDemoIniciales()
+        } catch (_: Exception) {
+            obtenerPublicacionesDemoIniciales()
+        }
+    }
+
+    fun guardarListaPublicaciones(lista: List<PublicacionViajero>) {
+        prefs.edit().putString(KEY_PUBLICACIONES, gson.toJson(lista)).apply()
+    }
+
+    private fun obtenerPublicacionesDemoIniciales(): List<PublicacionViajero> {
+        return listOf(
+            PublicacionViajero(
+                id = "pub_01",
+                autorNombre = "Camila Mendoza",
+                autorEmail = "camila.m@viajero.pe",
+                region = "Cusco",
+                destinoId = "1",
+                destinoNombre = "Santuario Histórico de Machu Picchu",
+                fotoUri = "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+                calificacion = 5.0f,
+                comentario = "Subir en el primer bus de las 5:30 a. m. vale totalmente la pena para ver despejar la neblina sobre el Huayna Picchu. Lleven poncho de lluvia y agua.",
+                fechaPublicacion = "12/11/2026",
+                likes = 24,
+                dioLike = false,
+                comentarios = listOf(
+                    ComentarioPublicacion("c1", "Diego Paredes", "¡Gran consejo! ¿Con cuánta anticipación compraste la entrada?", "13/11/2026")
+                )
+            ),
+            PublicacionViajero(
+                id = "pub_02",
+                autorNombre = "Mateo Quispe",
+                autorEmail = "mateo.q@viajero.pe",
+                region = "Arequipa",
+                destinoId = "2",
+                destinoNombre = "Cañón del Colca",
+                fotoUri = "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=800",
+                calificacion = 4.8f,
+                comentario = "En la Cruz del Cóndor vimos 7 cóndores planeando a las 7:40 a. m. Recomendado dormir en Chivay y probar las aguas termales La Calera.",
+                fechaPublicacion = "10/11/2026",
+                likes = 18,
+                dioLike = false
+            ),
+            PublicacionViajero(
+                id = "pub_03",
+                autorNombre = "Valeria Rojas",
+                autorEmail = "valeria.r@viajero.pe",
+                region = "Ica",
+                destinoId = "3",
+                destinoNombre = "Oasis de la Huacachina",
+                fotoUri = "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800",
+                calificacion = 4.7f,
+                comentario = "El tour de tubulares a las 4:30 p. m. te deja justo arriba de la duna grande para el atardecer. Lleven lentes cerrados por la arena.",
+                fechaPublicacion = "08/11/2026",
+                likes = 15,
+                dioLike = false
+            ),
+            PublicacionViajero(
+                id = "pub_04",
+                autorNombre = "Andrés Castillo",
+                autorEmail = "andres.c@viajero.pe",
+                region = "Áncash",
+                destinoId = "8",
+                destinoNombre = "Laguna 69 y Parque Nac. Huascarán",
+                fotoUri = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+                calificacion = 5.0f,
+                comentario = "Caminata exigente sobre los 4,600 m s. n. m., pero el azul turquesa de la laguna frente al Chacraraju es inolvidable. Aclimatarse mínimo 2 días en Huaraz.",
+                fechaPublicacion = "05/11/2026",
+                likes = 31,
+                dioLike = false
             )
         )
     }
@@ -236,32 +332,24 @@ class PreferencesHelper private constructor(context: Context) {
         return newState
     }
 
-    fun getFavoritosIds(): Set<String> {
-        return prefs.getStringSet(KEY_FAVORITOS, emptySet()) ?: emptySet()
-    }
+    fun getFavoritosIds(): Set<String> = prefs.getStringSet(KEY_FAVORITOS, emptySet()) ?: emptySet()
 
     // --- Gestión de tema visual (Claro/Oscuro) ---
-    fun isDarkMode(): Boolean {
-        return prefs.getBoolean(KEY_DARK_MODE, false)
-    }
+    fun isDarkMode(): Boolean = prefs.getBoolean(KEY_DARK_MODE, false)
 
     fun setDarkMode(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_DARK_MODE, enabled).apply()
     }
 
     // --- Último término buscado ---
-    fun getLastSearch(): String {
-        return prefs.getString(KEY_LAST_SEARCH, "") ?: ""
-    }
+    fun getLastSearch(): String = prefs.getString(KEY_LAST_SEARCH, "") ?: ""
 
     fun saveLastSearch(query: String) {
         prefs.edit().putString(KEY_LAST_SEARCH, query).apply()
     }
 
     // --- Bienvenida / Onboarding Inicial ---
-    fun isFirstRun(): Boolean {
-        return prefs.getBoolean(KEY_FIRST_RUN, true)
-    }
+    fun isFirstRun(): Boolean = prefs.getBoolean(KEY_FIRST_RUN, true)
 
     fun setFirstRunCompleted() {
         prefs.edit().putBoolean(KEY_FIRST_RUN, false).apply()
@@ -271,20 +359,41 @@ class PreferencesHelper private constructor(context: Context) {
         prefs.edit().putBoolean(KEY_FIRST_RUN, true).apply()
     }
 
+    // --- Última ubicación GPS conocida (para brújula offline) ---
+    fun saveLastLocation(lat: Double, lng: Double) {
+        prefs.edit()
+            .putString(KEY_LAST_LAT, lat.toString())
+            .putString(KEY_LAST_LNG, lng.toString())
+            .apply()
+    }
+
+    fun getLastLocation(): Pair<Double, Double>? {
+        val lat = prefs.getString(KEY_LAST_LAT, null)?.toDoubleOrNull() ?: return null
+        val lng = prefs.getString(KEY_LAST_LNG, null)?.toDoubleOrNull() ?: return null
+        return lat to lng
+    }
+
+    // --- Token FCM ---
+    fun saveFcmToken(token: String) {
+        prefs.edit().putString(KEY_FCM_TOKEN, token).apply()
+    }
+
+    fun getFcmToken(): String = prefs.getString(KEY_FCM_TOKEN, "") ?: ""
+
     // --- Gestión de Planificador de Itinerario (Turista) ---
-    fun getItinerario(): List<pe.edu.utp.perviajero.data.model.ActividadItinerario> {
+    fun getItinerario(): List<ActividadItinerario> {
         val json = prefs.getString(KEY_ITINERARIO, null)
         if (json.isNullOrEmpty()) {
-            val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-            val cal = java.util.Calendar.getInstance()
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val cal = Calendar.getInstance()
             val fechaHoy = sdf.format(cal.time)
-            cal.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            cal.add(Calendar.DAY_OF_YEAR, 1)
             val fechaManana = sdf.format(cal.time)
-            cal.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            cal.add(Calendar.DAY_OF_YEAR, 1)
             val fechaPasado = sdf.format(cal.time)
 
             val demo = listOf(
-                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                ActividadItinerario(
                     id = "act_01",
                     dia = "Día 1",
                     fecha = fechaHoy,
@@ -293,7 +402,7 @@ class PreferencesHelper private constructor(context: Context) {
                     descripcion = "Llegada, check-in en el hotel y aclimatación con mate de coca.",
                     completada = true
                 ),
-                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                ActividadItinerario(
                     id = "act_02",
                     dia = "Día 2",
                     fecha = fechaManana,
@@ -302,7 +411,7 @@ class PreferencesHelper private constructor(context: Context) {
                     descripcion = "Tour guiado por la ciudadela inca y sesión de fotos en el mirador.",
                     completada = false
                 ),
-                pe.edu.utp.perviajero.data.model.ActividadItinerario(
+                ActividadItinerario(
                     id = "act_03",
                     dia = "Día 3",
                     fecha = fechaPasado,
@@ -316,14 +425,14 @@ class PreferencesHelper private constructor(context: Context) {
             return demo
         }
         return try {
-            val type = object : TypeToken<List<pe.edu.utp.perviajero.data.model.ActividadItinerario>>() {}.type
+            val type = object : TypeToken<List<ActividadItinerario>>() {}.type
             gson.fromJson(json, type) ?: emptyList()
         } catch (_: Exception) {
             emptyList()
         }
     }
 
-    fun guardarActividad(actividad: pe.edu.utp.perviajero.data.model.ActividadItinerario) {
+    fun guardarActividad(actividad: ActividadItinerario) {
         val lista = getItinerario().toMutableList()
         lista.add(actividad)
         guardarListaItinerario(lista)
@@ -350,15 +459,13 @@ class PreferencesHelper private constructor(context: Context) {
         }
     }
 
-    private fun guardarListaItinerario(lista: List<pe.edu.utp.perviajero.data.model.ActividadItinerario>) {
-        val json = gson.toJson(lista)
-        prefs.edit().putString(KEY_ITINERARIO, json).apply()
+    private fun guardarListaItinerario(lista: List<ActividadItinerario>) {
+        prefs.edit().putString(KEY_ITINERARIO, gson.toJson(lista)).apply()
     }
 
     // --- Respaldo y Persistencia Local de Destinos de la API (Soporte Offline) ---
     fun guardarDestinosEnCache(lista: List<Destino>) {
-        val json = gson.toJson(lista)
-        prefs.edit().putString(KEY_CACHED_DESTINOS, json).apply()
+        prefs.edit().putString(KEY_CACHED_DESTINOS, gson.toJson(lista)).apply()
     }
 
     fun obtenerDestinosEnCache(): List<Destino> {
@@ -366,9 +473,8 @@ class PreferencesHelper private constructor(context: Context) {
         return try {
             val type = object : TypeToken<List<Destino>>() {}.type
             gson.fromJson(json, type) ?: emptyList()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
 }
-

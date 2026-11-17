@@ -10,8 +10,10 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Destino
+import pe.edu.utp.perviajero.util.GeoMath
+import pe.edu.utp.perviajero.util.LocationHelper
 
-// Pantalla para consultar cómo llegar, coordenadas geográficas e Intent Implícito a Google Maps
+// Pantalla para consultar cómo llegar, distancia GPS en vivo, mapa con ruta trazada y brújula offline
 class RutaDestinoActivity : AppCompatActivity() {
 
     companion object {
@@ -21,11 +23,14 @@ class RutaDestinoActivity : AppCompatActivity() {
     private lateinit var toolbarRuta: MaterialToolbar
     private lateinit var tvRutaNombre: TextView
     private lateinit var tvRutaDepartamento: TextView
+    private lateinit var tvRutaDistanciaGps: TextView
     private lateinit var tvRutaCoordenadas: TextView
     private lateinit var tvTransporteAereo: TextView
     private lateinit var tvTransporteTerrestre: TextView
     private lateinit var tvAccesoLocal: TextView
     private lateinit var tvRecomendacionRuta: TextView
+    private lateinit var btnAbrirMapaEmbebido: MaterialButton
+    private lateinit var btnAbrirBrujula: MaterialButton
     private lateinit var btnAbrirGoogleMaps: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,18 +40,19 @@ class RutaDestinoActivity : AppCompatActivity() {
         toolbarRuta = findViewById(R.id.toolbarRuta)
         tvRutaNombre = findViewById(R.id.tvRutaNombre)
         tvRutaDepartamento = findViewById(R.id.tvRutaDepartamento)
+        tvRutaDistanciaGps = findViewById(R.id.tvRutaDistanciaGps)
         tvRutaCoordenadas = findViewById(R.id.tvRutaCoordenadas)
         tvTransporteAereo = findViewById(R.id.tvTransporteAereo)
         tvTransporteTerrestre = findViewById(R.id.tvTransporteTerrestre)
         tvAccesoLocal = findViewById(R.id.tvAccesoLocal)
         tvRecomendacionRuta = findViewById(R.id.tvRecomendacionRuta)
+        btnAbrirMapaEmbebido = findViewById(R.id.btnRutaAbrirMapaEmbebido)
+        btnAbrirBrujula = findViewById(R.id.btnRutaAbrirBrujula)
         btnAbrirGoogleMaps = findViewById(R.id.btnAbrirGoogleMaps)
 
         setSupportActionBar(toolbarRuta)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbarRuta.setNavigationOnClickListener {
-            finish()
-        }
+        toolbarRuta.setNavigationOnClickListener { finish() }
 
         val destino = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(EXTRA_DESTINO, Destino::class.java)
@@ -70,7 +76,19 @@ class RutaDestinoActivity : AppCompatActivity() {
         val lng = destino.longitud ?: -75.0152
         tvRutaCoordenadas.text = "$lat, $lng"
 
-        // Datos de transporte según la región del Perú
+        tvRutaDistanciaGps.text = "Calculando distancia desde tu GPS..."
+        LocationHelper(this).obtainCurrentLocation { loc ->
+            runOnUiThread {
+                if (loc != null) {
+                    val distKm = GeoMath.haversineDistanceKm(loc.latitude, loc.longitude, lat, lng)
+                    val prefix = if (loc.isFallbackCached) "Último GPS" else "Desde tu ubicación"
+                    tvRutaDistanciaGps.text = "$prefix: ${GeoMath.formatDistance(distKm)}"
+                } else {
+                    tvRutaDistanciaGps.text = "Abre 'Trazar Ruta en Mapa GPS' para activar ubicación"
+                }
+            }
+        }
+
         when (destino.departamento.lowercase()) {
             "cusco" -> {
                 tvTransporteAereo.text = "Vuelos diarios desde Lima al Aeropuerto Internacional Alejandro Velasco Astete (aprox. 1h 15 min)."
@@ -100,7 +118,7 @@ class RutaDestinoActivity : AppCompatActivity() {
                 tvTransporteAereo.text = "Vuelos hacia el Aeropuerto Inca Manco Cápac de Juliaca (1h 40 min), luego combi a Puno (45 min)."
                 tvTransporteTerrestre.text = "Buses desde Arequipa (6h) o desde Cusco (7h con la ruta del Sol)."
                 tvAccesoLocal.text = "Embarcaciones turísticas desde el puerto lacustre de Puno hacia las islas flotantes de los Uros y Taquile."
-                tvRecomendacionRuta.text = "El lago está a 3,812 m s. n. m.; noche con temperaturas bajo cero en invierno. Llevar ropa térmica."
+                tvRecomendacionRuta.text = "El lago está a 3,812 m s. n. m.; noches frías en invierno. Llevar ropa térmica."
             }
             else -> {
                 tvTransporteAereo.text = "Vuelos comerciales al aeropuerto departamental más cercano o escalas desde el Aeropuerto Jorge Chávez de Lima."
@@ -110,21 +128,28 @@ class RutaDestinoActivity : AppCompatActivity() {
             }
         }
 
-        // Intent Implícito para abrir mapa o navegación GPS
+        btnAbrirMapaEmbebido.setOnClickListener {
+            startActivity(Intent(this, MapaRutaActivity::class.java).apply {
+                putExtra(MapaRutaActivity.EXTRA_DESTINO, destino)
+            })
+        }
+
+        btnAbrirBrujula.setOnClickListener {
+            startActivity(Intent(this, BrujulaActivity::class.java).apply {
+                putExtra(BrujulaActivity.EXTRA_DESTINO, destino)
+            })
+        }
+
         btnAbrirGoogleMaps.setOnClickListener {
             val label = Uri.encode(destino.nombre)
             val gmmIntentUri = Uri.parse("geo:$lat,$lng?q=$lat,$lng($label)")
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
             try {
                 startActivity(mapIntent)
-            } catch (e: Exception) {
-                // Fallback a URL web de Google Maps si no hay app nativa de mapas instalada
+            } catch (_: Exception) {
                 val webUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lng")
-                val webIntent = Intent(Intent.ACTION_VIEW, webUri)
-                startActivity(webIntent)
+                startActivity(Intent(Intent.ACTION_VIEW, webUri))
             }
         }
     }
 }
-

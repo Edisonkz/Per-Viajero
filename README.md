@@ -166,39 +166,45 @@ La diferencia fundamental radica en el **sistema de tipos** y el **modelo de con
 
 ```text
 pe.edu.utp.perviajero/
-├── MainActivity.kt                       (Navegación adaptativa con BottomNavigationView)
+├── PeruViajeroApp.kt                     (Application: logger, canal de notificaciones y manejo global de errores)
+├── MainActivity.kt                       (Navegación adaptativa con BottomNavigationView y accesos rápidos)
+├── di/
+│   └── ServiceLocator.kt                 (Inyección de dependencias sobre interfaces Repository)
 ├── ui/
 │   ├── OnboardingActivity.kt             (Pantalla de bienvenida en primer inicio con ViewPager2)
 │   ├── DestinosFragment.kt               (Catálogo REST, 3 estados de red y buscador reactivo)
-│   ├── DetalleDestinoActivity.kt         (Ficha técnica del atractivo, clima e Intent a cotizador)
+│   ├── DetalleDestinoActivity.kt         (Ficha técnica, ruta GPS, experiencias y cotizador)
+│   ├── ComunidadActivity.kt              (Red social de viajeros filtrable por Región y Destino)
+│   ├── PublicarExperienciaActivity.kt    (Captura con Cámara real / galería para publicar experiencias)
+│   ├── MapaRutaActivity.kt               (Mapa OSMDroid con trazado de ruta desde GPS real)
+│   ├── BrujulaActivity.kt                (Brújula Turística Offline con Acelerómetro y Magnetómetro)
 │   ├── ReservaTourActivity.kt            (Cotizador en vivo, terminales, manifiesto DNI y pasarela de pago)
 │   ├── ItinerarioActivity.kt             (Planificador semanal, sugerencias de expertos y CalendarView)
 │   ├── MisReservasFragment.kt            (Vouchers de viaje, código QR y mapa de terminales)
 │   ├── AdminDashboardFragment.kt         (Dashboard de agencia, KPIs y despacho de reservas)
-│   ├── GuiaViajeFragment.kt              (Recomendaciones turísticas e Intent telefónico a IPERÚ)
-│   ├── FavoritosFragment.kt              (Destinos guardados persistidos en SharedPreferences)
-│   ├── AjustesFragment.kt                (Control de roles Turista/Admin, modo oscuro y perfil)
+│   ├── GuiaViajeFragment.kt              (Brújula offline, comunidad, planificador e IPERÚ)
+│   ├── FavoritosFragment.kt              (Destinos guardados con respaldo offline)
+│   ├── AjustesFragment.kt                (Foto de perfil, permisos runtime, roles y modo oscuro)
+│   ├── DiagnosticoLogsActivity.kt        (Visor de logs, caché, token FCM y simulador WorkManager)
+│   ├── ErrorFatalActivity.kt             (Pantalla de recuperación ante excepciones no controladas)
 │   ├── LoginActivity.kt                  (Inicio de sesión y registro local)
-│   └── RutaDestinoActivity.kt            (Geolocalización e Intent implícito a Google Maps)
+│   ├── RutaDestinoActivity.kt            (Distancia GPS, transporte, mapa embebido y brújula)
+│   ├── common/VoucherDialogHelper.kt     (Helper compartido de tickets/vouchers)
+│   └── view/CompassView.kt               (Vista Canvas personalizada de brújula y rumbo)
 ├── data/
-│   ├── model/
-│   │   ├── Destino.kt                    (Modelo con tarifas base, departamento y coordenadas)
-│   │   ├── Reserva.kt                    (Modelo completo con terminal, manifiesto, pasarela y pago)
-│   │   ├── Pasajero.kt                   (Manifiesto MTC / SUTRAN con DNI, edad y teléfono)
-│   │   ├── ActividadItinerario.kt        (Actividad turística con fecha en calendario y estado)
-│   │   ├── EmpresaInfo.kt                (Datos fiscales RUC y registro MINCETUR de la agencia)
-│   │   ├── OnboardingItem.kt             (Diapositivas de la guía de bienvenida)
-│   │   ├── Usuario.kt                    (Modelo de usuario con roles CLIENTE y ADMIN)
-│   │   └── RolUsuario.kt                 (Enum CLIENTE / ADMIN)
-│   └── local/
-│       └── PreferencesHelper.kt          (Gestor Singleton de SharedPreferences)
+│   ├── common/AppResult.kt               (Manejo tipado de resultados y errores de red)
+│   ├── model/                            (Destino, Reserva, Pasajero, PublicacionViajero, Usuario, etc.)
+│   ├── repository/                       (Interfaces Repository + implementaciones desacopladas)
+│   └── local/PreferencesHelper.kt        (Persistencia local con SharedPreferences)
 ├── network/
-│   ├── ApiClient.kt                      (Retrofit 2 + OkHttp 4 con interceptor de conectividad)
-│   ├── TourismApiService.kt              (Endpoint GET /v1/destinos)
-│   └── MockData.kt                       (12 destinos oficiales del Perú con fotos HD)
-└── adapter/
-    ├── DestinoAdapter.kt                 (Adaptador con filtro reactivo en tiempo real)
-    ├── ReservaAdapter.kt                 (Adaptador de vouchers de embarque)
-    ├── ActividadItinerarioAdapter.kt     (Adaptador de actividades con casillas de verificación)
-    └── OnboardingAdapter.kt              (Adaptador de diapositivas de bienvenida)
+│   ├── ApiClient.kt                      (Retrofit 2 + OkHttp 4 con caché de 10 MB y logging)
+│   ├── TourismApiService.kt              (Endpoint GET destinos.json)
+│   ├── OsrmApiService.kt & RoutingService.kt (Rutas viales OSRM con fallback geodésico offline)
+│   └── PeruViajeroMessagingService.kt    (Receptor de notificaciones Push FCM)
+├── worker/
+│   └── RecordatorioViajeWorker.kt        (Recordatorios locales programados con WorkManager)
+├── util/                                 (AppLogger, GeoMath, PermissionHelper, LocationHelper, CompassSensorManager, etc.)
+└── adapter/                              (ListAdapter + DiffUtil para Destinos, Reservas, Itinerario y Comunidad)
 ```
+
+> **Roadmap Semanas 10 a 16:** Consulta [planeamiento/roadmap_s10_s16/README.md](planeamiento/roadmap_s10_s16/README.md) y el checklist de publicación en [docs/checklist_publicacion_play_store.md](docs/checklist_publicacion_play_store.md).

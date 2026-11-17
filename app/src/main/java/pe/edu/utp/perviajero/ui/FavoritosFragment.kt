@@ -10,14 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.adapter.DestinoAdapter
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
+import pe.edu.utp.perviajero.data.common.AppResult
 import pe.edu.utp.perviajero.data.model.Destino
-import pe.edu.utp.perviajero.network.ApiClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import pe.edu.utp.perviajero.di.ServiceLocator
 
-// REQ-09: Pantalla de Favoritos persistidos en SharedPreferences
+// Pantalla de Favoritos persistidos mediante FavoritoRepository con respaldo offline automático
 class FavoritosFragment : Fragment() {
 
     private lateinit var rvFavoritos: RecyclerView
@@ -41,13 +38,8 @@ class FavoritosFragment : Fragment() {
 
         rvFavoritos.layoutManager = LinearLayoutManager(requireContext())
         destinoAdapter = DestinoAdapter(
-            listaOriginal = emptyList(),
-            onItemClick = { destino ->
-                abrirDetalle(destino)
-            },
-            onFavoritoClick = { _, _ ->
-                cargarFavoritos()
-            }
+            onItemClick = { destino -> abrirDetalle(destino) },
+            onFavoritoClick = { _, _ -> cargarFavoritos() }
         )
         rvFavoritos.adapter = destinoAdapter
 
@@ -60,23 +52,33 @@ class FavoritosFragment : Fragment() {
     }
 
     private fun cargarDatos() {
-        ApiClient.service.getDestinos().enqueue(object : Callback<List<Destino>> {
-            override fun onResponse(call: Call<List<Destino>>, response: Response<List<Destino>>) {
-                if (response.isSuccessful && response.body() != null) {
-                    listaCompleta = response.body()!!
+        val destinoRepo = ServiceLocator.getDestinoRepository(requireContext())
+        // Carga inmediata desde caché para respuesta instantánea
+        val cachedInitial = destinoRepo.obtenerDestinosEnCache()
+        if (cachedInitial.isNotEmpty()) {
+            listaCompleta = cachedInitial
+            cargarFavoritos()
+        }
+
+        destinoRepo.obtenerDestinos { result ->
+            if (!isAdded) return@obtenerDestinos
+            when (result) {
+                is AppResult.Success -> {
+                    listaCompleta = result.data
+                    cargarFavoritos()
+                }
+                is AppResult.Error -> {
+                    if (listaCompleta.isEmpty() && !result.cachedData.isNullOrEmpty()) {
+                        listaCompleta = result.cachedData
+                    }
                     cargarFavoritos()
                 }
             }
-            override fun onFailure(call: Call<List<Destino>>, t: Throwable) {
-                cargarFavoritos()
-            }
-        })
+        }
     }
 
-    // Filtrar la lista según los IDs guardados en SharedPreferences
     private fun cargarFavoritos() {
-        val prefs = PreferencesHelper.getInstance(requireContext())
-        val idsFavoritos = prefs.getFavoritosIds()
+        val idsFavoritos = ServiceLocator.getFavoritoRepository(requireContext()).getFavoritosIds()
         val listaFiltrada = listaCompleta.filter { idsFavoritos.contains(it.id) }
 
         if (listaFiltrada.isEmpty()) {
@@ -96,4 +98,3 @@ class FavoritosFragment : Fragment() {
         startActivity(intent)
     }
 }
-

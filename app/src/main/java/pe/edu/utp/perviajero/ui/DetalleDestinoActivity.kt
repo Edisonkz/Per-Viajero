@@ -9,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pe.edu.utp.perviajero.R
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Destino
+import pe.edu.utp.perviajero.data.model.RolUsuario
+import pe.edu.utp.perviajero.data.model.Usuario
+import pe.edu.utp.perviajero.di.ServiceLocator
 
-// REQ-03: Pantalla de Detalle recibiendo datos mediante Intent y Bundle
+// Pantalla de Detalle con acceso directo a Cotizador, Mapa con Ruta GPS, Comunidad de Viajeros e Itinerario
 class DetalleDestinoActivity : AppCompatActivity() {
 
     companion object {
@@ -27,16 +30,20 @@ class DetalleDestinoActivity : AppCompatActivity() {
     private lateinit var tvDetalleNombre: TextView
     private lateinit var tvDetalleDepartamento: TextView
     private lateinit var tvDetalleDescripcion: TextView
+    private lateinit var btnCotizarReserva: MaterialButton
+    private lateinit var btnVerMapaRuta: MaterialButton
+    private lateinit var btnVerExperiencias: MaterialButton
+    private lateinit var btnPublicarVisita: MaterialButton
+    private lateinit var btnPlanearItinerario: MaterialButton
     private lateinit var btnComoLlegar: MaterialButton
     private lateinit var btnDetalleFavorito: MaterialButton
-    private lateinit var btnCotizarReserva: MaterialButton
-    private lateinit var btnPlanearItinerario: MaterialButton
+
+    private var destinoActual: Destino? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_destino)
 
-        // Inicializar vistas
         toolbarDetalle = findViewById(R.id.toolbarDetalle)
         ivDetalleFoto = findViewById(R.id.ivDetalleFoto)
         tvDetalleCategoria = findViewById(R.id.tvDetalleCategoria)
@@ -44,19 +51,18 @@ class DetalleDestinoActivity : AppCompatActivity() {
         tvDetalleNombre = findViewById(R.id.tvDetalleNombre)
         tvDetalleDepartamento = findViewById(R.id.tvDetalleDepartamento)
         tvDetalleDescripcion = findViewById(R.id.tvDetalleDescripcion)
+        btnCotizarReserva = findViewById(R.id.btnCotizarReserva)
+        btnVerMapaRuta = findViewById(R.id.btnVerMapaRuta)
+        btnVerExperiencias = findViewById(R.id.btnVerExperienciasDestino)
+        btnPublicarVisita = findViewById(R.id.btnPublicarVisitaDestino)
+        btnPlanearItinerario = findViewById(R.id.btnPlanearItinerario)
         btnComoLlegar = findViewById(R.id.btnComoLlegar)
         btnDetalleFavorito = findViewById(R.id.btnDetalleFavorito)
-        btnCotizarReserva = findViewById(R.id.btnCotizarReserva)
-        btnPlanearItinerario = findViewById(R.id.btnPlanearItinerario)
 
-        // Configuración de Toolbar con botón de retroceso
         setSupportActionBar(toolbarDetalle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbarDetalle.setNavigationOnClickListener {
-            finish()
-        }
+        toolbarDetalle.setNavigationOnClickListener { finish() }
 
-        // Obtener el objeto serializado del Intent
         val destino = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(EXTRA_DESTINO, Destino::class.java)
         } else {
@@ -65,10 +71,16 @@ class DetalleDestinoActivity : AppCompatActivity() {
         }
 
         if (destino != null) {
+            destinoActual = destino
             poblarDatos(destino)
         } else {
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        destinoActual?.let { actualizarContadorExperiencias(it) }
     }
 
     private fun poblarDatos(destino: Destino) {
@@ -79,32 +91,26 @@ class DetalleDestinoActivity : AppCompatActivity() {
         tvDetalleDescripcion.text = destino.descripcion
         supportActionBar?.title = destino.nombre
 
-        // Cargar imagen con Glide
         Glide.with(this)
             .load(destino.imageUrl)
             .placeholder(android.R.drawable.ic_menu_gallery)
             .error(android.R.drawable.ic_dialog_alert)
             .into(ivDetalleFoto)
 
-        // Cotizador interactivo: Verifica si hay sesión activa o invita a identificarse
-        val prefs = PreferencesHelper.getInstance(this)
+        val sessionRepo = ServiceLocator.getSessionRepository(this)
+        val favRepo = ServiceLocator.getFavoritoRepository(this)
+
         btnCotizarReserva.setOnClickListener {
-            if (!prefs.isLoggedIn()) {
-                com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            if (!sessionRepo.isLoggedIn()) {
+                MaterialAlertDialogBuilder(this)
                     .setTitle("Acceso a Reservas")
                     .setMessage("Para cotizar y confirmar reservas en PerúViajero se requiere una cuenta. ¿Deseas iniciar sesión o usar acceso rápido?")
                     .setPositiveButton("Iniciar Sesión") { _, _ ->
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
+                        startActivity(Intent(this, LoginActivity::class.java))
                     }
                     .setNeutralButton("Continuar como Turista") { _, _ ->
-                        prefs.login(
-                            pe.edu.utp.perviajero.data.model.Usuario(
-                                "usr_kevin_01",
-                                "Kevin Turista",
-                                "kevin@peruviajero.pe",
-                                pe.edu.utp.perviajero.data.model.RolUsuario.CLIENTE
-                            )
+                        sessionRepo.login(
+                            Usuario("usr_kevin_01", "Kevin Turista", "kevin@peruviajero.pe", RolUsuario.CLIENTE)
                         )
                         abrirCotizador(destino)
                     }
@@ -115,7 +121,29 @@ class DetalleDestinoActivity : AppCompatActivity() {
             }
         }
 
-        // Planificador: Agregar este atractivo al itinerario personal
+        btnVerMapaRuta.setOnClickListener {
+            val intent = Intent(this, MapaRutaActivity::class.java).apply {
+                putExtra(MapaRutaActivity.EXTRA_DESTINO, destino)
+            }
+            startActivity(intent)
+        }
+
+        btnVerExperiencias.setOnClickListener {
+            val intent = Intent(this, ComunidadActivity::class.java).apply {
+                putExtra(ComunidadActivity.EXTRA_FILTER_REGION, destino.departamento)
+                putExtra(ComunidadActivity.EXTRA_FILTER_DESTINO_ID, destino.id)
+            }
+            startActivity(intent)
+        }
+
+        btnPublicarVisita.setOnClickListener {
+            val intent = Intent(this, PublicarExperienciaActivity::class.java).apply {
+                putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_REGION, destino.departamento)
+                putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_DESTINO_ID, destino.id)
+            }
+            startActivity(intent)
+        }
+
         btnPlanearItinerario.setOnClickListener {
             val intent = Intent(this, ItinerarioActivity::class.java).apply {
                 putExtra(ItinerarioActivity.EXTRA_LUGAR_INICIAL, destino.nombre)
@@ -123,7 +151,6 @@ class DetalleDestinoActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Botón ¿Cómo llegar y Ubicación? (Intent explícito hacia RutaDestinoActivity)
         btnComoLlegar.setOnClickListener {
             val intent = Intent(this, RutaDestinoActivity::class.java).apply {
                 putExtra(RutaDestinoActivity.EXTRA_DESTINO, destino)
@@ -131,13 +158,18 @@ class DetalleDestinoActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Configurar estado del botón favorito
-        actualizarTextoBotonFavorito(prefs.isFavorito(destino.id))
-
+        actualizarTextoBotonFavorito(favRepo.isFavorito(destino.id))
         btnDetalleFavorito.setOnClickListener {
-            val nuevoEstado = prefs.toggleFavorito(destino.id)
+            val nuevoEstado = favRepo.toggleFavorito(destino.id)
             actualizarTextoBotonFavorito(nuevoEstado)
         }
+
+        actualizarContadorExperiencias(destino)
+    }
+
+    private fun actualizarContadorExperiencias(destino: Destino) {
+        val count = ServiceLocator.getComunidadRepository(this).contarPorDestino(destino.id)
+        btnVerExperiencias.text = if (count > 0) "Experiencias ($count)" else "Experiencias"
     }
 
     private fun abrirCotizador(destino: Destino) {

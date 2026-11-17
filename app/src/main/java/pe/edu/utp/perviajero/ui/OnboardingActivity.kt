@@ -13,8 +13,8 @@ import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.MainActivity
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.adapter.OnboardingAdapter
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.OnboardingItem
+import pe.edu.utp.perviajero.di.ServiceLocator
 
 // Experiencia de Bienvenida / Onboarding en el primer inicio de la aplicación
 class OnboardingActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var listaSlides: List<OnboardingItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val prefs = PreferencesHelper.getInstance(this)
+        val prefs = ServiceLocator.getSessionRepository(this)
         if (prefs.isDarkMode()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
@@ -135,7 +135,7 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun completarOnboarding() {
-        val prefs = PreferencesHelper.getInstance(this)
+        val prefs = ServiceLocator.getSessionRepository(this)
         prefs.setFirstRunCompleted()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

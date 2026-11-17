@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.R
 
-// Pantalla informativa de Guía del Viajero con Intent Implícito para asistencia turística
+// Pantalla informativa de Guía del Viajero, Brújula Offline, Comunidad e Intent a IPERÚ
 class GuiaViajeFragment : Fragment() {
 
     override fun onCreateView(
@@ -24,16 +24,23 @@ class GuiaViajeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btnLlamarIperu: MaterialButton = view.findViewById(R.id.btnLlamarIperu)
+        val btnBrujula: MaterialButton = view.findViewById(R.id.btnAbrirBrujulaOffline)
+        val btnComunidad: MaterialButton = view.findViewById(R.id.btnGuiaAbrirComunidad)
         val btnAbrirItinerario: MaterialButton = view.findViewById(R.id.btnAbrirItinerario)
+        val btnLlamarIperu: MaterialButton = view.findViewById(R.id.btnLlamarIperu)
 
-        // Abrir el Planificador interactivo de actividades turísticas
-        btnAbrirItinerario.setOnClickListener {
-            val intent = Intent(requireContext(), ItinerarioActivity::class.java)
-            startActivity(intent)
+        btnBrujula.setOnClickListener {
+            startActivity(Intent(requireContext(), BrujulaActivity::class.java))
         }
 
-        // Intent Implícito para abrir el marcador telefónico con el número oficial de IPERÚ
+        btnComunidad.setOnClickListener {
+            startActivity(Intent(requireContext(), ComunidadActivity::class.java))
+        }
+
+        btnAbrirItinerario.setOnClickListener {
+            startActivity(Intent(requireContext(), ItinerarioActivity::class.java))
+        }
+
         btnLlamarIperu.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:015748000")
@@ -42,4 +49,3 @@ class GuiaViajeFragment : Fragment() {
         }
     }
 }
-

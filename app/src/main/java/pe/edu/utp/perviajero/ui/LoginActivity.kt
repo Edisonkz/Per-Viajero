@@ -11,9 +11,9 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import pe.edu.utp.perviajero.R
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.data.model.Usuario
+import pe.edu.utp.perviajero.di.ServiceLocator
 
 // Autenticación de usuarios, modo invitado, roles (Turista / Administrador) y registro de cuentas
 class LoginActivity : AppCompatActivity() {
@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val prefs = PreferencesHelper.getInstance(this)
+        val prefs = ServiceLocator.getSessionRepository(this)
 
         toolbarLogin = findViewById(R.id.toolbarLogin)
         btnInvitado = findViewById(R.id.btnInvitado)
@@ -116,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoRegistro() {
-        val prefs = PreferencesHelper.getInstance(this)
+        val prefs = ServiceLocator.getSessionRepository(this)
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(50, 20, 50, 10)

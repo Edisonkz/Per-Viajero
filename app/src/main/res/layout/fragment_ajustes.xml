@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- REQ-10: Configuración del sistema, perfil de usuario, alternancia de roles y tema Claro/Oscuro -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,7 +12,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Tarjeta de Perfil y Alternancia de Roles -->
+        <!-- Tarjeta de Perfil, Foto con Cámara y Alternancia de Roles -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,14 +34,30 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
-                        android:src="@drawable/ic_person"
-                        app:tint="@color/colorPrimary"
-                        android:background="#15006837"
-                        android:padding="8dp"
-                        android:contentDescription="Avatar" />
+                    <FrameLayout
+                        android:layout_width="64dp"
+                        android:layout_height="64dp">
+
+                        <ImageView
+                            android:id="@+id/ivPerfilAvatar"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_pill_soft"
+                            android:padding="10dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_person"
+                            android:contentDescription="Avatar de usuario" />
+
+                        <ImageView
+                            android:id="@+id/btnCambiarFotoPerfil"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_badge_categoria"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_camera"
+                            android:contentDescription="Cambiar foto con cámara" />
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -90,7 +105,6 @@
                     android:layout_marginVertical="14dp"
                     android:background="#15000000" />
 
-                <!-- Botón de Planificador de Itinerario -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMiItinerario"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -103,7 +117,6 @@
                     app:icon="@drawable/ic_calendar"
                     app:iconGravity="textStart" />
 
-                <!-- Botón de Bienvenida y Tutorial Inicial -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnVerOnboarding"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -116,7 +129,6 @@
                     app:icon="@drawable/ic_logo_peruviajero_agency"
                     app:iconGravity="textStart" />
 
-                <!-- Botón de Alternancia Rápida de Rol -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCambiarRol"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -128,7 +140,6 @@
                     app:icon="@drawable/ic_dashboard"
                     app:iconGravity="textStart" />
 
-                <!-- Botón de Login / Logout -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLoginLogout"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -139,6 +150,74 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorError" />
 
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Tarjeta de Permisos en Tiempo de Ejecución -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#20000000"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Permisos del Dispositivo y Notificaciones"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvEstadoPermisos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="13sp"
+                    tools:text="• Cámara: Concedido\n• Ubicación GPS: Pendiente\n• Notificaciones: Concedido" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSolicitarPermisos"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:text="Gestionar Permisos"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        app:cornerRadius="10dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAbrirDiagnostico"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:text="Logs y Push FCM"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/ic_bug_report" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -260,20 +339,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/info_avance"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginVertical="12dp"
-                    android:background="#20000000" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Versión 2.0 (APF2 - Semana 10)"
+                    android:text="Versión 1.1.0 • Hardware, Sensores y Despliegue (S10–S16)"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
             </LinearLayout>

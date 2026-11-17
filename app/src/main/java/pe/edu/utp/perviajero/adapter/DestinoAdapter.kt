@@ -7,22 +7,31 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import pe.edu.utp.perviajero.R
-import pe.edu.utp.perviajero.data.local.PreferencesHelper
 import pe.edu.utp.perviajero.data.model.Destino
+import pe.edu.utp.perviajero.di.ServiceLocator
 
-// REQ-06: Adaptador para RecyclerView con patrón ViewHolder
+// Adaptador optimizado con ListAdapter + DiffUtil para el catálogo de destinos turísticos
 class DestinoAdapter(
-    private var listaOriginal: List<Destino>,
+    listaOriginal: List<Destino> = emptyList(),
     private val onItemClick: (Destino) -> Unit,
     private val onFavoritoClick: ((Destino, Boolean) -> Unit)? = null
-) : RecyclerView.Adapter<DestinoAdapter.DestinoViewHolder>() {
+) : ListAdapter<Destino, DestinoAdapter.DestinoViewHolder>(DestinoDiffCallback) {
 
-    // Lista mutable visible en pantalla (para filtrado reactivo)
-    private var listaFiltrada: MutableList<Destino> = listaOriginal.toMutableList()
+    private var listaBase: List<Destino> = listaOriginal
+    private var currentQuery: String = ""
+
+    init {
+        if (listaOriginal.isNotEmpty()) {
+            submitList(listaOriginal)
+        }
+    }
 
     inner class DestinoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivDestino: ImageView = itemView.findViewById(R.id.ivDestino)
@@ -41,9 +50,9 @@ class DestinoAdapter(
     }
 
     override fun onBindViewHolder(holder: DestinoViewHolder, position: Int) {
-        val destino = listaFiltrada[position]
+        val destino = getItem(position)
         val context = holder.itemView.context
-        val prefs = PreferencesHelper.getInstance(context)
+        val favRepo = ServiceLocator.getFavoritoRepository(context)
 
         holder.tvNombre.text = destino.nombre
         holder.tvDepartamento.text = "${destino.departamento}, Perú"
@@ -51,26 +60,23 @@ class DestinoAdapter(
         holder.tvCalificacion.text = destino.calificacion.toString()
         holder.tvDescripcionCorta.text = destino.descripcion
 
-        // Carga asíncrona de imágenes mediante Glide
         Glide.with(context)
             .load(destino.imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(android.R.drawable.ic_menu_gallery)
             .error(android.R.drawable.ic_dialog_alert)
             .into(holder.ivDestino)
 
-        // Estado del botón favorito desde SharedPreferences
-        val esFavorito = prefs.isFavorito(destino.id)
+        val esFavorito = favRepo.isFavorito(destino.id)
         actualizarIconoFavorito(holder.btnFavorito, esFavorito)
 
-        // Listener de clic en favorito
         holder.btnFavorito.setOnClickListener {
-            val nuevoEstado = prefs.toggleFavorito(destino.id)
+            val nuevoEstado = favRepo.toggleFavorito(destino.id)
             actualizarIconoFavorito(holder.btnFavorito, nuevoEstado)
             onFavoritoClick?.invoke(destino, nuevoEstado)
         }
 
-        // Navegación hacia detalle
         holder.cardDestino.setOnClickListener {
             onItemClick(destino)
         }
@@ -86,29 +92,33 @@ class DestinoAdapter(
         }
     }
 
-    override fun getItemCount(): Int = listaFiltrada.size
-
-    // Actualizar datos base
     fun updateData(nuevaLista: List<Destino>) {
-        listaOriginal = nuevaLista
-        listaFiltrada = nuevaLista.toMutableList()
-        notifyDataSetChanged()
+        listaBase = nuevaLista
+        val filtered = filterList(listaBase, currentQuery)
+        submitList(filtered)
     }
 
-    // REQ-08: Filtrado dinámico en tiempo real sin recrear la Activity
     fun filter(query: String): Int {
-        val texto = query.trim().lowercase()
-        listaFiltrada = if (texto.isEmpty()) {
-            listaOriginal.toMutableList()
-        } else {
-            listaOriginal.filter { destino ->
+        currentQuery = query
+        val filtered = filterList(listaBase, query)
+        submitList(filtered)
+        return filtered.size
+    }
+
+    companion object {
+        fun filterList(source: List<Destino>, query: String): List<Destino> {
+            val texto = query.trim().lowercase()
+            if (texto.isEmpty()) return source.toList()
+            return source.filter { destino ->
                 destino.nombre.lowercase().contains(texto) ||
-                destino.departamento.lowercase().contains(texto) ||
-                destino.categoria.lowercase().contains(texto)
-            }.toMutableList()
+                    destino.departamento.lowercase().contains(texto) ||
+                    destino.categoria.lowercase().contains(texto)
+            }
         }
-        notifyDataSetChanged()
-        return listaFiltrada.size
+    }
+
+    private object DestinoDiffCallback : DiffUtil.ItemCallback<Destino>() {
+        override fun areItemsTheSame(oldItem: Destino, newItem: Destino): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Destino, newItem: Destino): Boolean = oldItem == newItem
     }
 }
-

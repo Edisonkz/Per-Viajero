@@ -7,19 +7,26 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.ActividadItinerario
 
 class ActividadItinerarioAdapter(
-    private var actividades: List<ActividadItinerario>,
+    actividadesIniciales: List<ActividadItinerario> = emptyList(),
     private val onToggleCompletada: (ActividadItinerario) -> Unit,
     private val onEliminar: (ActividadItinerario) -> Unit
-) : RecyclerView.Adapter<ActividadItinerarioAdapter.ActividadViewHolder>() {
+) : ListAdapter<ActividadItinerario, ActividadItinerarioAdapter.ActividadViewHolder>(ActividadDiffCallback) {
+
+    init {
+        if (actividadesIniciales.isNotEmpty()) {
+            submitList(actividadesIniciales.map { it.copy() })
+        }
+    }
 
     fun actualizarLista(nuevaLista: List<ActividadItinerario>) {
-        actividades = nuevaLista
-        notifyDataSetChanged()
+        submitList(nuevaLista.map { it.copy() })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActividadViewHolder {
@@ -29,11 +36,8 @@ class ActividadItinerarioAdapter(
     }
 
     override fun onBindViewHolder(holder: ActividadViewHolder, position: Int) {
-        val item = actividades[position]
-        holder.bind(item, onToggleCompletada, onEliminar)
+        holder.bind(getItem(position), onToggleCompletada, onEliminar)
     }
-
-    override fun getItemCount(): Int = actividades.size
 
     class ActividadViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvDia: TextView = itemView.findViewById(R.id.tvItemActividadDia)
@@ -53,7 +57,7 @@ class ActividadItinerarioAdapter(
             tvHorario.text = item.horario
             if (item.fecha.isNotEmpty()) {
                 tvFecha.visibility = View.VISIBLE
-                tvFecha.text = "📅 ${item.fecha}"
+                tvFecha.text = item.fecha
             } else {
                 tvFecha.visibility = View.GONE
             }
@@ -63,7 +67,6 @@ class ActividadItinerarioAdapter(
             cbCompletada.setOnCheckedChangeListener(null)
             cbCompletada.isChecked = item.completada
 
-            // Efecto tachado si está completada
             if (item.completada) {
                 tvLugar.paintFlags = tvLugar.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 tvLugar.alpha = 0.6f
@@ -81,5 +84,12 @@ class ActividadItinerarioAdapter(
             }
         }
     }
-}
 
+    private object ActividadDiffCallback : DiffUtil.ItemCallback<ActividadItinerario>() {
+        override fun areItemsTheSame(oldItem: ActividadItinerario, newItem: ActividadItinerario): Boolean =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: ActividadItinerario, newItem: ActividadItinerario): Boolean =
+            oldItem == newItem
+    }
+}

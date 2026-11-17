@@ -7,23 +7,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
 import pe.edu.utp.perviajero.R
 import pe.edu.utp.perviajero.data.model.Reserva
 import java.util.Locale
 
 class ReservaAdapter(
-    private var listaReservas: List<Reserva>,
+    listaInicial: List<Reserva> = emptyList(),
     private val esModoAdmin: Boolean = false,
     private val onCambiarEstadoClicked: ((Reserva) -> Unit)? = null,
     private val onItemClicked: ((Reserva) -> Unit)? = null
-) : RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder>() {
+) : ListAdapter<Reserva, ReservaAdapter.ReservaViewHolder>(ReservaDiffCallback) {
+
+    init {
+        if (listaInicial.isNotEmpty()) {
+            submitList(listaInicial.toList())
+        }
+    }
 
     fun actualizarLista(nuevaLista: List<Reserva>) {
-        listaReservas = nuevaLista
-        notifyDataSetChanged()
+        // Copia defensiva con snapshot de estado para que DiffUtil detecte cambios en 'var estado'
+        submitList(nuevaLista.map { it.copy() })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReservaViewHolder {
@@ -32,11 +41,8 @@ class ReservaAdapter(
     }
 
     override fun onBindViewHolder(holder: ReservaViewHolder, position: Int) {
-        val reserva = listaReservas[position]
-        holder.bind(reserva, esModoAdmin, onCambiarEstadoClicked, onItemClicked)
+        holder.bind(getItem(position), esModoAdmin, onCambiarEstadoClicked, onItemClicked)
     }
-
-    override fun getItemCount(): Int = listaReservas.size
 
     class ReservaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivFoto: ImageView = itemView.findViewById(R.id.ivItemReservaFoto)
@@ -62,7 +68,6 @@ class ReservaAdapter(
             tvTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
             tvEstado.text = reserva.estado
 
-            // Color del badge según el estado de la reserva
             val badgeBg = GradientDrawable().apply {
                 cornerRadius = 16f
                 val colorHex = when (reserva.estado) {
@@ -76,6 +81,7 @@ class ReservaAdapter(
 
             Glide.with(itemView.context)
                 .load(reserva.destinoFoto)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .error(android.R.drawable.ic_dialog_alert)
                 .into(ivFoto)
@@ -96,5 +102,13 @@ class ReservaAdapter(
                 onItemClicked?.invoke(reserva)
             }
         }
+    }
+
+    private object ReservaDiffCallback : DiffUtil.ItemCallback<Reserva>() {
+        override fun areItemsTheSame(oldItem: Reserva, newItem: Reserva): Boolean =
+            oldItem.codigoReserva == newItem.codigoReserva
+
+        override fun areContentsTheSame(oldItem: Reserva, newItem: Reserva): Boolean =
+            oldItem == newItem
     }
 }
