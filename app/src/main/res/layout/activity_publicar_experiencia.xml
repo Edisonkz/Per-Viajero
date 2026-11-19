@@ -98,13 +98,33 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2. Fotografía de tu Viaje"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="2. Fotografías de tu Viaje (hasta 5)"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvContadorFotosPub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_soft"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="0 / 5 fotos"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <ImageView
                         android:id="@+id/ivPreviewFotoPub"
@@ -115,6 +135,14 @@
                         android:scaleType="centerCrop"
                         android:src="@android:drawable/ic_menu_camera"
                         android:contentDescription="Vista previa de foto" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvFotosSeleccionadasPub"
+                        android:layout_width="match_parent"
+                        android:layout_height="84dp"
+                        android:layout_marginTop="10dp"
+                        android:clipToPadding="false"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -129,7 +157,7 @@
                             android:layout_marginEnd="6dp"
                             android:layout_weight="1"
                             android:backgroundTint="@color/colorPrimary"
-                            android:text="Usar Cámara"
+                            android:text="+ Cámara"
                             android:textAllCaps="false"
                             app:cornerRadius="10dp"
                             app:icon="@drawable/ic_camera" />
@@ -141,7 +169,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:text="Galería"
+                            android:text="+ Galería (Varias)"
                             android:textAllCaps="false"
                             app:cornerRadius="10dp" />
                     </LinearLayout>

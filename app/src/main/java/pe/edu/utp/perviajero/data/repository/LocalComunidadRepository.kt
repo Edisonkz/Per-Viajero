@@ -13,6 +13,9 @@ class LocalComunidadRepository(
 
     override fun obtenerPublicaciones(): List<PublicacionViajero> = comunidadService.getPublicaciones()
 
+    override fun obtenerPublicacionPorId(publicacionId: String): PublicacionViajero? =
+        comunidadService.getPublicaciones().firstOrNull { it.id == publicacionId }
+
     override fun filtrarPublicaciones(region: String?, destinoId: String?): List<PublicacionViajero> {
         return filterPosts(comunidadService.getPublicaciones(), region, destinoId)
     }
@@ -46,6 +49,20 @@ class LocalComunidadRepository(
 
         val actual = lista[index]
         val actualizado = actual.copy(comentarios = actual.comentarios + comentario)
+        lista[index] = actualizado
+        comunidadService.guardarLista(lista)
+        return actualizado
+    }
+
+    override fun eliminarComentario(publicacionId: String, comentarioId: String): PublicacionViajero? {
+        val lista = comunidadService.getPublicaciones().toMutableList()
+        val index = lista.indexOfFirst { it.id == publicacionId }
+        if (index == -1) return null
+
+        val actual = lista[index]
+        val actualizado = actual.copy(
+            comentarios = actual.comentarios.filterNot { it.id == comentarioId }
+        )
         lista[index] = actualizado
         comunidadService.guardarLista(lista)
         return actualizado

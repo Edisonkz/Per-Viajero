@@ -261,59 +261,10 @@ class ComunidadFragment : Fragment() {
     }
 
     private fun mostrarDetallePublicacion(pub: PublicacionViajero) {
-        val ctx = requireContext()
-        val dialogView = LayoutInflater.from(ctx).inflate(R.layout.dialog_detalle_publicacion, null)
-        val ivFoto: ImageView = dialogView.findViewById(R.id.ivDetallePubFoto)
-        val tvTitulo: TextView = dialogView.findViewById(R.id.tvDetallePubTitulo)
-        val tvTexto: TextView = dialogView.findViewById(R.id.tvDetallePubTexto)
-        val tvComentarios: TextView = dialogView.findViewById(R.id.tvDetallePubComentarios)
-        val etNuevoComentario: EditText = dialogView.findViewById(R.id.etNuevoComentarioPub)
-        val btnEnviar: MaterialButton = dialogView.findViewById(R.id.btnEnviarComentarioPub)
-
-        val imageModel: Any = if (pub.fotoUri.startsWith("http")) pub.fotoUri else Uri.parse(pub.fotoUri)
-        Glide.with(ctx)
-            .load(imageModel)
-            .centerCrop()
-            .placeholder(android.R.drawable.ic_menu_gallery)
-            .into(ivFoto)
-
-        tvTitulo.text = "${pub.autorNombre} en ${pub.destinoNombre} (${pub.region})"
-        tvTexto.text = pub.comentario
-
-        fun renderComments(lista: List<ComentarioPublicacion>) {
-            tvComentarios.text = if (lista.isEmpty()) {
-                "Aún no hay comentarios. ¡Sé el primero en responder!"
-            } else {
-                lista.joinToString("\n\n") { c -> "• ${c.autorNombre} (${c.fecha}):\n  ${c.texto}" }
-            }
+        val intent = Intent(requireContext(), DetallePublicacionActivity::class.java).apply {
+            putExtra(DetallePublicacionActivity.EXTRA_PUBLICACION_ID, pub.id)
         }
-        renderComments(pub.comentarios)
-
-        btnEnviar.setOnClickListener {
-            val texto = etNuevoComentario.text.toString().trim()
-            if (texto.isEmpty()) {
-                Toast.makeText(ctx, "Escribe un comentario primero", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val autor = ServiceLocator.getSessionRepository(ctx).getUsuarioActual()?.nombre ?: "Viajero Invitado"
-            val fecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-            val nuevo = ComentarioPublicacion(
-                id = "com_${System.currentTimeMillis()}",
-                autorNombre = autor,
-                texto = texto,
-                fecha = fecha
-            )
-            val actualizada = ServiceLocator.getComunidadRepository(ctx).agregarComentario(pub.id, nuevo)
-            etNuevoComentario.setText("")
-            renderComments(actualizada?.comentarios ?: (pub.comentarios + nuevo))
-            recargarPublicaciones()
-            Toast.makeText(ctx, "Comentario publicado", Toast.LENGTH_SHORT).show()
-        }
-
-        MaterialAlertDialogBuilder(ctx)
-            .setView(dialogView)
-            .setPositiveButton("Cerrar", null)
-            .show()
+        startActivity(intent)
     }
 
     private fun abrirDestinoDesdePublicacion(pub: PublicacionViajero) {

@@ -1,6 +1,7 @@
 package pe.edu.utp.perviajero.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -164,8 +165,13 @@ class DetalleDestinoActivity : AppCompatActivity() {
 
         actualizarUbicacionConDistancia(destino)
 
+        val heroImageModel: Any = when {
+            destino.imageUrl.isBlank() -> R.drawable.bg_destino_placeholder
+            destino.imageUrl.startsWith("http") -> destino.imageUrl
+            else -> Uri.parse(destino.imageUrl)
+        }
         Glide.with(this)
-            .load(destino.imageUrl)
+            .load(heroImageModel)
             .placeholder(R.drawable.bg_destino_placeholder)
             .error(R.drawable.bg_destino_placeholder)
             .into(ivDetalleFoto)
@@ -245,11 +251,17 @@ class DetalleDestinoActivity : AppCompatActivity() {
     }
 
     private fun renderUbicacion(destino: Destino, origin: Pair<Double, Double>?) {
+        val ubicacionBase = listOfNotNull(
+            destino.distrito?.takeIf { it.isNotBlank() },
+            destino.provincia?.takeIf { it.isNotBlank() && !it.equals(destino.distrito, ignoreCase = true) },
+            destino.departamento.takeIf { it.isNotBlank() }
+        ).distinct().joinToString(", ")
+
         tvDetalleDepartamento.text = if (origin != null && destino.latitud != null && destino.longitud != null) {
             val km = GeoMath.haversineDistanceKm(origin.first, origin.second, destino.latitud, destino.longitud)
-            "${destino.departamento}, Perú • A ${GeoMath.formatDistance(km)} de ti"
+            "$ubicacionBase, Perú • A ${GeoMath.formatDistance(km)} de ti"
         } else {
-            "${destino.departamento}, Perú"
+            "$ubicacionBase, Perú"
         }
     }
 

@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 object ApiClient {
 
     private const val BASE_URL = "https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/"
+    private const val UBIGEO_BASE_URL = "https://raw.githubusercontent.com/joseluisq/ubigeos-peru/master/json/"
     private const val OSRM_BASE_URL = "https://router.project-osrm.org/"
     private const val CACHE_SIZE_BYTES = 10L * 1024L * 1024L // 10 MB
 
@@ -93,8 +94,25 @@ object ApiClient {
             .build()
     }
 
+    private val ubigeoRetrofit by lazy {
+        val ubigeoClient = okHttpClient.newBuilder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build()
+
+        Retrofit.Builder()
+            .baseUrl(UBIGEO_BASE_URL)
+            .client(ubigeoClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     val service: TourismApiService by lazy {
         retrofit.create(TourismApiService::class.java)
+    }
+
+    val ubigeoService: UbigeoApiService by lazy {
+        ubigeoRetrofit.create(UbigeoApiService::class.java)
     }
 
     val osrmService: OsrmApiService by lazy {

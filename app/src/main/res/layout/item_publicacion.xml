@@ -106,14 +106,36 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Foto de la experiencia -->
-        <ImageView
-            android:id="@+id/ivPubFoto"
+        <!-- Foto de la experiencia + badge multi-foto -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="205dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Foto de experiencia turística"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:layout_height="205dp">
+
+            <ImageView
+                android:id="@+id/ivPubFoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Foto de experiencia turística"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <TextView
+                android:id="@+id/tvPubFotosCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="10dp"
+                android:background="@drawable/bg_onboarding_glass_pill"
+                android:backgroundTint="#A6000000"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="📷 3 fotos"
+                tools:visibility="visible" />
+        </FrameLayout>
 
         <!-- Reseña -->
         <TextView

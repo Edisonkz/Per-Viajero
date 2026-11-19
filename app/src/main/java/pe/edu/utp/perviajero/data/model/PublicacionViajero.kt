@@ -3,18 +3,21 @@ package pe.edu.utp.perviajero.data.model
 import java.io.Serializable
 
 /**
- * Comentario realizado por un turista dentro de una publicación de la Comunidad.
+ * Comentario realizado por un turista o administrador dentro de una publicación de la Comunidad.
  */
 data class ComentarioPublicacion(
     val id: String,
     val autorNombre: String,
     val texto: String,
-    val fecha: String
-) : Serializable
+    val fecha: String,
+    val autorRol: String? = "TURISTA"
+) : Serializable {
+    fun rolNormalizado(): String = autorRol?.takeIf { it.isNotBlank() } ?: "TURISTA"
+}
 
 /**
  * Publicación de experiencia turística compartida por un viajero según región y destino.
- * Modelo desacoplado de la capa de almacenamiento para facilitar futura migración a Room o Firestore.
+ * Soporta múltiples fotografías (fotosUris) manteniendo compatibilidad con fotoUri.
  */
 data class PublicacionViajero(
     val id: String,
@@ -30,5 +33,18 @@ data class PublicacionViajero(
     val fechaPublicacion: String,
     val likes: Int = 0,
     val dioLike: Boolean = false,
-    val comentarios: List<ComentarioPublicacion> = emptyList()
-) : Serializable
+    val comentarios: List<ComentarioPublicacion> = emptyList(),
+    val fotosUris: List<String>? = null
+) : Serializable {
+
+    fun obtenerFotos(): List<String> {
+        val extras = fotosUris.orEmpty().filter { it.isNotBlank() }
+        return if (extras.isNotEmpty()) {
+            extras
+        } else {
+            listOfNotNull(fotoUri.takeIf { it.isNotBlank() })
+        }
+    }
+
+    fun fotoPrincipal(): String = obtenerFotos().firstOrNull().orEmpty()
+}

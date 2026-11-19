@@ -4,15 +4,20 @@ import android.Manifest
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
@@ -24,30 +29,38 @@ import pe.edu.utp.perviajero.di.ServiceLocator
 import pe.edu.utp.perviajero.util.AppLogger
 import pe.edu.utp.perviajero.util.CameraFileHelper
 import pe.edu.utp.perviajero.util.PermissionHelper
+import pe.edu.utp.perviajero.util.WindowInsetsHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
- * Pantalla para publicar experiencias en la Comunidad de Viajeros usando la Cámara real del dispositivo.
+ * Pantalla para publicar experiencias multi-foto en la Comunidad de Viajeros
+ * usando la Cámara real del dispositivo o selección múltiple desde Galería (hasta 5 fotos).
  */
 class PublicarExperienciaActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_PRESELECTED_REGION = "extra_preselected_region"
         const val EXTRA_PRESELECTED_DESTINO_ID = "extra_preselected_destino_id"
+        private const val MAX_FOTOS = 5
         private const val TAG = "PublicarExperiencia"
     }
 
     private lateinit var toolbar: MaterialToolbar
     private lateinit var spRegion: Spinner
     private lateinit var spDestino: Spinner
+    private lateinit var tvContadorFotos: TextView
     private lateinit var ivPreviewFoto: ImageView
+    private lateinit var rvFotosSeleccionadas: RecyclerView
     private lateinit var btnTomarFoto: MaterialButton
     private lateinit var btnElegirGaleria: MaterialButton
     private lateinit var rbCalificacion: RatingBar
     private lateinit var etComentario: TextInputEditText
     private lateinit var btnPublicar: MaterialButton
+
+    private lateinit var thumbsAdapter: SelectedPhotosAdapter
+    private val selectedPhotoUris = mutableListOf<String>()
 
     private var todosDestinos: List<Destino> = emptyList()
     private var destinosFiltrados: List<Destino> = emptyList()
@@ -55,7 +68,6 @@ class PublicarExperienciaActivity : AppCompatActivity() {
 
     private var pendingCameraContentUri: Uri? = null
     private var pendingCameraFileUriString: String = ""
-    private var selectedPhotoUriString: String = ""
     private var preselectedDestinoId: String? = null
 
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -78,23 +90,31 @@ class PublicarExperienciaActivity : AppCompatActivity() {
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success && pendingCameraFileUriString.isNotEmpty()) {
-            selectedPhotoUriString = pendingCameraFileUriString
-            mostrarVistaPrevia(selectedPhotoUriString)
-            AppLogger.i(TAG, "Foto capturada con cámara: $selectedPhotoUriString")
+            agregarFoto(pendingCameraFileUriString)
+            AppLogger.i(TAG, "Foto capturada con cámara: $pendingCameraFileUriString")
         }
     }
 
-    private val galleryLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
+    private val multiGalleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        if (uris.isNullOrEmpty()) return@registerForActivityResult
+        var agregadas = 0
+        for (uri in uris) {
+            if (selectedPhotoUris.size >= MAX_FOTOS) {
+                Toast.makeText(this, "Máximo $MAX_FOTOS fotografías por publicación", Toast.LENGTH_SHORT).show()
+                break
+            }
             val savedPath = CameraFileHelper.copyUriToInternalStorage(this, uri, "pub_gal")
             if (savedPath != null) {
-                selectedPhotoUriString = savedPath
-                mostrarVistaPrevia(selectedPhotoUriString)
-            } else {
-                Toast.makeText(this, "No se pudo importar la imagen", Toast.LENGTH_SHORT).show()
+                selectedPhotoUris.add(savedPath)
+                agregadas++
             }
+        }
+        if (agregadas > 0) {
+            actualizarGaleriaSeleccionada(selectedPhotoUris.last())
+        } else {
+            Toast.makeText(this, "No se pudieron importar las imágenes seleccionadas", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -108,14 +128,17 @@ class PublicarExperienciaActivity : AppCompatActivity() {
         inicializarVistas()
         cargarCatalogoRegionesYDestinos(preselectedRegion)
         configurarEventos()
+        actualizarGaleriaSeleccionada(null)
     }
 
     private fun inicializarVistas() {
         toolbar = findViewById(R.id.toolbarPublicar)
-        pe.edu.utp.perviajero.util.WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
+        WindowInsetsHelper.applyToolbarActivityInsets(this, toolbar)
         spRegion = findViewById(R.id.spPubRegion)
         spDestino = findViewById(R.id.spPubDestino)
+        tvContadorFotos = findViewById(R.id.tvContadorFotosPub)
         ivPreviewFoto = findViewById(R.id.ivPreviewFotoPub)
+        rvFotosSeleccionadas = findViewById(R.id.rvFotosSeleccionadasPub)
         btnTomarFoto = findViewById(R.id.btnTomarFotoCamara)
         btnElegirGaleria = findViewById(R.id.btnElegirGaleria)
         rbCalificacion = findViewById(R.id.rbPubCalificacion)
@@ -125,6 +148,19 @@ class PublicarExperienciaActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
+
+        thumbsAdapter = SelectedPhotosAdapter(
+            onSelect = { uri -> mostrarVistaPrevia(uri) },
+            onRemove = { index ->
+                if (index in selectedPhotoUris.indices) {
+                    selectedPhotoUris.removeAt(index)
+                    actualizarGaleriaSeleccionada(selectedPhotoUris.lastOrNull())
+                }
+            }
+        )
+        rvFotosSeleccionadas.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvFotosSeleccionadas.adapter = thumbsAdapter
     }
 
     private fun cargarCatalogoRegionesYDestinos(preselectedRegion: String?) {
@@ -175,15 +211,44 @@ class PublicarExperienciaActivity : AppCompatActivity() {
 
     private fun configurarEventos() {
         btnTomarFoto.setOnClickListener {
+            if (selectedPhotoUris.size >= MAX_FOTOS) {
+                Toast.makeText(this, "Ya alcanzaste el máximo de $MAX_FOTOS fotos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             solicitarPermisoYTomarFoto()
         }
 
         btnElegirGaleria.setOnClickListener {
-            galleryLauncher.launch("image/*")
+            if (selectedPhotoUris.size >= MAX_FOTOS) {
+                Toast.makeText(this, "Ya alcanzaste el máximo de $MAX_FOTOS fotos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            multiGalleryLauncher.launch("image/*")
         }
 
         btnPublicar.setOnClickListener {
             publicarExperiencia()
+        }
+    }
+
+    private fun agregarFoto(uriString: String) {
+        if (selectedPhotoUris.size >= MAX_FOTOS) {
+            Toast.makeText(this, "Máximo $MAX_FOTOS fotografías por publicación", Toast.LENGTH_SHORT).show()
+            return
+        }
+        selectedPhotoUris.add(uriString)
+        actualizarGaleriaSeleccionada(uriString)
+    }
+
+    private fun actualizarGaleriaSeleccionada(previewUri: String?) {
+        tvContadorFotos.text = "${selectedPhotoUris.size} / $MAX_FOTOS fotos"
+        thumbsAdapter.actualizar(selectedPhotoUris)
+        rvFotosSeleccionadas.visibility = if (selectedPhotoUris.isNotEmpty()) View.VISIBLE else View.GONE
+
+        if (!previewUri.isNullOrBlank()) {
+            mostrarVistaPrevia(previewUri)
+        } else if (selectedPhotoUris.isEmpty()) {
+            ivPreviewFoto.setImageResource(android.R.drawable.ic_menu_camera)
         }
     }
 
@@ -194,7 +259,7 @@ class PublicarExperienciaActivity : AppCompatActivity() {
                 PermissionHelper.showRationaleDialog(
                     this,
                     "Acceso a la Cámara",
-                    "PerúViajero utiliza la cámara únicamente para capturar la fotografía de tu visita turística."
+                    "PerúViajero utiliza la cámara únicamente para capturar las fotografías de tu visita turística."
                 ) {
                     cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                 }
@@ -229,9 +294,10 @@ class PublicarExperienciaActivity : AppCompatActivity() {
         val destinoId = destinoObj?.id ?: "custom_${region.lowercase()}"
         val destinoNombre = destinoObj?.nombre ?: spDestino.selectedItem?.toString().orEmpty()
 
-        // Si el turista no tomó foto ni eligió de galería, usar foto oficial del destino como respaldo visual
-        val fotoFinal = selectedPhotoUriString.ifEmpty {
-            destinoObj?.imageUrl ?: "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800"
+        val fotosFinales = if (selectedPhotoUris.isNotEmpty()) {
+            selectedPhotoUris.toList()
+        } else {
+            listOf(destinoObj?.imageUrl ?: "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800")
         }
 
         val sessionRepo = ServiceLocator.getSessionRepository(this)
@@ -246,16 +312,56 @@ class PublicarExperienciaActivity : AppCompatActivity() {
             region = region,
             destinoId = destinoId,
             destinoNombre = destinoNombre,
-            fotoUri = fotoFinal,
+            fotoUri = fotosFinales.first(),
+            fotosUris = fotosFinales,
             calificacion = rbCalificacion.rating,
             comentario = comentario,
             fechaPublicacion = fecha
         )
 
         ServiceLocator.getComunidadRepository(this).agregarPublicacion(nueva)
-        AppLogger.i(TAG, "Nueva experiencia publicada en $region ($destinoNombre)")
-        Toast.makeText(this, "¡Experiencia publicada en Comunidad!", Toast.LENGTH_SHORT).show()
+        AppLogger.i(TAG, "Nueva experiencia publicada en $region ($destinoNombre) con ${fotosFinales.size} foto(s)")
+        Toast.makeText(this, "¡Experiencia publicada con ${fotosFinales.size} foto(s)!", Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK)
         finish()
+    }
+
+    private class SelectedPhotosAdapter(
+        private val onSelect: (String) -> Unit,
+        private val onRemove: (Int) -> Unit
+    ) : RecyclerView.Adapter<SelectedPhotosAdapter.VH>() {
+
+        private var items: List<String> = emptyList()
+
+        fun actualizar(nuevaLista: List<String>) {
+            items = nuevaLista.toList()
+            notifyDataSetChanged()
+        }
+
+        class VH(v: View) : RecyclerView.ViewHolder(v) {
+            val ivThumb: ImageView = v.findViewById(R.id.ivThumbFoto)
+            val btnQuitar: View = v.findViewById(R.id.btnQuitarThumbFoto)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_pub_foto_thumb, parent, false)
+            return VH(view)
+        }
+
+        override fun onBindViewHolder(holder: VH, position: Int) {
+            val uri = items[position]
+            Glide.with(holder.itemView.context)
+                .load(Uri.parse(uri))
+                .centerCrop()
+                .into(holder.ivThumb)
+            holder.ivThumb.setOnClickListener { onSelect(uri) }
+            holder.btnQuitar.setOnClickListener {
+                val pos = holder.bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) onRemove(pos)
+            }
+        }
+
+        override fun getItemCount(): Int = items.size
     }
 }

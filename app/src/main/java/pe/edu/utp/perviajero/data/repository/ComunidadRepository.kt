@@ -9,10 +9,12 @@ import pe.edu.utp.perviajero.data.model.PublicacionViajero
  */
 interface ComunidadRepository {
     fun obtenerPublicaciones(): List<PublicacionViajero>
+    fun obtenerPublicacionPorId(publicacionId: String): PublicacionViajero?
     fun filtrarPublicaciones(region: String? = null, destinoId: String? = null): List<PublicacionViajero>
     fun agregarPublicacion(publicacion: PublicacionViajero)
     fun toggleLike(publicacionId: String): PublicacionViajero?
     fun agregarComentario(publicacionId: String, comentario: ComentarioPublicacion): PublicacionViajero?
+    fun eliminarComentario(publicacionId: String, comentarioId: String): PublicacionViajero?
     fun eliminarPublicacion(publicacionId: String)
     fun contarPorDestino(destinoId: String): Int
 }

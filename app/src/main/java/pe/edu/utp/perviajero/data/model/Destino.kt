@@ -33,6 +33,9 @@ data class Destino(
     val longitud: Double? = null,
 
     @SerializedName("provincia")
-    val provincia: String? = null
+    val provincia: String? = null,
+
+    @SerializedName("distrito")
+    val distrito: String? = null
 ) : Serializable
 

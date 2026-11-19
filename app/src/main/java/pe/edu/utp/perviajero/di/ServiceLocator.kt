@@ -23,6 +23,7 @@ import pe.edu.utp.perviajero.services.ComunidadService
 import pe.edu.utp.perviajero.services.DestinoService
 import pe.edu.utp.perviajero.services.ItinerarioService
 import pe.edu.utp.perviajero.services.ReservaService
+import pe.edu.utp.perviajero.services.UbigeoPeruService
 import pe.edu.utp.perviajero.services.UsuarioService
 
 /**
@@ -38,6 +39,7 @@ object ServiceLocator {
     @Volatile private var comunidadRepo: ComunidadRepository? = null
     @Volatile private var sessionRepo: SessionRepository? = null
     @Volatile private var avisoRepo: AvisoRepository? = null
+    @Volatile private var ubigeoService: UbigeoPeruService? = null
 
     private val routingServiceInstance: RoutingService by lazy { RoutingService() }
 
@@ -98,6 +100,16 @@ object ServiceLocator {
             avisoRepo ?: LocalAvisoRepository(
                 avisoService = AvisoService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { avisoRepo = it }
+        }
+    }
+
+    fun getUbigeoService(context: Context): UbigeoPeruService {
+        return ubigeoService ?: synchronized(this) {
+            ubigeoService ?: UbigeoPeruService(
+                context = context.applicationContext,
+                prefs = PreferencesHelper.getInstance(context),
+                apiService = ApiClient.ubigeoService
+            ).also { ubigeoService = it }
         }
     }
 

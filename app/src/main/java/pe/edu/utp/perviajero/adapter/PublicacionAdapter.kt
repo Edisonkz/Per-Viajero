@@ -46,6 +46,7 @@ class PublicacionAdapter(
         private val tvDestino: TextView = itemView.findViewById(R.id.tvPubDestino)
         private val tvRating: TextView = itemView.findViewById(R.id.tvPubRating)
         private val ivFoto: ImageView = itemView.findViewById(R.id.ivPubFoto)
+        private val tvFotosCount: TextView = itemView.findViewById(R.id.tvPubFotosCount)
         private val tvComentario: TextView = itemView.findViewById(R.id.tvPubComentario)
         private val btnLike: MaterialButton = itemView.findViewById(R.id.btnPubLike)
         private val btnComentar: MaterialButton = itemView.findViewById(R.id.btnPubComentar)
@@ -80,7 +81,13 @@ class PublicacionAdapter(
                 ivAvatar.setImageResource(R.drawable.ic_person)
             }
 
-            val imageModel: Any = if (pub.fotoUri.startsWith("http")) pub.fotoUri else Uri.parse(pub.fotoUri)
+            val fotos = pub.obtenerFotos()
+            val principal = pub.fotoPrincipal()
+            val imageModel: Any = when {
+                principal.isBlank() -> R.drawable.bg_destino_placeholder
+                principal.startsWith("http") -> principal
+                else -> Uri.parse(principal)
+            }
             Glide.with(ctx)
                 .load(imageModel)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -88,6 +95,13 @@ class PublicacionAdapter(
                 .placeholder(R.drawable.bg_destino_placeholder)
                 .error(R.drawable.bg_destino_placeholder)
                 .into(ivFoto)
+
+            if (fotos.size > 1) {
+                tvFotosCount.visibility = View.VISIBLE
+                tvFotosCount.text = "📷 ${fotos.size} fotos"
+            } else {
+                tvFotosCount.visibility = View.GONE
+            }
 
             btnLike.text = "${pub.likes} Útil"
             if (pub.dioLike) {
@@ -100,6 +114,7 @@ class PublicacionAdapter(
 
             btnComentar.text = "${pub.comentarios.size} Comentarios"
 
+            itemView.setOnClickListener { onCommentClick(pub) }
             btnLike.setOnClickListener { onLikeClick(pub) }
             btnComentar.setOnClickListener { onCommentClick(pub) }
             ivFoto.setOnClickListener { onCommentClick(pub) }

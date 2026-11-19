@@ -88,6 +88,12 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ui.DetallePublicacionActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ui.DiagnosticoLogsActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />

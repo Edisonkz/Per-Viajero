@@ -1,5 +1,6 @@
 package pe.edu.utp.perviajero.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,11 +72,11 @@ class DestinoAdapter(
         holder.tvCalificacion.text = destino.calificacion.toString()
 
         val provincia = RegionPeruHelper.resolveProvincia(destino)
-        val ubicacion = if (provincia.equals(destino.departamento, ignoreCase = true)) {
-            "${destino.departamento}, Perú"
-        } else {
-            "$provincia, ${destino.departamento}"
-        }
+        val ubicacion = listOfNotNull(
+            destino.distrito?.takeIf { it.isNotBlank() },
+            provincia.takeIf { it.isNotBlank() },
+            destino.departamento.takeIf { it.isNotBlank() }
+        ).distinct().joinToString(", ")
         val origin = userOrigin
         holder.tvDepartamento.text = if (origin != null && destino.latitud != null && destino.longitud != null) {
             val km = GeoMath.haversineDistanceKm(origin.first, origin.second, destino.latitud, destino.longitud)
@@ -84,8 +85,13 @@ class DestinoAdapter(
             ubicacion
         }
 
+        val imageModel: Any = when {
+            destino.imageUrl.isBlank() -> R.drawable.bg_destino_placeholder
+            destino.imageUrl.startsWith("http") -> destino.imageUrl
+            else -> Uri.parse(destino.imageUrl)
+        }
         Glide.with(context)
-            .load(destino.imageUrl)
+            .load(imageModel)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.bg_destino_placeholder)
@@ -173,6 +179,7 @@ class DestinoAdapter(
                     destino.nombre.lowercase().contains(texto) ||
                     destino.departamento.lowercase().contains(texto) ||
                     resolvedProv.lowercase().contains(texto) ||
+                    (destino.distrito?.lowercase()?.contains(texto) == true) ||
                     destino.categoria.lowercase().contains(texto)
                 matchesCategory && matchesDepartment && matchesProvince && matchesQuery
             }
