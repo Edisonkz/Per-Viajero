@@ -7,7 +7,7 @@ import pe.edu.utp.perviajero.util.AppLogger
 import pe.edu.utp.perviajero.util.NotificationHelper
 
 /**
- * Servicio receptor de Firebase Cloud Messaging (FCM) para notificaciones push en primer y segundo plano.
+ * Servicio receptor de Firebase Cloud Messaging (FCM) unificado con NotificationHelper y AvisoRepository.
  */
 class PeruViajeroMessagingService : FirebaseMessagingService() {
 
@@ -23,14 +23,27 @@ class PeruViajeroMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        val titulo = remoteMessage.notification?.title
-            ?: remoteMessage.data["title"]
+        val data = remoteMessage.data
+        val titulo = data["titulo"]
+            ?: data["title"]
+            ?: remoteMessage.notification?.title
             ?: "Alerta Turística PerúViajero"
-        val cuerpo = remoteMessage.notification?.body
-            ?: remoteMessage.data["body"]
+        val cuerpo = data["cuerpo"]
+            ?: data["body"]
+            ?: remoteMessage.notification?.body
             ?: "Revisa las novedades de tu destino."
+        val tipo = data["tipo"] ?: "alerta"
+        val region = data["region"] ?: "Perú"
+        val url = data["url"] ?: ""
 
-        AppLogger.i(TAG, "Push recibido: $titulo")
-        NotificationHelper.mostrarNotificacionPush(applicationContext, titulo, cuerpo)
+        AppLogger.i(TAG, "Push FCM recibido [$tipo]: $titulo")
+        NotificationHelper.mostrarNotificacionPush(
+            context = applicationContext,
+            titulo = titulo,
+            cuerpo = cuerpo,
+            tipo = tipo,
+            region = region,
+            url = url
+        )
     }
 }

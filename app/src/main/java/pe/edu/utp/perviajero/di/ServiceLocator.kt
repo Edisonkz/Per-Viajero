@@ -2,10 +2,12 @@ package pe.edu.utp.perviajero.di
 
 import android.content.Context
 import pe.edu.utp.perviajero.data.local.PreferencesHelper
+import pe.edu.utp.perviajero.data.repository.AvisoRepository
 import pe.edu.utp.perviajero.data.repository.ComunidadRepository
 import pe.edu.utp.perviajero.data.repository.DestinoRepository
 import pe.edu.utp.perviajero.data.repository.FavoritoRepository
 import pe.edu.utp.perviajero.data.repository.ItinerarioRepository
+import pe.edu.utp.perviajero.data.repository.LocalAvisoRepository
 import pe.edu.utp.perviajero.data.repository.LocalComunidadRepository
 import pe.edu.utp.perviajero.data.repository.LocalFavoritoRepository
 import pe.edu.utp.perviajero.data.repository.LocalItinerarioRepository
@@ -16,6 +18,7 @@ import pe.edu.utp.perviajero.data.repository.ReservaRepository
 import pe.edu.utp.perviajero.data.repository.SessionRepository
 import pe.edu.utp.perviajero.network.ApiClient
 import pe.edu.utp.perviajero.network.RoutingService
+import pe.edu.utp.perviajero.services.AvisoService
 import pe.edu.utp.perviajero.services.ComunidadService
 import pe.edu.utp.perviajero.services.ItinerarioService
 import pe.edu.utp.perviajero.services.ReservaService
@@ -33,6 +36,7 @@ object ServiceLocator {
     @Volatile private var itinerarioRepo: ItinerarioRepository? = null
     @Volatile private var comunidadRepo: ComunidadRepository? = null
     @Volatile private var sessionRepo: SessionRepository? = null
+    @Volatile private var avisoRepo: AvisoRepository? = null
 
     private val routingServiceInstance: RoutingService by lazy { RoutingService() }
 
@@ -83,6 +87,14 @@ object ServiceLocator {
                 prefs = PreferencesHelper.getInstance(context),
                 usuarioService = UsuarioService(context.applicationContext, PreferencesHelper.getInstance(context))
             ).also { sessionRepo = it }
+        }
+    }
+
+    fun getAvisoRepository(context: Context): AvisoRepository {
+        return avisoRepo ?: synchronized(this) {
+            avisoRepo ?: LocalAvisoRepository(
+                avisoService = AvisoService(context.applicationContext, PreferencesHelper.getInstance(context))
+            ).also { avisoRepo = it }
         }
     }
 

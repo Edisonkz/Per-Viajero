@@ -449,7 +449,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 true
             }
             R.id.action_notificaciones -> {
-                startActivity(Intent(this, DiagnosticoLogsActivity::class.java))
+                startActivity(Intent(this, pe.edu.utp.perviajero.ui.BandejaAvisosActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)

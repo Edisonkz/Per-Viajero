@@ -115,6 +115,20 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.BandejaAvisosActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ui.DetalleAvisoActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.BandejaAvisosActivity" />
+
+        <receiver
+            android:name=".util.AvisoPushReceiver"
+            android:exported="false" />
+
         <service
             android:name=".network.PeruViajeroMessagingService"
             android:exported="false">

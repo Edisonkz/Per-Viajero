@@ -107,18 +107,18 @@ flowchart TD
 ---
 
 ### Fase K — Semana 14: Bandeja de Avisos, Payload JSON, Canales, Agrupación y `TaskStackBuilder`
-- [ ] **Capa de datos y parseo seguro (`assets/services/avisos.json` + `AvisoService` + `AvisoRepository` + `AvisoPayloadParser`):**
+- [x] **Capa de datos y parseo seguro (`assets/services/avisos.json` + `AvisoService` + `AvisoRepository` + `AvisoPayloadParser`):**
   - Persistencia de los últimos 50 avisos con estado `leído / no leído` y filtro por tipo.
-  - Parseo seguro con `org.json.JSONObject` (`getString` para obligatorios, `optString` para opcionales, captura de `JSONException` y validación estricta de `url` `http/https`).
-- [ ] **4 canales por prioridad y agrupación en `NotificationHelper.kt`:**
+  - Parseo seguro de JSON (`titulo`/`cuerpo` obligatorios, `tipo`/`region`/`url` opcionales, captura de errores de formato y validación estricta de `url` `http/https`).
+- [x] **4 canales por prioridad y agrupación en `NotificationHelper.kt`:**
   - Canales diferenciados: `alerta` (`HIGH`), `reserva` (`HIGH`), `itinerario` (`DEFAULT`), `aviso` (`LOW`) con colores por tipo.
   - Agrupación real: `.setGroup(...)` + resumen `.setGroupSummary(true)` con `InboxStyle` y `GROUP_ALERT_CHILDREN` (≥ 2 no leídos).
   - `PendingIntent` con `TaskStackBuilder` pasando solo `EXTRA_AVISO_ID` hacia `DetalleAvisoActivity` (con `parentActivityName`).
   - Acción rápida `"Marcar leído"` directo desde la notificación.
-- [ ] **Simulador + FCM unificados:** `AvisoPushReceiver` (`BroadcastReceiver`) + `AvisoPushSimulator` (`AlarmManager.setAndAllowWhileIdle`) compartiendo lógica con `PeruViajeroMessagingService`.
-- [ ] **Pantallas `BandejaAvisosActivity` (campana `🔔`) y `DetalleAvisoActivity`:**
-  - Contador de no leídos, chips de filtro por tipo, botón *"Marcar todos como leídos"*, simulador JSON para pruebas y control de `aviso == null` + botón *"Abrir enlace"* cuando exista `url`.
-- [ ] **Tests unitarios JVM + Commit Fase K** (`AvisoPayloadParserTest` + `testDebugUnitTest assembleDebug` + actualizar checklist).
+- [x] **Simulador + FCM unificados:** `AvisoPushReceiver` (`BroadcastReceiver`) + `AvisoPushSimulator` (`AlarmManager.setAndAllowWhileIdle`) compartiendo lógica con `PeruViajeroMessagingService`.
+- [x] **Pantallas `BandejaAvisosActivity` (campana `🔔`) y `DetalleAvisoActivity`:**
+  - Contador de no leídos, chips de filtro por tipo, botón *"Marcar leídos"*, simulador JSON para pruebas y control de `aviso == null` + botón *"Abrir enlace oficial"* cuando exista `url`.
+- [x] **Tests unitarios JVM + Commit Fase K** (`AvisoPayloadParserTest` 4/4 + `testDebugUnitTest assembleDebug`).
 
 ---
 

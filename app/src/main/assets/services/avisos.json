@@ -1,0 +1,32 @@
+[
+  {
+    "id": 9001,
+    "tipo": "alerta",
+    "titulo": "Clima despejado en Valle Sagrado y Machu Picchu",
+    "cuerpo": "SENAMHI reporta visibilidad óptima para visitas matutinas en Cusco y Urubamba. Lleva bloqueador solar y cortaviento ligero.",
+    "region": "Cusco",
+    "url": "https://www.gob.pe/senamhi",
+    "hora": 1763568000000,
+    "leido": false
+  },
+  {
+    "id": 9002,
+    "tipo": "reserva",
+    "titulo": "Embarque confirmado • Terminal Wanchaq",
+    "cuerpo": "Recuerda presentarte 30 minutos antes con tu DNI físico y tu código QR del voucher oficial de PerúViajero.",
+    "region": "Cusco",
+    "url": "",
+    "hora": 1763564400000,
+    "leido": false
+  },
+  {
+    "id": 9003,
+    "tipo": "aviso",
+    "titulo": "Nuevas rutas turísticas en Ica y Arequipa",
+    "cuerpo": "Explora los filtros por departamento y provincia en la pestaña Explorar para descubrir circuitos en Paracas, Nazca y Caylloma.",
+    "region": "Perú",
+    "url": "https://www.peru.travel/es",
+    "hora": 1763550000000,
+    "leido": true
+  }
+]
