@@ -51,6 +51,11 @@ class LocalComunidadRepository(
         return actualizado
     }
 
+    override fun eliminarPublicacion(publicacionId: String) {
+        val filtradas = comunidadService.getPublicaciones().filterNot { it.id == publicacionId }
+        comunidadService.guardarLista(filtradas)
+    }
+
     override fun contarPorDestino(destinoId: String): Int {
         return comunidadService.getPublicaciones().count { it.destinoId == destinoId }
     }

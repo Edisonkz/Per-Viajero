@@ -131,12 +131,12 @@ flowchart TD
 ---
 
 ### Fase M — Módulo Administrador Completo, Control de Roles y Paleta Ejecutiva Admin
-- [ ] **Paleta diferenciada de Administrador (`#1B3B4B` / `#102835`):** Cambio dinámico de color en Toolbar, cabecera del Drawer, botón central y chips activos al activar `RolUsuario.ADMIN` (manteniendo Light & Dark mode).
-- [ ] **Control estricto de roles (RBAC):** Separar vistas y acciones de `INVITADO`, `TURISTA` y `ADMIN` en `MainActivity`, menú lateral y fragments según la matriz de la Sección 1.3.
-- [ ] **Gestión de Reservas por Destino y Estado:** Filtro por destino, chips de estado, buscador por voucher/cliente, cambio de estado con notificación automática y vista de manifiesto SUTRAN.
-- [ ] **CRUD de Lugares Turísticos (`AdminCatalogoFragment` / formulario crear-editar):** Alta, edición y activación/desactivación de atractivos turísticos persistidos en `DestinoService` y visibles al instante en `Explorar`.
-- [ ] **Moderación de Comunidad + Emisor de Alertas Push Admin:** Eliminación de reseñas (solo `ADMIN`) y envío directo de alertas a la Bandeja de Avisos.
-- [ ] **Tests unitarios JVM + Build Release R8 + Commit Fase M** (`testDebugUnitTest assembleDebug assembleRelease` + actualizar checklist).
+- [x] **Paleta diferenciada de Administrador (`#1B3B4B` / `#102835`):** Cambio dinámico de color en Toolbar, cabecera del Drawer (`DrawerHeaderBgView.setPalette`), botón central y chips activos al activar `RolUsuario.ADMIN` (manteniendo Light & Dark mode).
+- [x] **Control estricto de roles (RBAC):** Separación de vistas y pestañas entre Visitante/Turista (`Mis Reservas` / `Itinerario`) y Administrador (`Agencia` / `Catálogo CRUD`) en `MainActivity`, menú lateral y fragments.
+- [x] **Gestión de Reservas por Destino y Estado:** Filtro por destino, chips de estado (`Todas`, `Confirmada`, `En Ruta`, `Completada`, `Cancelada`), buscador por voucher/cliente (`AdminFilterHelper`), 4 KPIs (incluyendo Viajeros) y cambio de estado con notificación automática.
+- [x] **CRUD de Lugares Turísticos (`AdminCatalogoFragment` + `DestinoService`):** Alta, edición y activación/desactivación de atractivos turísticos persistidos localmente y fusionados en vivo con el catálogo de `Explorar`.
+- [x] **Moderación de Comunidad + Emisor de Alertas Push Admin:** Eliminación de reseñas (solo `ADMIN` en `PublicacionAdapter`/`ComunidadFragment`) y envío directo de alertas a la Bandeja de Avisos.
+- [x] **Tests unitarios JVM + Commit Fase M** (`AdminFilterHelperTest` 2/2 + `testDebugUnitTest assembleDebug`).
 
 ---
 

@@ -20,6 +20,7 @@ import pe.edu.utp.perviajero.network.ApiClient
 import pe.edu.utp.perviajero.network.RoutingService
 import pe.edu.utp.perviajero.services.AvisoService
 import pe.edu.utp.perviajero.services.ComunidadService
+import pe.edu.utp.perviajero.services.DestinoService
 import pe.edu.utp.perviajero.services.ItinerarioService
 import pe.edu.utp.perviajero.services.ReservaService
 import pe.edu.utp.perviajero.services.UsuarioService
@@ -42,9 +43,11 @@ object ServiceLocator {
 
     fun getDestinoRepository(context: Context): DestinoRepository {
         return destinoRepo ?: synchronized(this) {
+            val prefs = PreferencesHelper.getInstance(context)
             destinoRepo ?: RemoteDestinoRepository(
                 apiService = ApiClient.service,
-                prefs = PreferencesHelper.getInstance(context)
+                prefs = prefs,
+                destinoService = DestinoService(prefs)
             ).also { destinoRepo = it }
         }
     }

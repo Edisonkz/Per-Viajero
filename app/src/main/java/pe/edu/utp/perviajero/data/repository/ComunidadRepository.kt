@@ -13,5 +13,6 @@ interface ComunidadRepository {
     fun agregarPublicacion(publicacion: PublicacionViajero)
     fun toggleLike(publicacionId: String): PublicacionViajero?
     fun agregarComentario(publicacionId: String, comentario: ComentarioPublicacion): PublicacionViajero?
+    fun eliminarPublicacion(publicacionId: String)
     fun contarPorDestino(destinoId: String): Int
 }

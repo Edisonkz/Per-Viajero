@@ -38,6 +38,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import pe.edu.utp.perviajero.ui.view.DrawerHeaderBgView
 import pe.edu.utp.perviajero.data.model.RolUsuario
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.ui.AdminCatalogoFragment
 import pe.edu.utp.perviajero.ui.AdminDashboardFragment
 import pe.edu.utp.perviajero.ui.AjustesFragment
 import pe.edu.utp.perviajero.ui.BrujulaActivity
@@ -271,7 +272,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 cambiarFragment(ComunidadFragment())
             }
             MainTab.RESERVAS -> {
-                if (rol == RolUsuario.ADMIN) {
+                if (esModoAdmin()) {
                     toolbar.title = "Panel de Agencia"
                     cambiarFragment(AdminDashboardFragment())
                 } else {
@@ -280,8 +281,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
             MainTab.ITINERARIO -> {
-                toolbar.title = "Mi Itinerario"
-                cambiarFragment(ItinerarioFragment())
+                if (esModoAdmin()) {
+                    toolbar.title = "Catálogo Turístico (Admin)"
+                    cambiarFragment(AdminCatalogoFragment())
+                } else {
+                    toolbar.title = "Mi Itinerario"
+                    cambiarFragment(ItinerarioFragment())
+                }
             }
             MainTab.FAVORITOS -> {
                 toolbar.title = "Mis Favoritos"
@@ -295,9 +301,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         actualizarEstilosBarraInferior(tab)
     }
 
+    private fun esModoAdmin(): Boolean {
+        val repo = ServiceLocator.getSessionRepository(this)
+        return repo.isLoggedIn() && repo.getRolActual() == RolUsuario.ADMIN
+    }
+
     private fun actualizarEstilosBarraInferior(active: MainTab) {
-        val activeColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        val isAdmin = esModoAdmin()
+        val primaryRes = if (isAdmin) R.color.colorAdminPrimary else R.color.colorPrimary
+        val primaryDarkRes = if (isAdmin) R.color.colorAdminPrimaryDark else R.color.colorPrimaryDark
+        val activeColor = ContextCompat.getColor(this, primaryRes)
         val inactiveColor = ContextCompat.getColor(this, R.color.colorTextSecondary)
+
+        toolbar.setBackgroundColor(activeColor)
+        val headerView = navigationView.getHeaderView(0)
+        headerView.findViewById<DrawerHeaderBgView>(R.id.drawerHeaderBg)?.setPalette(
+            ContextCompat.getColor(this, primaryRes),
+            ContextCompat.getColor(this, primaryDarkRes)
+        )
 
         fun applyTabStyle(iv: ImageView?, tv: TextView, isActive: Boolean) {
             val color = if (isActive) activeColor else inactiveColor
@@ -317,7 +338,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         btnNavCenterReservas.setCardBackgroundColor(
             ContextCompat.getColor(
                 this,
-                if (isReservas) R.color.colorPrimaryDark else R.color.colorPrimary
+                if (isReservas) primaryDarkRes else primaryRes
             )
         )
         btnNavCenterReservas.cardElevation = if (isReservas) 10f else 6f
@@ -458,22 +479,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun actualizarNavegacionPorRol() {
         actualizarDrawerHeaderYMenu()
-        val rol = ServiceLocator.getSessionRepository(this).getRolActual()
-        if (rol == RolUsuario.ADMIN) {
+        val isAdmin = esModoAdmin()
+        if (isAdmin) {
             tvNavReservas.text = "Agencia"
             ivNavCenterReservas.setImageResource(R.drawable.ic_dashboard)
+            tvNavItinerario.text = "Catálogo"
+            ivNavItinerario.setImageResource(R.drawable.ic_explore_mountain)
         } else {
             tvNavReservas.text = "Mis Reservas"
             ivNavCenterReservas.setImageResource(R.drawable.ic_receipt)
+            tvNavItinerario.text = "Itinerario"
+            ivNavItinerario.setImageResource(R.drawable.ic_calendar)
         }
 
+        actualizarEstilosBarraInferior(currentTab)
+
         if (currentTab == MainTab.RESERVAS) {
-            if (rol == RolUsuario.ADMIN) {
+            if (isAdmin) {
                 toolbar.title = "Panel de Agencia"
                 cambiarFragment(AdminDashboardFragment())
             } else {
                 toolbar.title = "Mis Reservas"
                 cambiarFragment(MisReservasFragment())
+            }
+        } else if (currentTab == MainTab.ITINERARIO) {
+            if (isAdmin) {
+                toolbar.title = "Catálogo Turístico (Admin)"
+                cambiarFragment(AdminCatalogoFragment())
+            } else {
+                toolbar.title = "Mi Itinerario"
+                cambiarFragment(ItinerarioFragment())
             }
         }
     }

@@ -20,8 +20,8 @@ class DrawerHeaderBgView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val primary = ContextCompat.getColor(context, R.color.colorPrimary)
-    private val primaryDark = ContextCompat.getColor(context, R.color.colorPrimaryDark)
+    private var primary = ContextCompat.getColor(context, R.color.colorPrimary)
+    private var primaryDark = ContextCompat.getColor(context, R.color.colorPrimaryDark)
     private val density = resources.displayMetrics.density
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -29,6 +29,21 @@ class DrawerHeaderBgView @JvmOverloads constructor(
     }
     private val path = Path()
     private var topInsetPx: Int = 0
+
+    fun setPalette(startColor: Int, endColor: Int) {
+        if (primary != startColor || primaryDark != endColor) {
+            primary = startColor
+            primaryDark = endColor
+            if (width > 0 && height > 0) {
+                paint.shader = LinearGradient(
+                    0f, 0f, width.toFloat(), height.toFloat(),
+                    primary, primaryDark,
+                    Shader.TileMode.CLAMP
+                )
+            }
+            invalidate()
+        }
+    }
 
     fun setTopInsetPx(inset: Int) {
         if (topInsetPx != inset) {

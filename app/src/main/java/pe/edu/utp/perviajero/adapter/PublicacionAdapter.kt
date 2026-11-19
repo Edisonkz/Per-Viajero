@@ -18,9 +18,11 @@ import pe.edu.utp.perviajero.data.model.PublicacionViajero
 import java.util.Locale
 
 class PublicacionAdapter(
+    private val esModoAdmin: () -> Boolean = { false },
     private val onLikeClick: (PublicacionViajero) -> Unit,
     private val onCommentClick: (PublicacionViajero) -> Unit,
-    private val onVerDestinoClick: (PublicacionViajero) -> Unit
+    private val onVerDestinoClick: (PublicacionViajero) -> Unit,
+    private val onModerarClick: ((PublicacionViajero) -> Unit)? = null
 ) : ListAdapter<PublicacionViajero, PublicacionAdapter.PublicacionViewHolder>(PublicacionDiffCallback) {
 
     fun actualizarLista(lista: List<PublicacionViajero>) {
@@ -33,7 +35,7 @@ class PublicacionAdapter(
     }
 
     override fun onBindViewHolder(holder: PublicacionViewHolder, position: Int) {
-        holder.bind(getItem(position), onLikeClick, onCommentClick, onVerDestinoClick)
+        holder.bind(getItem(position), esModoAdmin(), onLikeClick, onCommentClick, onVerDestinoClick, onModerarClick)
     }
 
     class PublicacionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -47,13 +49,16 @@ class PublicacionAdapter(
         private val tvComentario: TextView = itemView.findViewById(R.id.tvPubComentario)
         private val btnLike: MaterialButton = itemView.findViewById(R.id.btnPubLike)
         private val btnComentar: MaterialButton = itemView.findViewById(R.id.btnPubComentar)
+        private val btnModerar: MaterialButton = itemView.findViewById(R.id.btnPubModerar)
         private val btnVerDestino: MaterialButton = itemView.findViewById(R.id.btnPubVerDestino)
 
         fun bind(
             pub: PublicacionViajero,
+            isAdmin: Boolean,
             onLikeClick: (PublicacionViajero) -> Unit,
             onCommentClick: (PublicacionViajero) -> Unit,
-            onVerDestinoClick: (PublicacionViajero) -> Unit
+            onVerDestinoClick: (PublicacionViajero) -> Unit,
+            onModerarClick: ((PublicacionViajero) -> Unit)?
         ) {
             val ctx = itemView.context
             tvAutor.text = pub.autorNombre
@@ -99,6 +104,13 @@ class PublicacionAdapter(
             btnComentar.setOnClickListener { onCommentClick(pub) }
             ivFoto.setOnClickListener { onCommentClick(pub) }
             btnVerDestino.setOnClickListener { onVerDestinoClick(pub) }
+
+            if (isAdmin && onModerarClick != null) {
+                btnModerar.visibility = View.VISIBLE
+                btnModerar.setOnClickListener { onModerarClick(pub) }
+            } else {
+                btnModerar.visibility = View.GONE
+            }
         }
     }
 

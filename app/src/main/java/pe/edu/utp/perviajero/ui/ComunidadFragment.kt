@@ -103,12 +103,28 @@ class ComunidadFragment : Fragment() {
 
         rvComunidad.layoutManager = LinearLayoutManager(requireContext())
         adapter = PublicacionAdapter(
+            esModoAdmin = {
+                val repo = ServiceLocator.getSessionRepository(requireContext())
+                repo.isLoggedIn() && repo.getRolActual() == pe.edu.utp.perviajero.data.model.RolUsuario.ADMIN
+            },
             onLikeClick = { pub ->
                 ServiceLocator.getComunidadRepository(requireContext()).toggleLike(pub.id)
                 recargarPublicaciones()
             },
             onCommentClick = { pub -> mostrarDetallePublicacion(pub) },
-            onVerDestinoClick = { pub -> abrirDestinoDesdePublicacion(pub) }
+            onVerDestinoClick = { pub -> abrirDestinoDesdePublicacion(pub) },
+            onModerarClick = { pub ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Moderar publicación (Admin)")
+                    .setMessage("¿Deseas eliminar la reseña de ${pub.autorNombre} sobre ${pub.destinoNombre}?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        ServiceLocator.getComunidadRepository(requireContext()).eliminarPublicacion(pub.id)
+                        recargarPublicaciones()
+                        Toast.makeText(requireContext(), "Publicación eliminada por moderación", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
         )
         rvComunidad.adapter = adapter
 

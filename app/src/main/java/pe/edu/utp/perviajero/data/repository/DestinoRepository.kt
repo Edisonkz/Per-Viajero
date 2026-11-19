@@ -14,4 +14,9 @@ interface DestinoRepository {
     )
 
     fun obtenerDestinosEnCache(): List<Destino>
+
+    fun obtenerCatalogoCompletoAdmin(): List<Destino>
+    fun guardarDestinoAdmin(destino: Destino)
+    fun toggleOcultarDestinoAdmin(destinoId: String): Boolean
+    fun esDestinoOculto(destinoId: String): Boolean
 }

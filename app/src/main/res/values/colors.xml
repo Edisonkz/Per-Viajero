@@ -4,6 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#006837</color>
     <color name="colorPrimaryDark">#004D25</color>
+    <color name="colorAdminPrimary">#1B3B4B</color>
+    <color name="colorAdminPrimaryDark">#102835</color>
     <color name="colorAccent">#C1272D</color>
     <color name="colorBackground">#F8F9FA</color>
     <color name="colorCardBackground">#FFFFFF</color>
