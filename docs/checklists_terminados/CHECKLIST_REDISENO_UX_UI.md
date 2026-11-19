@@ -1,6 +1,6 @@
 # Checklist de Rediseño UX/UI — `PerúViajero`
 
-Referencia visual en [docs/mockups_ux_ui](README.md).  
+Referencia visual en [docs/mockups_ux_ui](../mockups_ux_ui/README.md).  
 Estrategia de implementación incremental: primero el **Shell de Navegación + Pantallas 1 y 2 (`Explorar` y `Comunidad`)**, y luego las pantallas 3, 4, 5 y 6 (`Mis Reservas`, `Itinerario`, `Favoritos` y `Detalle Hero`).
 
 ---
@@ -53,3 +53,7 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 ## Fase I — Auditoría Global de Paleta y Temas (`Light` & `Dark`)
 - [x] **Temas base Material 3 (`values/themes.xml` y `values-night/themes.xml` + `colors.xml`):** Eliminado el púrpura por defecto de Material3 vinculando `colorPrimary`, `colorPrimaryDark`, `colorSecondary`, `colorControlActivated` y contraste AA+ en modo oscuro (`#007A42` con texto blanco).
 - [x] **Unificación en pantallas y adaptadores:** Reemplazados colores dispersos (azules `#1976D2`/`#0277BD`, morado `#6A1B9A` y naranjas `#F57C00`/`#D84315`) en `activity_login.xml`, `fragment_admin_dashboard.xml`, `dialog_pasarela_pago.xml`, `item_publicacion.xml`, `ReservaAdapter.kt` y `MapaRutaActivity.kt` hacia la paleta oficial PerúViajero (`@color/colorPrimary`, `@color/colorPrimaryDark`, `@color/colorAccent`, `@color/colorStar`).
+
+---
+
+> **Siguientes fases (J, K, L y M):** Semana 13 (`GestorPermisos` + Contactos), Semana 14 (Bandeja de Avisos Push + Canales + Agrupación + `TaskStackBuilder`), Rediseño de Checkout/Boleto (`07`–`09`) y Módulo Administrador completo con paleta ejecutiva diferenciada → ver [README_CHECKLIST_Y_ADMIN.md](../checklists_pendientes/README_CHECKLIST_Y_ADMIN.md).
