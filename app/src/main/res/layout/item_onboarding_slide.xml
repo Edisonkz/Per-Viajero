@@ -4,78 +4,160 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="28dp">
+    android:paddingHorizontal="28dp"
+    android:paddingVertical="12dp">
 
-    <!-- Tarjeta Visual Central con Icono -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        app:cardCornerRadius="70dp"
-        app:cardElevation="6dp"
-        app:cardBackgroundColor="#0D006837"
-        app:strokeColor="#25006837"
-        app:strokeWidth="2dp">
+    <!-- Escenario Hero con anillos orbitales y medallón central -->
+    <FrameLayout
+        android:id="@+id/layoutSlideHero"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <ImageView
-            android:id="@+id/ivOnboardingIcono"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
+        <View
+            android:id="@+id/viewSlideHaloOuter"
+            android:layout_width="216dp"
+            android:layout_height="216dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_logo_peruviajero_agency"
-            android:contentDescription="Ilustración Bienvenida" />
-    </com.google.android.material.card.MaterialCardView>
+            android:alpha="0.45"
+            android:background="@drawable/bg_splash_halo_ring" />
 
-    <!-- Badge Temático -->
+        <View
+            android:id="@+id/viewSlideHaloInner"
+            android:layout_width="174dp"
+            android:layout_height="174dp"
+            android:layout_gravity="center"
+            android:alpha="0.72"
+            android:background="@drawable/bg_splash_halo_ring" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSlideMedallion"
+            android:layout_width="136dp"
+            android:layout_height="136dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#24FFFFFF"
+            app:cardCornerRadius="68dp"
+            app:cardElevation="10dp"
+            app:strokeColor="#59FFFFFF"
+            app:strokeWidth="2dp">
+
+            <ImageView
+                android:id="@+id/ivOnboardingIcono"
+                android:layout_width="86dp"
+                android:layout_height="86dp"
+                android:layout_gravity="center"
+                android:contentDescription="Ilustración Bienvenida"
+                android:src="@drawable/ic_logo_peruviajero_agency" />
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+
+    <!-- Badge Temático Glass -->
     <TextView
         android:id="@+id/tvOnboardingBadge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/bg_badge_categoria"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="5dp"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_onboarding_glass_pill"
+        android:letterSpacing="0.06"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:textColor="#FFB300"
+        android:textSize="11sp"
         android:textStyle="bold"
         tools:text="¡BIENVENIDO A BORDO!" />
 
-    <!-- Título Principal -->
-    <TextView
-        android:id="@+id/tvOnboardingTitulo"
+    <!-- Bloque de Copy con Parallax -->
+    <LinearLayout
+        android:id="@+id/layoutSlideCopy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        tools:text="Descubre la Magia del Perú" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <!-- Subtítulo -->
-    <TextView
-        android:id="@+id/tvOnboardingSubtitulo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:gravity="center"
-        android:textColor="@color/colorPrimary"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        tools:text="Costa, Sierra y Selva en la palma de tu mano" />
+        <TextView
+            android:id="@+id/tvOnboardingTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:text="Descubre la Magia del Perú" />
 
-    <!-- Descripción Detallada -->
-    <TextView
-        android:id="@+id/tvOnboardingDescripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp"
-        tools:text="Explora los atractivos turísticos más fascinantes del país, con información oficial de clima, rutas en mapa, guías y manifiesto de pasajeros formal." />
+        <TextView
+            android:id="@+id/tvOnboardingSubtitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textColor="#FFB300"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Costa, Sierra y Selva en la palma de tu mano" />
+
+        <TextView
+            android:id="@+id/tvOnboardingDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#D9FFFFFF"
+            android:textSize="14sp"
+            tools:text="Explora los atractivos más fascinantes del Perú con clima en vivo, mapas GPS y guías certificados." />
+
+        <!-- Pills de beneficios clave -->
+        <LinearLayout
+            android:id="@+id/layoutSlideHighlights"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSlidePill1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_onboarding_glass_pill"
+                android:paddingHorizontal="11dp"
+                android:paddingVertical="5dp"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="24 Regiones" />
+
+            <TextView
+                android:id="@+id/tvSlidePill2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/bg_onboarding_glass_pill"
+                android:paddingHorizontal="11dp"
+                android:paddingVertical="5dp"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Clima en Vivo" />
+
+            <TextView
+                android:id="@+id/tvSlidePill3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_onboarding_glass_pill"
+                android:paddingHorizontal="11dp"
+                android:paddingVertical="5dp"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="GPS &amp; Brújula" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
-

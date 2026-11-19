@@ -61,6 +61,10 @@ import pe.edu.utp.perviajero.util.PermissionHelper
  */
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object {
+        const val EXTRA_OPEN_LOGIN = "extra_open_login"
+    }
+
     enum class MainTab {
         EXPLORAR, COMUNIDAD, RESERVAS, ITINERARIO, FAVORITOS, PERFIL
     }
@@ -131,6 +135,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (savedInstanceState == null) {
             seleccionarTab(MainTab.EXPLORAR)
+        }
+
+        if (intent.getBooleanExtra(EXTRA_OPEN_LOGIN, false)) {
+            intent.removeExtra(EXTRA_OPEN_LOGIN)
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_OPEN_LOGIN, false)) {
+            intent.removeExtra(EXTRA_OPEN_LOGIN)
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
@@ -413,7 +431,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.drawer_permisos_diagnostico -> startActivity(Intent(this, DiagnosticoLogsActivity::class.java))
             R.id.drawer_ajustes_perfil -> seleccionarTab(MainTab.PERFIL)
-            R.id.drawer_onboarding -> startActivity(Intent(this, OnboardingActivity::class.java))
+            R.id.drawer_onboarding -> startActivity(
+                Intent(this, OnboardingActivity::class.java).apply {
+                    putExtra(OnboardingActivity.EXTRA_FROM_DRAWER, true)
+                }
+            )
             R.id.drawer_login_logout -> {
                 if (sessionRepo.isLoggedIn()) {
                     sessionRepo.logout()

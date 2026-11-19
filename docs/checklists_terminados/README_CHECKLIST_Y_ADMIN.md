@@ -154,4 +154,7 @@ flowchart TD
   - Helper centralizado que intercepta acciones protegidas (`Reservar`, `Itinerario`, `Mis Reservas`, `Publicar/Comentar` en Comunidad) cuando `!sessionRepo.isLoggedIn()`.
   - Abre un modal/diálogo elegante hacia `LoginActivity` explicando el motivo y permitiendo ingresar como **Turista Registrado** o **Administrador**.
   - En `Mis Reservas` para Visitante: vista vacía atractiva con botón `"Iniciar Sesión / Registrarme"`; en `Itinerario`: preview de solo lectura con protección contextual al editar/añadir.
+- [x] **`OnboardingActivity.kt` (Bienvenida Épica garantizada en primer inicio):**
+  - Versión `key_first_run_v2` en `PreferencesHelper` para asegurar que la bienvenida aparezca al iniciar la app por primera vez tras instalar/actualizar (y repetible desde el menú lateral).
+  - Degradados inmersivos full-screen con *morphing* en vivo (`ArgbEvaluator`), `PageTransformer` con parallax 3D, medallón central flotante con anillos orbitales, pills glassmórficos y CTA final hacia **Modo Visitante** o **Iniciar Sesión**.
 - [x] **Verificación + Build Release R8 + Commit Fase N** (`testDebugUnitTest assembleDebug assembleRelease` — 27/27 tests JVM + R8 + lintVital + checklist movido a `docs/checklists_terminados/`).

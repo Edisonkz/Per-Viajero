@@ -42,8 +42,8 @@ class PreferencesHelper private constructor(context: Context) {
         private const val KEY_LAST_LNG = "key_last_lng"
         private const val KEY_FCM_TOKEN = "key_fcm_token"
 
-        // Onboarding
-        private const val KEY_FIRST_RUN = "key_first_run"
+        // Onboarding (v2 garantiza mostrar la nueva Bienvenida Épica al iniciar por primera vez)
+        private const val KEY_FIRST_RUN = "key_first_run_v2"
 
         @Volatile
         private var instance: PreferencesHelper? = null
