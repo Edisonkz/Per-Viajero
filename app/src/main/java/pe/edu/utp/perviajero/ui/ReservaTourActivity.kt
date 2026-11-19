@@ -27,11 +27,13 @@ import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.Pasajero
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.ui.common.VoucherDialogHelper
 import pe.edu.utp.perviajero.util.ContactoAgenda
 import pe.edu.utp.perviajero.util.ContactoImportHelper
 import pe.edu.utp.perviajero.util.CotizadorCalculator
 import pe.edu.utp.perviajero.util.GestorPermisos
 import pe.edu.utp.perviajero.util.NotificationHelper
+import pe.edu.utp.perviajero.util.RegionPeruHelper
 import pe.edu.utp.perviajero.util.ReminderScheduler
 import java.util.Calendar
 import java.util.Locale
@@ -176,7 +178,12 @@ class ReservaTourActivity : AppCompatActivity() {
     private fun configurarDatosDestino() {
         val dest = destino ?: return
         tvReservaDestino.text = dest.nombre
-        tvReservaDepartamento.text = "${dest.departamento}, Perú"
+        val prov = RegionPeruHelper.resolveProvincia(dest)
+        tvReservaDepartamento.text = if (prov.equals(dest.departamento, ignoreCase = true)) {
+            "${dest.departamento}, Perú"
+        } else {
+            "$prov, ${dest.departamento}"
+        }
 
         Glide.with(this)
             .load(dest.imageUrl)
@@ -544,9 +551,16 @@ class ReservaTourActivity : AppCompatActivity() {
         val tvPasarelaTotal: TextView = dialogView.findViewById(R.id.tvPasarelaTotal)
 
         val rgMetodosPago: RadioGroup = dialogView.findViewById(R.id.rgMetodosPago)
+        val rbTarjeta: android.widget.RadioButton = dialogView.findViewById(R.id.rbMetodoTarjeta)
+        val rbYape: android.widget.RadioButton = dialogView.findViewById(R.id.rbMetodoYape)
+        val rbTransferencia: android.widget.RadioButton = dialogView.findViewById(R.id.rbMetodoTransferencia)
         val layoutFormularioTarjeta: LinearLayout = dialogView.findViewById(R.id.layoutFormularioTarjeta)
         val layoutFormularioYape: LinearLayout = dialogView.findViewById(R.id.layoutFormularioYape)
         val layoutFormularioTransferencia: LinearLayout = dialogView.findViewById(R.id.layoutFormularioTransferencia)
+
+        val tvVirtualCardNumber: TextView = dialogView.findViewById(R.id.tvVirtualCardNumber)
+        val tvVirtualCardHolder: TextView = dialogView.findViewById(R.id.tvVirtualCardHolder)
+        val tvVirtualCardExpiry: TextView = dialogView.findViewById(R.id.tvVirtualCardExpiry)
 
         val chipDemoTarjeta: com.google.android.material.chip.Chip = dialogView.findViewById(R.id.chipDemoTarjeta)
         val etNumeroTarjeta: EditText = dialogView.findViewById(R.id.etNumeroTarjeta)
@@ -565,19 +579,56 @@ class ReservaTourActivity : AppCompatActivity() {
         val btnCancelarPago: MaterialButton = dialogView.findViewById(R.id.btnCancelarPago)
 
         tvPasarelaDestinoResumen.text = "${dest.nombre} • $cantidadPasajeros pasajero(s)"
-        tvPasarelaDesgloseIgv.text = String.format(Locale.US, "Subtotal: S/ %.2f • IGV (18%%): S/ %.2f", subtotal, igv)
+        tvPasarelaDesgloseIgv.text = String.format(Locale.US, "Subtotal: S/ %.2f • IGV 18%%: S/ %.2f", subtotal, igv)
         tvPasarelaTotal.text = String.format(Locale.US, "S/ %.2f", total)
-        btnEjecutarPago.text = String.format(Locale.US, "Pagar S/ %.2f con Cifrado SSL", total)
+        btnEjecutarPago.text = String.format(Locale.US, "Pagar S/ %.2f Ahora", total)
 
         val usuario = ServiceLocator.getSessionRepository(this).getUsuarioActual()
         if (usuario != null && usuario.nombre.isNotEmpty()) {
-            etTitularTarjeta.setText(usuario.nombre.uppercase(Locale.US))
+            val titularUpper = usuario.nombre.uppercase(Locale.US)
+            etTitularTarjeta.setText(titularUpper)
+            tvVirtualCardHolder.text = titularUpper
         }
+
+        fun refrescarTarjetaVirtual() {
+            val digitos = etNumeroTarjeta.text.toString().filter { it.isDigit() }
+            val ultimos4 = digitos.takeLast(4).padStart(4, '•')
+            tvVirtualCardNumber.text = "**** **** **** $ultimos4"
+            tvVirtualCardExpiry.text = etVencimientoTarjeta.text.toString().ifBlank { "MM/AA" }
+            tvVirtualCardHolder.text = etTitularTarjeta.text.toString().ifBlank { "TITULAR DE TARJETA" }
+        }
+        refrescarTarjetaVirtual()
+
+        val cardWatcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { refrescarTarjetaVirtual() }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        }
+        etNumeroTarjeta.addTextChangedListener(cardWatcher)
+        etVencimientoTarjeta.addTextChangedListener(cardWatcher)
+        etTitularTarjeta.addTextChangedListener(cardWatcher)
+
+        fun estilizarTabsPago(checkedId: Int) {
+            val primary = androidx.core.content.ContextCompat.getColor(this, R.color.colorPrimary)
+            val cardBg = androidx.core.content.ContextCompat.getColor(this, R.color.colorCardBackground)
+            val textPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.colorTextPrimary)
+            listOf(rbTarjeta, rbYape, rbTransferencia).forEach { rb ->
+                val active = rb.id == checkedId
+                rb.background = android.graphics.drawable.GradientDrawable().apply {
+                    cornerRadius = 100f
+                    setColor(if (active) primary else cardBg)
+                    if (!active) setStroke(2, android.graphics.Color.argb(40, 0, 0, 0))
+                }
+                rb.setTextColor(if (active) android.graphics.Color.WHITE else textPrimary)
+            }
+        }
+        estilizarTabsPago(R.id.rbMetodoTarjeta)
 
         val cipAleatorio = "CIP: " + (8000000..8999999).random() + " (Vence en 24h)"
         tvCodigoCip.text = cipAleatorio
 
         rgMetodosPago.setOnCheckedChangeListener { _, checkedId ->
+            estilizarTabsPago(checkedId)
             when (checkedId) {
                 R.id.rbMetodoTarjeta -> {
                     layoutFormularioTarjeta.visibility = View.VISIBLE
@@ -707,62 +758,9 @@ class ReservaTourActivity : AppCompatActivity() {
             delaySeconds = 20L
         )
 
-        val resumenPasajeros = listaManifiesto.joinToString("\n") { "   • ${it.nombresApellidos} (DNI: ${it.numeroDocumento}, ${it.edad} años)" }
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("¡Pago Aprobado y Voucher Emitido! 💳✅")
-            .setMessage(
-                "${empresa.razonSocial}\n" +
-                "RUC: ${empresa.ruc} • Reg. ${empresa.registroMincetur}\n" +
-                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                "• Código: $codigoGenerado\n" +
-                "• Destino: ${dest.nombre}\n" +
-                "• Fecha de Salida: $fechaSeleccionada\n" +
-                "• Horario: $horarioElegido\n" +
-                "• Terminal: $terminalElegido\n" +
-                "• Transporte: $nombreMovilidad\n" +
-                "• Alojamiento: $nombreHotel\n" +
-                "• Guía Oficial: $nombreGuia\n\n" +
-                "💳 Medio de Pago: $metodoPago\n" +
-                "🔢 N° Operación: $numeroOperacion\n\n" +
-                "👥 Manifiesto de Pasajeros:\n$resumenPasajeros\n\n" +
-                "💰 Total Pagado: S/ ${String.format(Locale.US, "%.2f", total)} (Inc. IGV)\n\n" +
-                "Toca 'Aceptar' o pulsa en 'Mis Reservas' para ver el ticket detallado."
-            )
-            .setIcon(R.drawable.ic_check_circle)
-            .setPositiveButton("Aceptar") { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }
-            .setNeutralButton("Compartir") { _, _ ->
-                compartirVoucher(nuevaReserva, empresa.razonSocial, empresa.ruc)
-                finish()
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun compartirVoucher(reserva: Reserva, razonSocial: String, ruc: String) {
-        val listaStr = reserva.listaPasajeros.joinToString("\n") { "   - ${it.nombresApellidos} (DNI: ${it.numeroDocumento})" }
-        val mensaje = "🎟️ VOUCHER OFICIAL DE EMBARQUE - $razonSocial\n" +
-                "RUC: $ruc • Reg. Oficial MINCETUR\n\n" +
-                "• Código de Reserva: ${reserva.codigoReserva}\n" +
-                "• Tour: ${reserva.destinoNombre}\n" +
-                "• Fecha de Salida: ${reserva.fechaSalida}\n" +
-                "• Horario: ${reserva.horarioSalida}\n" +
-                "• Terminal de Embarque: ${reserva.terminalEmbarque}\n" +
-                "• Transporte: ${reserva.tipoMovilidad}\n" +
-                "• Alojamiento: ${reserva.categoriaHotel}\n" +
-                "• Guía Acreditado: ${reserva.guiaTuristico}\n\n" +
-                "👥 Pasajeros Registrados:\n$listaStr\n\n" +
-                "💰 Monto Total: S/ ${String.format(Locale.US, "%.2f", reserva.costoTotal)} (Inc. IGV)\n\n" +
-                "Emitido por PerúViajero."
-
-        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, mensaje)
+        Toast.makeText(this, "¡Pago aprobado! Boleto $codigoGenerado emitido.", Toast.LENGTH_LONG).show()
+        VoucherDialogHelper.showVoucherDialog(this, nuevaReserva) {
+            finish()
         }
-        val chooser = Intent.createChooser(sendIntent, "Compartir Voucher de Embarque")
-        startActivity(chooser)
     }
 }

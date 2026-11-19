@@ -3,77 +3,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="18dp">
 
-        <!-- Encabezado de Seguridad SSL -->
+        <!-- Encabezado SSL 256-bit igual al mockup 08 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_logo_peruviajero_agency"
-                android:contentDescription="Pasarela de Pago" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="SSL"
+                    android:src="@drawable/ic_lock_white" />
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pasarela de Pagos Segura 🔒"
-                    android:textColor="@color/colorPrimary"
+                    android:text="Pasarela de Pagos Segura"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cifrado bancario SSL 256-bit • PerúViajero Pay"
+                    android:text="Cifrado SSL 256-bit • PerúViajero Pay"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Tarjeta de Resumen del Monto a Pagar -->
+        <!-- Tarjeta Resumen Esmeralda con desglose IGV -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="#0A006837"
-            app:strokeColor="#25006837"
+            app:cardBackgroundColor="#12006837"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#40006837"
             app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="14dp">
 
-                <TextView
-                    android:id="@+id/tvPasarelaDestinoResumen"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    tools:text="Machu Picchu • 2 pasajeros" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/bg_badge_categoria"
+                        android:backgroundTint="@color/colorAccent" />
+
+                    <TextView
+                        android:id="@+id/tvPasarelaDestinoResumen"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Machu Picchu • 2 pasajeros" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -88,8 +112,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp"
-                        tools:text="Subtotal: S/ 512.71 • IGV 18%: S/ 92.29" />
+                        android:textSize="11sp"
+                        tools:text="Subtotal: S/ 355.93 • IGV 18%: S/ 64.07" />
 
                     <TextView
                         android:id="@+id/tvPasarelaTotal"
@@ -98,306 +122,477 @@
                         android:textColor="@color/colorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        tools:text="S/ 605.00" />
+                        tools:text="S/ 420.00" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Selector de Métodos de Pago Disponibles en Perú -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selecciona tu método de pago:"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
+        <!-- Selector horizontal de 3 pestañas píldora: Tarjeta | Yape / Plin | Código CIP -->
         <RadioGroup
             android:id="@+id/rgMetodosPago"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp">
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/rbMetodoTarjeta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:button="@null"
                 android:checked="true"
-                android:text="💳 Tarjeta Débito / Crédito (Visa, Mastercard, Amex)" />
+                android:gravity="center"
+                android:text="Tarjeta"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/rbMetodoYape"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📱 Billetera Móvil (Yape / Plin)" />
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="3dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Yape / Plin"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/rbMetodoTransferencia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🏦 Transferencia Bancaria / PagoEfectivo (CIP)" />
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Código CIP"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </RadioGroup>
 
-        <!-- SECCIÓN 1: FORMULARIO DE TARJETA -->
-        <LinearLayout
-            android:id="@+id/layoutFormularioTarjeta"
+        <!-- SECCIÓN 1: TARJETA CON TARJETA VIRTUAL ESMERALDA -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardContenedorFormulario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDemoTarjeta"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="⚡ Autocompletar Tarjeta Demo de Prueba" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:hint="Número de Tarjeta (16 dígitos)"
-                app:boxStrokeColor="@color/colorPrimary"
-                app:startIconDrawable="@drawable/ic_receipt">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNumeroTarjeta"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="19"
-                    android:text="4557 8912 3456 7890" />
-            </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/colorCardBackground"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#14000000"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="14dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:hint="Vence (MM/AA)"
-                    app:boxStrokeColor="@color/colorPrimary">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etVencimientoTarjeta"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:maxLength="5"
-                        android:text="12/28" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:hint="CVV / CVC (3 dígitos)"
-                    app:boxStrokeColor="@color/colorPrimary">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etCvvTarjeta"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberPassword"
-                        android:maxLength="4"
-                        android:text="742" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:hint="Nombre impreso del Titular"
-                app:boxStrokeColor="@color/colorPrimary">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTitularTarjeta"
+                <!-- Formulario Tarjeta -->
+                <LinearLayout
+                    android:id="@+id/layoutFormularioTarjeta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:text="KEVIN TURISTA QUISPE" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+                    android:orientation="vertical">
 
-        <!-- SECCIÓN 2: FORMULARIO DE YAPE / PLIN -->
-        <LinearLayout
-            android:id="@+id/layoutFormularioYape"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:visibility="gone">
+                    <!-- Vista previa Tarjeta Virtual Degradado Esmeralda -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_virtual_card_emerald"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="#0D006837"
-                app:strokeColor="#30006837"
-                app:strokeWidth="1dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="24dp"
+                                android:background="@drawable/bg_pill_white_badge"
+                                android:alpha="0.75" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="PerúViajero Pay"
+                                android:textColor="#CCFFFFFF"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvVirtualCardNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:letterSpacing="0.08"
+                            android:text="**** **** **** 4532"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvVirtualCardHolder"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="TITULAR DE TARJETA"
+                                android:textColor="#E0FFFFFF"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvVirtualCardExpiry"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="08/29"
+                                android:textColor="#E0FFFFFF"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDemoTarjeta"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="⚡ Autocompletar Tarjeta Demo" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:hint="Número de Tarjeta"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etNumeroTarjeta"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="19"
+                            android:text="4557 8912 3456 4532" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1.3"
+                            android:hint="Vencimiento (MM/AA)"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etVencimientoTarjeta"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLength="5"
+                                android:text="08/29" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:hint="CVV"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etCvvTarjeta"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberPassword"
+                                android:maxLength="4"
+                                android:text="742" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="Nombre del Titular"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTitularTarjeta"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapCharacters" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Formulario Yape / Plin -->
                 <LinearLayout
+                    android:id="@+id/layoutFormularioYape"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:visibility="gone">
 
-                    <TextView
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="#0D006837"
+                        app:cardCornerRadius="12dp"
+                        app:strokeColor="#30006837"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📱 Yape / Plin Oficial PerúViajero"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Número: 984 112 233\nTitular: PerúViajero Tours S.A.C."
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDemoYape"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📱 Yape / Plin Oficial PerúViajero:"
+                        android:layout_marginTop="8dp"
+                        android:text="⚡ Generar Código Yape Demo" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:hint="Código de Aprobación Yape (6 dígitos)"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCodigoOperacionYape"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:text="941820" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Formulario Código CIP -->
+                <LinearLayout
+                    android:id="@+id/layoutFormularioTransferencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="#0DC1272D"
+                        app:cardCornerRadius="12dp"
+                        app:strokeColor="#30C1272D"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🏦 Código de Pago CIP (PagoEfectivo / BCP / BBVA)"
+                                android:textColor="@color/colorAccent"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCodigoCip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="CIP: 8492015 (Vence en 24h)" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Abona desde tu banca móvil o agente más cercano usando este código CIP."
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <!-- Estado procesando pago -->
+                <LinearLayout
+                    android:id="@+id/layoutProcesandoPago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <ProgressBar
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:indeterminateTint="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvEstadoProcesando"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Número: 984 112 233\nTitular: PerúViajero Tours S.A.C."
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDemoYape"
-                style="@style/Widget.MaterialComponents.Chip.Action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="⚡ Generar Código de Aprobación Yape Demo" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:hint="Código de Aprobación Yape (6 a 8 dígitos)"
-                app:boxStrokeColor="@color/colorPrimary">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCodigoOperacionYape"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:text="941820" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <!-- SECCIÓN 3: FORMULARIO DE TRANSFERENCIA BANCARIA -->
-        <LinearLayout
-            android:id="@+id/layoutFormularioTransferencia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="#0DC1272D"
-                app:strokeColor="#30C1272D"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏦 Código de Pago CIP (PagoEfectivo / BCP / BBVA):"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvCodigoCip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="CIP: 8492015 (Vence en 24h)" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Abona desde tu banca móvil o agente más cercano con el código CIP."
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="12sp" />
+                        tools:text="Validando pago seguro..." />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- SECCIÓN 4: PROCESANDO PAGO (Animación en Vivo) -->
+        <!-- Fila de sellos de confianza -->
         <LinearLayout
-            android:id="@+id/layoutProcesandoPago"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:indeterminateTint="@color/colorPrimary" />
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvEstadoProcesando"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Conectando con la pasarela bancaria..."
+                android:background="@drawable/bg_pill_soft"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Visa"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_pill_soft"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Mastercard"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_pill_soft"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Yape"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="✓ Pago Seguro"
                 android:textColor="@color/colorPrimary"
-                android:textSize="13sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Botones de Acción -->
+        <!-- Botón Principal Pagar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEjecutarPago"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Pagar S/ 0.00 Ahora"
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:text="Pagar S/ 420.00 Ahora"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            app:cornerRadius="14dp"
-            app:icon="@drawable/ic_check_circle"
-            app:iconGravity="textStart" />
+            app:backgroundTint="@color/colorPrimary"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_lock_white"
+            app:iconGravity="textStart"
+            app:iconSize="16dp"
+            app:iconTint="#FFFFFF" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelarPago"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Cancelar y Volver"
+            android:text="Cancelar"
             android:textAllCaps="false"
             android:textColor="?android:attr/textColorSecondary" />
-
     </LinearLayout>
 </ScrollView>
-

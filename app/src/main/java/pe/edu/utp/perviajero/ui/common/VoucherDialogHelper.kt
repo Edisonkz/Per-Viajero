@@ -20,18 +20,25 @@ import pe.edu.utp.perviajero.ui.BrujulaActivity
 import pe.edu.utp.perviajero.ui.LoginActivity
 import pe.edu.utp.perviajero.ui.MapaRutaActivity
 import pe.edu.utp.perviajero.ui.ReservaTourActivity
+import pe.edu.utp.perviajero.ui.view.BoardingPassBgView
+import pe.edu.utp.perviajero.ui.view.QrVisualView
 import java.util.Locale
 
 /**
- * Componente compartido para renderizar y compartir el voucher oficial de embarque.
- * Elimina duplicación entre MisReservasFragment y AdminDashboardFragment.
+ * Componente compartido para renderizar el Boleto Oficial de Embarque (con QR y perforación),
+ * compartir el voucher y centralizar los accesos rápidos desde reservas y favoritos.
  */
 object VoucherDialogHelper {
 
-    fun showVoucherDialog(context: Context, reserva: Reserva) {
-        val empresa: EmpresaInfo = ServiceLocator.getSessionRepository(context).getEmpresaInfo()
+    fun showVoucherDialog(
+        context: Context,
+        reserva: Reserva,
+        onDismiss: (() -> Unit)? = null
+    ) {
+        val empresa = ServiceLocator.getSessionRepository(context).getEmpresaInfo()
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_detalle_voucher, null)
 
+        val boardingBg: BoardingPassBgView = dialogView.findViewById(R.id.boardingPassVoucherBg)
         val tvTicketEmpresa: TextView = dialogView.findViewById(R.id.tvTicketEmpresa)
         val tvTicketRuc: TextView = dialogView.findViewById(R.id.tvTicketRuc)
         val tvTicketCodigo: TextView = dialogView.findViewById(R.id.tvTicketCodigo)
@@ -42,23 +49,30 @@ object VoucherDialogHelper {
         val tvTicketTerminal: TextView = dialogView.findViewById(R.id.tvTicketTerminal)
         val tvTicketTransporte: TextView = dialogView.findViewById(R.id.tvTicketTransporte)
         val tvTicketGuia: TextView = dialogView.findViewById(R.id.tvTicketGuia)
+        val tvTicketCantidadPasajeros: TextView = dialogView.findViewById(R.id.tvTicketCantidadPasajeros)
         val tvTicketPasajerosLista: TextView = dialogView.findViewById(R.id.tvTicketPasajerosLista)
+        val qrVoucher: QrVisualView = dialogView.findViewById(R.id.qrTicketVoucher)
         val tvTicketTotal: TextView = dialogView.findViewById(R.id.tvTicketTotal)
         val tvTicketMetodoPago: TextView = dialogView.findViewById(R.id.tvTicketMetodoPago)
         val btnTicketMaps: MaterialButton = dialogView.findViewById(R.id.btnTicketMaps)
         val btnTicketCompartir: MaterialButton = dialogView.findViewById(R.id.btnTicketCompartir)
 
+        boardingBg.setTearLineBottomOffsetRatio(0.24f)
+        qrVoucher.setCode("${reserva.codigoReserva}|${reserva.destinoId}|${reserva.costoTotal}")
+
         tvTicketEmpresa.text = empresa.razonSocial
-        tvTicketRuc.text = "RUC: ${empresa.ruc} • Reg: ${empresa.registroMincetur}"
+        tvTicketRuc.text = "RUC: ${empresa.ruc} • Reg. ${empresa.registroMincetur}"
         tvTicketCodigo.text = reserva.codigoReserva
         tvTicketEstado.text = reserva.estado.uppercase(Locale.US)
         tvTicketDestino.text = reserva.destinoNombre
-        tvTicketFechaHora.text = "Salida: ${reserva.fechaSalida} • ${reserva.horarioSalida}"
-        tvTicketTerminal.text = "Embarque: ${reserva.terminalEmbarque}"
-        tvTicketTransporte.text = "Transporte: ${reserva.tipoMovilidad} • ${reserva.categoriaHotel}"
-        tvTicketGuia.text = "Guía Oficial: ${reserva.guiaTuristico}"
+        tvTicketFechaHora.text = "${reserva.fechaSalida} • ${reserva.horarioSalida}"
+        tvTicketTerminal.text = reserva.terminalEmbarque
+        tvTicketTransporte.text = reserva.tipoMovilidad
+        tvTicketGuia.text = reserva.guiaTuristico
+        val sufijoPax = if (reserva.cantidadPersonas == 1) "Pasajero" else "Pasajeros"
+        tvTicketCantidadPasajeros.text = "${reserva.cantidadPersonas} $sufijoPax"
         tvTicketTotal.text = String.format(Locale.US, "S/ %.2f", reserva.costoTotal)
-        tvTicketMetodoPago.text = "${reserva.metodoPago} • ${reserva.numeroOperacion}"
+        tvTicketMetodoPago.text = "Inc. IGV • ${reserva.metodoPago}"
 
         Glide.with(context)
             .load(reserva.destinoFoto)
@@ -69,7 +83,7 @@ object VoucherDialogHelper {
 
         tvTicketPasajerosLista.text = if (reserva.listaPasajeros.isNotEmpty()) {
             reserva.listaPasajeros.joinToString("\n") { p ->
-                "• ${p.nombresApellidos} (${p.tipoDocumento}: ${p.numeroDocumento}, ${p.edad} años)"
+                "• ${p.nombresApellidos} (${p.tipoDocumento}: ${p.numeroDocumento})"
             }
         } else {
             "• Titular: ${reserva.usuarioNombre} (${reserva.usuarioEmail})"
@@ -77,7 +91,8 @@ object VoucherDialogHelper {
 
         val dialog = MaterialAlertDialogBuilder(context)
             .setView(dialogView)
-            .setPositiveButton("Cerrar", null)
+            .setPositiveButton("Cerrar") { _, _ -> onDismiss?.invoke() }
+            .setOnCancelListener { onDismiss?.invoke() }
             .create()
 
         btnTicketMaps.setOnClickListener {
@@ -86,29 +101,27 @@ object VoucherDialogHelper {
             try {
                 context.startActivity(intent)
             } catch (_: Exception) {
-                Toast.makeText(context, "No se encontró una app de mapas instalada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "No se encontró una aplicación de mapas instalada", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnTicketCompartir.setOnClickListener {
-            shareVoucher(context, reserva, empresa.razonSocial, empresa.ruc)
-            dialog.dismiss()
+            shareVoucherText(context, reserva, empresa)
         }
 
         dialog.show()
     }
 
-    fun shareVoucher(context: Context, reserva: Reserva, razonSocial: String, ruc: String) {
+    fun shareVoucherText(context: Context, reserva: Reserva, empresa: EmpresaInfo) {
         val listaStr = if (reserva.listaPasajeros.isNotEmpty()) {
-            reserva.listaPasajeros.joinToString("\n") {
-                "   - ${it.nombresApellidos} (${it.tipoDocumento}: ${it.numeroDocumento})"
-            }
+            reserva.listaPasajeros.joinToString("\n") { "   - ${it.nombresApellidos} (${it.tipoDocumento}: ${it.numeroDocumento})" }
         } else {
-            "   - ${reserva.usuarioNombre} (${reserva.usuarioEmail})"
+            "   - ${reserva.usuarioNombre}"
         }
 
-        val mensaje = "BOLETO DE EMBARQUE OFICIAL - $razonSocial\n" +
-            "RUC: $ruc • Reg. MINCETUR\n\n" +
+        val mensaje = "🎟️ BOLETO OFICIAL DE EMBARQUE - ${empresa.razonSocial}\n" +
+            "RUC: ${empresa.ruc} • Reg. MINCETUR: ${empresa.registroMincetur}\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
             "• Código Voucher: ${reserva.codigoReserva}\n" +
             "• Destino: ${reserva.destinoNombre}\n" +
             "• Salida: ${reserva.fechaSalida} a las ${reserva.horarioSalida}\n" +
@@ -145,12 +158,12 @@ object VoucherDialogHelper {
         val sessionRepo = ServiceLocator.getSessionRepository(context)
         if (!sessionRepo.isLoggedIn()) {
             MaterialAlertDialogBuilder(context)
-                .setTitle("Acceso a Reservas")
-                .setMessage("Para cotizar y confirmar reservas en PerúViajero se requiere una cuenta. ¿Deseas iniciar sesión o usar acceso rápido?")
+                .setTitle("Inicia sesión para reservar")
+                .setMessage("Como visitante puedes explorar libremente. Para cotizar y confirmar tu reserva en PerúViajero, inicia sesión como Turista Registrado.")
                 .setPositiveButton("Iniciar Sesión") { _, _ ->
                     context.startActivity(Intent(context, LoginActivity::class.java))
                 }
-                .setNeutralButton("Continuar como Turista") { _, _ ->
+                .setNeutralButton("Acceso Rápido Turista") { _, _ ->
                     sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE))
                     lanzarReservaTour(context, destino)
                 }

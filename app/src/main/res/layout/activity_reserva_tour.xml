@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
+    <!-- Toolbar Esmeralda -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarReserva"
         android:layout_width="match_parent"
@@ -17,87 +18,120 @@
         app:title="Cotizar y Reservar Tour"
         app:titleTextColor="#FFFFFF" />
 
+    <!-- Contenido desplazable -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="24dp">
 
-            <!-- Encabezado del Destino seleccionado -->
+            <!-- 1. Tarjeta Resumen del Destino -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/colorCardBackground"
+                app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
-                app:strokeColor="#20000000"
+                app:strokeColor="#14000000"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
 
-                    <ImageView
-                        android:id="@+id/ivReservaFoto"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="@string/app_name"
-                        tools:src="@tools:sample/backgrounds/scenic" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:id="@+id/ivReservaFoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="centerCrop"
+                            tools:src="@tools:sample/backgrounds/scenic" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="14dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tvReservaDestino"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textSize="17sp"
                             android:textStyle="bold"
-                            android:textColor="?android:attr/textColorPrimary"
                             tools:text="Machu Picchu" />
 
-                        <TextView
-                            android:id="@+id/tvReservaDepartamento"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:textSize="13sp"
-                            android:textColor="?android:attr/textColorSecondary"
-                            tools:text="Cusco, Perú" />
+                            android:layout_marginTop="3dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="13dp"
+                                android:layout_height="13dp"
+                                android:contentDescription="Ubicación"
+                                android:src="@drawable/ic_location"
+                                app:tint="?android:attr/textColorSecondary" />
+
+                            <TextView
+                                android:id="@+id/tvReservaDepartamento"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="12sp"
+                                tools:text="Urubamba, Cusco" />
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/tvPrecioBase"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorPrimary"
-                            android:text="Tarifa Base: S/ 150.00 / persona" />
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_badge_categoria"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="3dp"
+                            android:text="S/ 150 / pers"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Sección: Fecha de Salida -->
+            <!-- 2. Fecha y Embarque -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/colorCardBackground"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#14000000"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -109,7 +143,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1. Fecha de Salida del Tour"
+                        android:text="Fecha y Embarque"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -121,12 +155,25 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_calendar"
-                            app:tint="@color/colorPrimary"
-                            android:contentDescription="Fecha" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnElegirFecha"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="14dp"
+                            android:text="Elegir Fecha"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="13sp"
+                            app:cornerRadius="20dp"
+                            app:icon="@drawable/ic_calendar"
+                            app:iconPadding="6dp"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/colorPrimary"
+                            app:strokeColor="@color/colorPrimary"
+                            app:strokeWidth="1.2dp" />
 
                         <TextView
                             android:id="@+id/tvFechaSeleccionada"
@@ -134,88 +181,73 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:layout_weight="1"
-                            android:text="Seleccionar fecha..."
                             android:textColor="?android:attr/textColorPrimary"
-                            android:textSize="15sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnElegirFecha"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Elegir Fecha"
-                            android:textAllCaps="false"
-                            app:cornerRadius="8dp" />
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="22/11/2026" />
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Sección: Terminal y Horario de Salida -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2. Terminal de Embarque y Horario"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Punto de Partida / Terminal Terrestre:"
+                        android:layout_marginTop="12dp"
+                        android:text="Terminal / Punto de Recojo"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
-                    <Spinner
-                        android:id="@+id/spTerminalEmbarque"
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:background="@android:drawable/btn_dropdown"
-                        android:padding="8dp" />
+                        app:cardBackgroundColor="@color/colorCardBackground"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#22000000"
+                        app:strokeWidth="1dp">
+
+                        <Spinner
+                            android:id="@+id/spTerminalEmbarque"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:paddingHorizontal="8dp" />
+                    </com.google.android.material.card.MaterialCardView>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Horario de Salida (Turno):"
+                        android:text="Horario de Salida"
                         android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
-                    <Spinner
-                        android:id="@+id/spHorarioSalida"
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:background="@android:drawable/btn_dropdown"
-                        android:padding="8dp" />
+                        app:cardBackgroundColor="@color/colorCardBackground"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#22000000"
+                        app:strokeWidth="1dp">
+
+                        <Spinner
+                            android:id="@+id/spHorarioSalida"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:paddingHorizontal="8dp" />
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Sección: Número de Pasajeros y Manifiesto Oficial -->
+            <!-- 3. Pasajeros (Manifiesto SUTRAN) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/colorCardBackground"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#14000000"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -239,7 +271,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="3. Cantidad de Pasajeros"
+                                android:text="Pasajeros"
                                 android:textColor="?android:attr/textColorPrimary"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -247,61 +279,71 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Cupos para el grupo (1 a 10)"
+                                android:text="(Manifiesto SUTRAN • 1 a 10)"
                                 android:textColor="?android:attr/textColorSecondary"
-                                android:textSize="13sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnMenosPasajeros"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:insetLeft="0dp"
-                            android:insetTop="0dp"
-                            android:insetRight="0dp"
-                            android:insetBottom="0dp"
-                            android:padding="0dp"
-                            android:text="—"
-                            android:textSize="16sp"
-                            app:cornerRadius="22dp" />
+                        <!-- Stepper píldora verde esmeralda igual al mockup 07 -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            app:cardBackgroundColor="@color/colorPrimary"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp">
 
-                        <TextView
-                            android:id="@+id/tvCantidadPasajeros"
-                            android:layout_width="36dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="1"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="4dp">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnMasPasajeros"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:insetLeft="0dp"
-                            android:insetTop="0dp"
-                            android:insetRight="0dp"
-                            android:insetBottom="0dp"
-                            android:padding="0dp"
-                            android:text="+"
-                            android:textSize="18sp"
-                            app:cornerRadius="22dp" />
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnMenosPasajeros"
+                                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                                    android:layout_width="34dp"
+                                    android:layout_height="34dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:minWidth="0dp"
+                                    android:padding="0dp"
+                                    android:text="−"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvCantidadPasajeros"
+                                    android:layout_width="28dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="1"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnMasPasajeros"
+                                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                                    android:layout_width="34dp"
+                                    android:layout_height="34dp"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:minWidth="0dp"
+                                    android:padding="0dp"
+                                    android:text="+"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="#15000000" />
-
-                    <!-- Acciones de Manifiesto: Importar de Contactos (READ_CONTACTS) o Registro Manual -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
@@ -332,7 +374,7 @@
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:paddingHorizontal="8dp"
-                            android:text="Registrar DNI (1)"
+                            android:text="Registrar DNI (1/1)"
                             android:textAllCaps="false"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="12sp"
@@ -350,20 +392,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="ℹ️ Puedes importar acompañantes desde tu agenda o registrarlos a mano."
+                        android:text="ℹ️ Importa acompañantes de tu agenda o regístralos manualmente."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Sección: Tipo de Movilidad -->
+            <!-- 4. Personaliza tu Experiencia (Movilidad, Hospedaje y Guía) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
+                app:cardBackgroundColor="@color/colorCardBackground"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#14000000"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -375,179 +417,180 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3. Tipo de Transporte / Movilidad"
+                        android:text="Personaliza tu Experiencia"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Movilidad"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/rgMovilidad"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="4dp">
 
                         <RadioButton
                             android:id="@+id/rbMovilidadVan"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Van Turística Estándar (Incluido)" />
+                            android:text="Van Turística Compartida (Incluido)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbMovilidadBus"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Minibús Panorámico (+S/ 40 por persona)" />
+                            android:text="Minibús Panorámico (+ S/ 40 / pers)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbMovilidad4x4"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Camioneta 4x4 Privada (+S/ 120 por persona)" />
+                            android:text="Camioneta 4x4 Privada (+ S/ 120 / pers)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbMovilidadTren"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Tren Ejecutivo / VIP (+S/ 250 por persona)" />
+                            android:text="Tren VIP Ejecutivo (+ S/ 250 / pers)"
+                            android:textSize="13sp" />
                     </RadioGroup>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Sección: Categoría de Hotel -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#12000000" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4. Alojamiento / Categoría de Hotel"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
+                        android:text="Alojamiento y Hotel"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/rgHotel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="4dp">
 
                         <RadioButton
                             android:id="@+id/rbHotelNinguno"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Solo Tour (Sin Hotel)" />
+                            android:text="Solo Tour Full Day (Sin hotel)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbHotel3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Hotel Turista 3★ (+S/ 90 por persona)" />
+                            android:text="Hotel Turista 3★ (+ S/ 90 / pers)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbHotel4"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Hotel Superior 4★ (+S/ 180 por persona)" />
+                            android:text="Hotel Superior 4★ (+ S/ 180 / pers)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbHotel5"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Resort de Lujo 5★ (+S/ 320 por persona)" />
+                            android:text="Resort de Lujo 5★ (+ S/ 320 / pers)"
+                            android:textSize="13sp" />
                     </RadioGroup>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Sección: Guía Oficial de Turismo -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#20000000"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#12000000" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5. Guía Oficial de Turismo (MINCETUR)"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="15sp"
+                        android:text="Guía Oficial"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/rgGuia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="4dp">
 
                         <RadioButton
                             android:id="@+id/rbGuiaNinguno"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Sin Guía Privado (Tour Libre)" />
+                            android:text="Guía Estándar de Grupo (Incluido)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbGuiaEspanol"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Guía Oficial en Español (+S/ 45.00 por grupo)" />
+                            android:text="Guía Oficial en Español (+ S/ 45 / grupo)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbGuiaBilingue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Guía Bilingüe Certificado Inglés/Español (+S/ 80.00)" />
+                            android:text="Guía Bilingüe Certificado (+ S/ 80 / grupo)"
+                            android:textSize="13sp" />
 
                         <RadioButton
                             android:id="@+id/rbGuiaExperto"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Guía Experto de Alta Montaña / Historiador (+S/ 130.00)" />
+                            android:text="Guía Experto de Montaña (+ S/ 130 / grupo)"
+                            android:textSize="13sp" />
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
         </LinearLayout>
     </ScrollView>
 
-    <!-- Barra Inferior de Cotización en Tiempo Real -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Barra Sticky Inferior fija igual al mockup 07 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="0dp"
-        app:strokeColor="#20000000"
-        app:strokeWidth="1dp">
+        android:background="@color/colorCardBackground"
+        android:elevation="12dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#16000000" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="12dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -558,7 +601,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Costo Total Estimado:"
+                    android:text="Total (Inc. IGV)"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp" />
 
@@ -569,20 +612,21 @@
                     android:textColor="@color/colorPrimary"
                     android:textSize="22sp"
                     android:textStyle="bold"
-                    android:text="S/ 150.00" />
+                    tools:text="S/ 420.00" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmarReserva"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorPrimary"
-                android:text="Proceder al Pago Seguro"
+                android:layout_height="46dp"
+                android:paddingHorizontal="22dp"
+                android:text="Continuar al Pago"
                 android:textAllCaps="false"
-                app:cornerRadius="12dp"
-                app:icon="@drawable/ic_check_circle" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="23dp" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+    </LinearLayout>
 </LinearLayout>
-
