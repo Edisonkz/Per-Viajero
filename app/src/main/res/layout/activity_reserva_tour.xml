@@ -298,18 +298,61 @@
                         android:layout_marginVertical="10dp"
                         android:background="#15000000" />
 
-                    <!-- Botón para Manifiesto de Pasajeros (DNI / Datos según normativa SUTRAN) -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnRegistrarPasajeros"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    <!-- Acciones de Manifiesto: Importar de Contactos (READ_CONTACTS) o Registro Manual -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="📝 Manifiesto de Pasajeros y DNI (Configurado)"
-                        android:textAllCaps="false"
-                        android:textSize="13sp"
-                        app:cornerRadius="10dp"
-                        app:icon="@drawable/ic_person"
-                        app:iconGravity="textStart" />
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnImportarContactos"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="8dp"
+                            android:text="Importar Contactos"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="12sp"
+                            app:cornerRadius="20dp"
+                            app:strokeColor="@color/colorPrimary"
+                            app:strokeWidth="1.2dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRegistrarPasajeros"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="8dp"
+                            android:text="Registrar DNI (1)"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12sp"
+                            app:backgroundTint="#14006837"
+                            app:cornerRadius="20dp"
+                            app:icon="@drawable/ic_person"
+                            app:iconPadding="4dp"
+                            app:iconSize="15dp"
+                            app:iconTint="@color/colorPrimary"
+                            app:strokeWidth="0dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvEstadoPermisoContactos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="ℹ️ Puedes importar acompañantes desde tu agenda o registrarlos a mano."
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

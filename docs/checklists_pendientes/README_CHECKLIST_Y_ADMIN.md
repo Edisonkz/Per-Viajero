@@ -96,13 +96,13 @@ flowchart TD
 ---
 
 ### Fase J — Semana 13: Permisos UX (4 Estados) + `ContentResolver` de Contactos
-- [ ] **Crear `GestorPermisos.kt` reutilizable:** `enum Estado` (`CONCEDIDO`, `PENDIENTE`, `DENEGADO`, `BLOQUEADO`), persistencia de "ya preguntado" en `SharedPreferences`, diálogos educativos (*rationale*) y redirección a `Settings.ACTION_APPLICATION_DETAILS_SETTINGS`.
-- [ ] **Permisos en contexto:** Retirar solicitud automática de `POST_NOTIFICATIONS` al iniciar `MainActivity` y pedirlo únicamente al reservar, programar recordatorios o activar avisos.
-- [ ] **Importar acompañantes en `ReservaTourActivity` (`READ_CONTACTS` + `ContentResolver`):**
+- [x] **Crear `GestorPermisos.kt` reutilizable:** `enum Estado` (`CONCEDIDO`, `PENDIENTE`, `DENEGADO`, `BLOQUEADO`), persistencia de "ya preguntado" en `SharedPreferences`, diálogos educativos (*rationale*) y redirección a `Settings.ACTION_APPLICATION_DETAILS_SETTINGS`.
+- [x] **Permisos en contexto:** Retirar solicitud automática de `POST_NOTIFICATIONS` al iniciar `MainActivity` y pedirlo únicamente al reservar, programar recordatorios o activar avisos.
+- [x] **Importar acompañantes en `ReservaTourActivity` (`READ_CONTACTS` + `ContentResolver`):**
   - Declarar `READ_CONTACTS` en `AndroidManifest.xml`.
   - Consultar `ContactsContract.CommonDataKinds.Phone.CONTENT_URI` con `.use { cursor -> ... }` y `try/catch (SecurityException)`.
-  - Evitar duplicados y mantener **degradación elegante** (si el usuario deniega o bloquea, sigue registrando pasajeros manualmente con estado visible en pantalla).
-- [ ] **Verificación + Commit Fase J** (`testDebugUnitTest assembleDebug` + actualizar checklist).
+  - Evitar duplicados (`ContactoImportHelper`) y mantener **degradación elegante** (si el usuario deniega o bloquea, sigue registrando pasajeros manualmente con estado visible en pantalla).
+- [x] **Verificación + Commit Fase J** (`testDebugUnitTest assembleDebug` + `ContactoImportHelperTest` 2/2).
 
 ---
 

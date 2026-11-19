@@ -1,9 +1,11 @@
 package pe.edu.utp.perviajero.ui
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -14,6 +16,7 @@ import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
@@ -24,7 +27,10 @@ import pe.edu.utp.perviajero.data.model.Destino
 import pe.edu.utp.perviajero.data.model.Pasajero
 import pe.edu.utp.perviajero.data.model.Reserva
 import pe.edu.utp.perviajero.di.ServiceLocator
+import pe.edu.utp.perviajero.util.ContactoAgenda
+import pe.edu.utp.perviajero.util.ContactoImportHelper
 import pe.edu.utp.perviajero.util.CotizadorCalculator
+import pe.edu.utp.perviajero.util.GestorPermisos
 import pe.edu.utp.perviajero.util.NotificationHelper
 import pe.edu.utp.perviajero.util.ReminderScheduler
 import java.util.Calendar
@@ -51,7 +57,39 @@ class ReservaTourActivity : AppCompatActivity() {
     private lateinit var btnMenosPasajeros: MaterialButton
     private lateinit var btnMasPasajeros: MaterialButton
     private lateinit var tvCantidadPasajeros: TextView
+    private lateinit var btnImportarContactos: MaterialButton
     private lateinit var btnRegistrarPasajeros: MaterialButton
+    private lateinit var tvEstadoPermisoContactos: TextView
+
+    private val permisosContactos = arrayOf(Manifest.permission.READ_CONTACTS)
+    private val gestorPermisos by lazy { GestorPermisos(this) }
+
+    private val lanzadorContactos = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        gestorPermisos.marcarPreguntado(permisosContactos)
+        if (resultado.values.any { it }) {
+            importarAcompanantesDesdeContactos()
+        } else {
+            Toast.makeText(
+                this,
+                "Sin acceso a contactos. Puedes registrar los pasajeros manualmente.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+        actualizarEstadoPermisoContactos()
+    }
+
+    private val lanzadorNotificaciones = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            gestorPermisos.marcarPreguntado(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+        }
+        if (resultado.values.any { it }) {
+            Toast.makeText(this, "Alertas de embarque activadas", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private lateinit var rgMovilidad: RadioGroup
     private lateinit var rgHotel: RadioGroup
@@ -94,7 +132,13 @@ class ReservaTourActivity : AppCompatActivity() {
         configurarSpinnersTerminalYHorario()
         sincronizarListaManifiesto()
         configurarEventos()
+        actualizarEstadoPermisoContactos()
         actualizarCalculoCosto()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        actualizarEstadoPermisoContactos()
     }
 
     private fun inicializarVistas() {
@@ -112,7 +156,9 @@ class ReservaTourActivity : AppCompatActivity() {
         btnMenosPasajeros = findViewById(R.id.btnMenosPasajeros)
         btnMasPasajeros = findViewById(R.id.btnMasPasajeros)
         tvCantidadPasajeros = findViewById(R.id.tvCantidadPasajeros)
+        btnImportarContactos = findViewById(R.id.btnImportarContactos)
         btnRegistrarPasajeros = findViewById(R.id.btnRegistrarPasajeros)
+        tvEstadoPermisoContactos = findViewById(R.id.tvEstadoPermisoContactos)
 
         rgMovilidad = findViewById(R.id.rgMovilidad)
         rgHotel = findViewById(R.id.rgHotel)
@@ -225,6 +271,16 @@ class ReservaTourActivity : AppCompatActivity() {
             }
         }
 
+        btnImportarContactos.setOnClickListener {
+            gestorPermisos.ejecutarConPermiso(
+                permisos = permisosContactos,
+                lanzador = lanzadorContactos,
+                motivo = "Leemos tu agenda solo para ayudarte a completar rápido los nombres de tus acompañantes. Si prefieres, puedes registrarlos manualmente."
+            ) {
+                importarAcompanantesDesdeContactos()
+            }
+        }
+
         btnRegistrarPasajeros.setOnClickListener {
             mostrarDialogoManifiestoPasajeros()
         }
@@ -296,8 +352,90 @@ class ReservaTourActivity : AppCompatActivity() {
         }
 
         btnConfirmarReserva.setOnClickListener {
+            solicitarPermisoNotificacionEnContexto()
             iniciarPasarelaDePago()
         }
+    }
+
+    private fun solicitarPermisoNotificacionEnContexto() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permisosNotif = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+            if (gestorPermisos.estadoDe(permisosNotif) == GestorPermisos.Estado.PENDIENTE) {
+                lanzadorNotificaciones.launch(permisosNotif)
+            }
+        }
+    }
+
+    private fun actualizarEstadoPermisoContactos() {
+        val estado = gestorPermisos.estadoDe(permisosContactos)
+        tvEstadoPermisoContactos.text = when (estado) {
+            GestorPermisos.Estado.CONCEDIDO -> "✅ Contactos activos: puedes importar acompañantes o escribirlos a mano."
+            GestorPermisos.Estado.PENDIENTE -> "ℹ️ Importa acompañantes de tu agenda o regístralos manualmente."
+            GestorPermisos.Estado.DENEGADO -> "⚠️ Sin acceso a contactos. El registro manual de DNI sigue disponible."
+            GestorPermisos.Estado.BLOQUEADO -> "🚫 Contactos bloqueados (Ajustes). Modo manual activo sin restricciones."
+        }
+        btnRegistrarPasajeros.text = "Registrar DNI (${listaManifiesto.size}/$cantidadPasajeros)"
+    }
+
+    private fun importarAcompanantesDesdeContactos() {
+        val colNombre = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+        val colNumero = ContactsContract.CommonDataKinds.Phone.NUMBER
+        val encontrados = mutableListOf<ContactoAgenda>()
+
+        try {
+            contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(colNombre, colNumero),
+                null,
+                null,
+                "$colNombre ASC"
+            )?.use { cursor ->
+                val idxNombre = cursor.getColumnIndexOrThrow(colNombre)
+                val idxNumero = cursor.getColumnIndexOrThrow(colNumero)
+                while (cursor.moveToNext()) {
+                    encontrados.add(
+                        ContactoAgenda(
+                            nombre = cursor.getString(idxNombre) ?: "",
+                            telefono = cursor.getString(idxNumero) ?: ""
+                        )
+                    )
+                }
+            }
+        } catch (_: SecurityException) {
+            Toast.makeText(this, "No hay permiso para leer contactos", Toast.LENGTH_SHORT).show()
+            actualizarEstadoPermisoContactos()
+            return
+        }
+
+        val contactos = ContactoImportHelper.deduplicar(encontrados)
+        if (contactos.isEmpty()) {
+            Toast.makeText(this, "No se encontraron contactos con teléfono; regístralos a mano.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val etiquetas = contactos.map { "${it.nombre} (${it.telefono})" }.toTypedArray()
+        val marcados = BooleanArray(contactos.size)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Importar acompañantes (máx. 10)")
+            .setMultiChoiceItems(etiquetas, marcados) { _, which, isChecked ->
+                marcados[which] = isChecked
+            }
+            .setPositiveButton("Agregar al manifiesto") { _, _ ->
+                val elegidos = contactos.filterIndexed { idx, _ -> marcados[idx] }
+                if (elegidos.isNotEmpty()) {
+                    val nuevaLista = ContactoImportHelper.agregarAlManifiesto(listaManifiesto, elegidos, 10)
+                    listaManifiesto.clear()
+                    listaManifiesto.addAll(nuevaLista)
+                    cantidadPasajeros = listaManifiesto.size.coerceIn(1, 10)
+                    tvCantidadPasajeros.text = cantidadPasajeros.toString()
+                    actualizarCalculoCosto()
+                    actualizarEstadoPermisoContactos()
+                    Toast.makeText(this, "${elegidos.size} acompañante(s) agregado(s) al manifiesto", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun mostrarDialogoManifiestoPasajeros() {

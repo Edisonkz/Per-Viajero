@@ -91,10 +91,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var currentTab: MainTab = MainTab.EXPLORAR
 
-    private val notificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { /* Estado actualizado en Ajustes */ }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val sessionRepo = ServiceLocator.getSessionRepository(this)
         if (sessionRepo.isDarkMode()) {
@@ -112,7 +108,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        solicitarPermisoNotificacionesSiAplica()
         inicializarVistas()
         aplicarWindowInsets()
         configurarDrawer()
@@ -458,14 +453,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun solicitarPermisoNotificacionesSiAplica() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            !PermissionHelper.hasNotificationPermission(this)
-        ) {
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
