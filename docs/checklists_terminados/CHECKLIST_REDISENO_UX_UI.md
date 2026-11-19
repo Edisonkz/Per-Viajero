@@ -56,4 +56,4 @@ Estrategia de implementación incremental: primero el **Shell de Navegación + P
 
 ---
 
-> **Siguientes fases (J, K, L y M):** Semana 13 (`GestorPermisos` + Contactos), Semana 14 (Bandeja de Avisos Push + Canales + Agrupación + `TaskStackBuilder`), Rediseño de Checkout/Boleto (`07`–`09`) y Módulo Administrador completo con paleta ejecutiva diferenciada → ver [README_CHECKLIST_Y_ADMIN.md](../checklists_pendientes/README_CHECKLIST_Y_ADMIN.md).
+> **Siguientes fases (J, K, L, M y N — Completadas):** Semana 13 (`GestorPermisos` + Contactos), Semana 14 (Bandeja de Avisos Push + Canales + Agrupación + `TaskStackBuilder`), Rediseño de Checkout/Boleto (`07`–`09`), Módulo Administrador completo con paleta ejecutiva diferenciada, Nuevo Logo Oficial + Splash Animado + Modo Visitante → ver [README_CHECKLIST_Y_ADMIN.md](README_CHECKLIST_Y_ADMIN.md).

@@ -155,21 +155,11 @@ object VoucherDialogHelper {
     }
 
     fun openCotizadorConValidacion(context: Context, destino: Destino) {
-        val sessionRepo = ServiceLocator.getSessionRepository(context)
-        if (!sessionRepo.isLoggedIn()) {
-            MaterialAlertDialogBuilder(context)
-                .setTitle("Inicia sesión para reservar")
-                .setMessage("Como visitante puedes explorar libremente. Para cotizar y confirmar tu reserva en PerúViajero, inicia sesión como Turista Registrado.")
-                .setPositiveButton("Iniciar Sesión") { _, _ ->
-                    context.startActivity(Intent(context, LoginActivity::class.java))
-                }
-                .setNeutralButton("Acceso Rápido Turista") { _, _ ->
-                    sessionRepo.login(sessionRepo.getQuickAccessUser(RolUsuario.CLIENTE))
-                    lanzarReservaTour(context, destino)
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
-        } else {
+        AuthGuardHelper.requireAuth(
+            context = context,
+            titulo = "Inicia sesión para reservar",
+            motivo = "Como visitante puedes explorar libremente los atractivos. Para cotizar y confirmar tu tour en PerúViajero necesitas iniciar sesión."
+        ) {
             lanzarReservaTour(context, destino)
         }
     }

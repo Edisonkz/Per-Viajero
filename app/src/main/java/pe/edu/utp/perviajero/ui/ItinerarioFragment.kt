@@ -114,20 +114,32 @@ class ItinerarioFragment : Fragment() {
         rvItinerario.layoutManager = LinearLayoutManager(requireContext())
         adapter = ActividadItinerarioAdapter(
             onToggleCompletada = { item ->
-                ServiceLocator.getItinerarioRepository(requireContext()).toggleActividadCompletada(item.id)
-                cargarItinerario()
+                pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                    requireContext(),
+                    "Inicia sesión para editar tu itinerario",
+                    "Como visitante puedes revisar el plan de viaje. Inicia sesión para marcar actividades completadas y guardar tu progreso."
+                ) {
+                    ServiceLocator.getItinerarioRepository(requireContext()).toggleActividadCompletada(item.id)
+                    cargarItinerario()
+                }
             },
             onEliminar = { item ->
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Eliminar Actividad")
-                    .setMessage("¿Deseas quitar \"${item.lugar}\" de tu itinerario?")
-                    .setPositiveButton("Eliminar") { _, _ ->
-                        ServiceLocator.getItinerarioRepository(requireContext()).eliminarActividad(item.id)
-                        Toast.makeText(requireContext(), "Actividad eliminada", Toast.LENGTH_SHORT).show()
-                        cargarItinerario()
-                    }
-                    .setNegativeButton("Cancelar", null)
-                    .show()
+                pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                    requireContext(),
+                    "Inicia sesión para gestionar tu itinerario",
+                    "Inicia sesión para modificar o eliminar actividades de tu itinerario personal."
+                ) {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Eliminar Actividad")
+                        .setMessage("¿Deseas quitar \"${item.lugar}\" de tu itinerario?")
+                        .setPositiveButton("Eliminar") { _, _ ->
+                            ServiceLocator.getItinerarioRepository(requireContext()).eliminarActividad(item.id)
+                            Toast.makeText(requireContext(), "Actividad eliminada", Toast.LENGTH_SHORT).show()
+                            cargarItinerario()
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .show()
+                }
             }
         )
         rvItinerario.adapter = adapter
@@ -215,13 +227,25 @@ class ItinerarioFragment : Fragment() {
         }
 
         fabNuevaActividad.setOnClickListener {
-            mostrarDialogoNuevaActividad(
-                fechaInicial = if (esModoCalendario) fechaCalendarioSeleccionada else ""
-            )
+            pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                requireContext(),
+                "Crea tu itinerario personal",
+                "Inicia sesión para agregar actividades personalizadas y programar recordatorios de viaje."
+            ) {
+                mostrarDialogoNuevaActividad(
+                    fechaInicial = if (esModoCalendario) fechaCalendarioSeleccionada else ""
+                )
+            }
         }
 
         btnSugerencias.setOnClickListener {
-            mostrarDialogoSugerenciasSemanales()
+            pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                requireContext(),
+                "Importar rutas sugeridas",
+                "Inicia sesión para cargar planes semanales recomendados en tu itinerario personal."
+            ) {
+                mostrarDialogoSugerenciasSemanales()
+            }
         }
 
         btnCompartir.setOnClickListener {

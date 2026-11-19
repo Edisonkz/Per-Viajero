@@ -205,10 +205,16 @@ class DetalleDestinoActivity : AppCompatActivity() {
         cardPreviaComunidad.setOnClickListener { abrirResenasDestino() }
 
         btnPublicarVisitaDestino.setOnClickListener {
-            startActivity(Intent(this, PublicarExperienciaActivity::class.java).apply {
-                putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_REGION, destino.departamento)
-                putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_DESTINO_ID, destino.id)
-            })
+            pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                this,
+                "Inicia sesión para publicar",
+                "Comparte fotos y consejos sobre ${destino.nombre} iniciando sesión en PerúViajero."
+            ) {
+                startActivity(Intent(this, PublicarExperienciaActivity::class.java).apply {
+                    putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_REGION, destino.departamento)
+                    putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_DESTINO_ID, destino.id)
+                })
+            }
         }
 
         cardHeroItinerario.setOnClickListener {

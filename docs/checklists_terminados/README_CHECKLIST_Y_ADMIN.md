@@ -141,17 +141,17 @@ flowchart TD
 ---
 
 ### Fase N — Nuevo Logo Oficial + Splash Épico Animado + Modo Visitante Público + Auth Gate Contextual
-- [ ] **Aplicar Nuevo Logo Oficial de la App ([logo_app_icon_propuesta.jpg](../mockups_ux_ui/logo_app_icon_propuesta.jpg)):**
-  - Reemplazar ícono adaptable de Android (`ic_launcher_foreground.xml`, `ic_launcher_background.xml` / `mipmap-*`) con el emblema oficial aprobado (Pin GPS blanco + montañas gemelas de Machu Picchu + camino + sol dorado `#FFB300` + punta carmesí `#C1272D` sobre degradado esmeralda `#006837` → `#004D25`).
+- [x] **Aplicar Nuevo Logo Oficial de la App ([logo_app_icon_propuesta.jpg](../mockups_ux_ui/logo_app_icon_propuesta.jpg)):**
+  - Reemplazar ícono adaptable de Android (`ic_launcher_foreground.xml`, `ic_launcher_background.xml`) con el emblema oficial aprobado (Pin GPS blanco + montañas gemelas de Machu Picchu + camino + sol dorado `#FFB300` + punta carmesí `#C1272D` sobre degradado esmeralda `#006837` → `#004D25`).
   - Actualizar `ic_logo_peruviajero_agency.xml` para que el nuevo logo aparezca también en Login, Pasarela de Pagos, Panel Admin y Splash Screen.
-- [ ] **`SplashActivity.kt` (Launcher con animación de entrada épica):**
+- [x] **`SplashActivity.kt` (Launcher con animación de entrada épica):**
   - Fondo degradado esmeralda profundo (`#004D25` → `#006837`) con ondas/resplandor sutil.
   - Animación coreografiada (`AnimatorSet` + `OvershootInterpolator`): entrada elástica del nuevo logo oficial centrado, pulso de halo luminoso, aparición deslizante del título `"PerúViajero"` + subtítulo `"Descubre el Perú a tu ritmo"` y transición *cross-fade* fluida (~1.8 s) hacia `OnboardingActivity` (primera vez) o `MainActivity` en modo **Visitante**.
-- [ ] **Modo Visitante (`INVITADO`) por defecto al iniciar:**
+- [x] **Modo Visitante (`INVITADO`) por defecto al iniciar:**
   - Garantizar navegación libre sin login en `Explorar`, `Detalle Hero`, `Mapa GPS`, `Brújula`, `Guía IPERÚ` y lectura de `Comunidad`.
   - Mostrar badge `VISITANTE` y botón directo `"Iniciar Sesión"` en el Drawer Header.
-- [ ] **Auth Gate Contextual (`AuthGuardHelper.kt`):**
+- [x] **Auth Gate Contextual (`AuthGuardHelper.kt`):**
   - Helper centralizado que intercepta acciones protegidas (`Reservar`, `Itinerario`, `Mis Reservas`, `Publicar/Comentar` en Comunidad) cuando `!sessionRepo.isLoggedIn()`.
-  - Abre un modal/diálogo elegante o `LoginActivity` explicando el motivo y, tras autenticarse como **Turista Registrado** o **Administrador**, redirige o ejecuta automáticamente la acción que el usuario había solicitado (sin perder el contexto).
-  - En `Mis Reservas` e `Itinerario` para Visitante: vista vacía atractiva con ilustración, beneficios de la cuenta y botón `"Iniciar Sesión / Registrarme"`.
-- [ ] **Verificación + Build Release R8 + Commit Fase N** (`testDebugUnitTest assembleDebug assembleRelease` + mover checklist completado a `docs/checklists_terminados/`).
+  - Abre un modal/diálogo elegante hacia `LoginActivity` explicando el motivo y permitiendo ingresar como **Turista Registrado** o **Administrador**.
+  - En `Mis Reservas` para Visitante: vista vacía atractiva con botón `"Iniciar Sesión / Registrarme"`; en `Itinerario`: preview de solo lectura con protección contextual al editar/añadir.
+- [x] **Verificación + Build Release R8 + Commit Fase N** (`testDebugUnitTest assembleDebug assembleRelease` — 27/27 tests JVM + R8 + lintVital + checklist movido a `docs/checklists_terminados/`).

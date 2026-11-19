@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash_emerald">
+
+    <!-- Anillos de resplandor que se expanden detrás del logo -->
+    <View
+        android:id="@+id/viewSplashRingOuter"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="46dp"
+        android:alpha="0"
+        android:background="@drawable/bg_splash_halo_ring" />
+
+    <View
+        android:id="@+id/viewSplashRingInner"
+        android:layout_width="156dp"
+        android:layout_height="156dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="46dp"
+        android:alpha="0"
+        android:background="@drawable/bg_splash_halo_ring" />
+
+    <!-- Bloque central animado: Logo oficial + Wordmark + Tagline -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <ImageView
+            android:id="@+id/ivSplashLogo"
+            android:layout_width="124dp"
+            android:layout_height="124dp"
+            android:alpha="0"
+            android:contentDescription="@string/app_name"
+            android:elevation="12dp"
+            android:src="@drawable/ic_logo_peruviajero_agency" />
+
+        <TextView
+            android:id="@+id/tvSplashBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:alpha="0"
+            android:letterSpacing="0.04"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/viewSplashAccentBar"
+            android:layout_width="56dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="10dp"
+            android:alpha="0"
+            android:background="@color/colorStar" />
+
+        <TextView
+            android:id="@+id/tvSplashSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:alpha="0"
+            android:text="Descubre el Perú a tu ritmo"
+            android:textColor="#D9FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSplashFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="36dp"
+        android:alpha="0"
+        android:text="Turismo • Rutas GPS • Comunidad"
+        android:textColor="#A6FFFFFF"
+        android:textSize="11sp" />
+
+</FrameLayout>

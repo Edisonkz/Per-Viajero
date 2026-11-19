@@ -29,6 +29,9 @@ class MisReservasFragment : Fragment() {
 
     private lateinit var rvMisReservas: RecyclerView
     private lateinit var layoutSinReservas: LinearLayout
+    private lateinit var tvSinReservasTitulo: TextView
+    private lateinit var tvSinReservasSubtitulo: TextView
+    private lateinit var btnMisReservasLogin: com.google.android.material.button.MaterialButton
     private lateinit var tvSubtituloMisReservas: TextView
     private lateinit var chipGroupEstadoReservas: ChipGroup
     private lateinit var adapter: ReservaAdapter
@@ -48,7 +51,14 @@ class MisReservasFragment : Fragment() {
 
         rvMisReservas = view.findViewById(R.id.rvMisReservas)
         layoutSinReservas = view.findViewById(R.id.layoutSinReservas)
+        tvSinReservasTitulo = view.findViewById(R.id.tvSinReservasTitulo)
+        tvSinReservasSubtitulo = view.findViewById(R.id.tvSinReservasSubtitulo)
+        btnMisReservasLogin = view.findViewById(R.id.btnMisReservasLogin)
         tvSubtituloMisReservas = view.findViewById(R.id.tvSubtituloMisReservas)
+
+        btnMisReservasLogin.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), LoginActivity::class.java))
+        }
         chipGroupEstadoReservas = view.findViewById(R.id.chipGroupEstadoReservas)
 
         rvMisReservas.layoutManager = LinearLayoutManager(requireContext())
@@ -119,8 +129,23 @@ class MisReservasFragment : Fragment() {
     }
 
     private fun cargarReservas() {
+        val sessionRepo = ServiceLocator.getSessionRepository(requireContext())
+        if (!sessionRepo.isLoggedIn()) {
+            tvSubtituloMisReservas.text = "Modo Visitante • Inicia sesión para ver tus boletos"
+            layoutSinReservas.visibility = View.VISIBLE
+            rvMisReservas.visibility = View.GONE
+            tvSinReservasTitulo.text = "Tus boletos y reservas te esperan"
+            tvSinReservasSubtitulo.text = "Inicia sesión como Turista Registrado o Administrador para ver tus vouchers QR, cotizar tours y recibir alertas."
+            btnMisReservasLogin.visibility = View.VISIBLE
+            return
+        }
+
+        btnMisReservasLogin.visibility = View.GONE
+        tvSinReservasTitulo.text = "No hay reservas en este estado"
+        tvSinReservasSubtitulo.text = "Explora los destinos del Perú y cotiza tu próximo recorrido turístico."
+
         val todasLasReservas = ServiceLocator.getReservaRepository(requireContext()).getReservas()
-        val usuario = ServiceLocator.getSessionRepository(requireContext()).getUsuarioActual()
+        val usuario = sessionRepo.getUsuarioActual()
 
         val reservasUsuario = if (usuario != null) {
             val userReservas = todasLasReservas.filter { it.usuarioEmail.equals(usuario.email, ignoreCase = true) }
@@ -138,7 +163,7 @@ class MisReservasFragment : Fragment() {
         tvSubtituloMisReservas.text = if (usuario != null) {
             "Viajero: ${usuario.nombre} • ${reservasUsuario.size} tours activos"
         } else {
-            "Modo libre • ${reservasUsuario.size} tours activos"
+            "Viajero • ${reservasUsuario.size} tours activos"
         }
 
         if (filtradas.isEmpty()) {

@@ -87,6 +87,7 @@
                 android:contentDescription="Sin reservas" />
 
             <TextView
+                android:id="@+id/tvSinReservasTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -97,6 +98,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSinReservasSubtitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -104,6 +106,19 @@
                 android:text="Explora los destinos del Perú y cotiza tu próximo recorrido turístico."
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMisReservasLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="22dp"
+                android:text="Iniciar Sesión / Registrarme"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:visibility="gone"
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="21dp" />
         </LinearLayout>
     </FrameLayout>
 

@@ -108,8 +108,14 @@ class ComunidadFragment : Fragment() {
                 repo.isLoggedIn() && repo.getRolActual() == pe.edu.utp.perviajero.data.model.RolUsuario.ADMIN
             },
             onLikeClick = { pub ->
-                ServiceLocator.getComunidadRepository(requireContext()).toggleLike(pub.id)
-                recargarPublicaciones()
+                pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                    requireContext(),
+                    "Inicia sesión para reaccionar",
+                    "Como visitante puedes leer todas las experiencias. Inicia sesión para marcar reseñas como útiles."
+                ) {
+                    ServiceLocator.getComunidadRepository(requireContext()).toggleLike(pub.id)
+                    recargarPublicaciones()
+                }
             },
             onCommentClick = { pub -> mostrarDetallePublicacion(pub) },
             onVerDestinoClick = { pub -> abrirDestinoDesdePublicacion(pub) },
@@ -223,15 +229,21 @@ class ComunidadFragment : Fragment() {
 
     private fun configurarEventos() {
         fabPublicar.setOnClickListener {
-            val intent = Intent(requireContext(), PublicarExperienciaActivity::class.java).apply {
-                if (selectedRegion != "Todas") {
-                    putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_REGION, selectedRegion)
+            pe.edu.utp.perviajero.ui.common.AuthGuardHelper.requireAuth(
+                requireContext(),
+                "Inicia sesión para publicar",
+                "Comparte tus fotos y reseñas con la comunidad de viajeros iniciando sesión en PerúViajero."
+            ) {
+                val intent = Intent(requireContext(), PublicarExperienciaActivity::class.java).apply {
+                    if (selectedRegion != "Todas") {
+                        putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_REGION, selectedRegion)
+                    }
+                    if (selectedDestinoId != "ALL") {
+                        putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_DESTINO_ID, selectedDestinoId)
+                    }
                 }
-                if (selectedDestinoId != "ALL") {
-                    putExtra(PublicarExperienciaActivity.EXTRA_PRESELECTED_DESTINO_ID, selectedDestinoId)
-                }
+                publicarLauncher.launch(intent)
             }
-            publicarLauncher.launch(intent)
         }
     }
 

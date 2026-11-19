@@ -371,10 +371,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             tvNombre.text = usuario.nombre
             tvEmail.text = usuario.email
             tvRol.text = if (usuario.rol == RolUsuario.ADMIN) "ADMIN AGENCIA" else "TURISTA"
+            headerView.setOnClickListener {
+                drawerLayout.closeDrawer(GravityCompat.START)
+                seleccionarTab(MainTab.PERFIL)
+            }
         } else {
-            tvNombre.text = "Invitado"
-            tvEmail.text = "Modo exploración libre"
-            tvRol.text = "INVITADO"
+            tvNombre.text = "Visitante"
+            tvEmail.text = "Explora libremente • Toca para ingresar"
+            tvRol.text = "VISITANTE"
+            headerView.setOnClickListener {
+                drawerLayout.closeDrawer(GravityCompat.START)
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
         }
 
         val menu = navigationView.menu
