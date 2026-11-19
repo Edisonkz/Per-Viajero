@@ -1,210 +1,142 @@
-# PerúViajero — Plataforma Móvil para Agencia de Servicios Turísticos
+# PerúViajero — Plataforma Móvil Integral de Turismo Formal en el Perú
+
 **Curso:** Desarrollo de Aplicaciones Móviles  
-**Avance:** Proyecto Final 2 (APF2) — Semana 10 (Continuidad de APF1 Semana 5)  
 **Institución:** Universidad Tecnológica del Perú (UTP)  
-**Empresa / Modelo de Negocio:** *PerúViajero Tours & Travel S.A.C.* (RUC: 20608945123)  
-**Repositorio GitHub:** [https://github.com/Edisonkz/Per-Viajero.git](https://github.com/Edisonkz/Per-Viajero.git)  
+**Empresa / Modelo de Negocio:** *PerúViajero Tours & Travel S.A.C.* (RUC: `20608945123` • Registro MINCETUR)  
+**Package Name:** `pe.edu.utp.perviajero`  
+**Repositorio GitHub:** [https://github.com/Edisonkz/Per-Viajero](https://github.com/Edisonkz/Per-Viajero)
 
 ---
 
-## 1. Datos Generales del Proyecto (Sección 1 del Informe APF2)
+## 1. Datos Generales del Proyecto
 
-| Campo | Detalle Real del Proyecto |
+| Campo | Detalle |
 | :--- | :--- |
-| **Nombre de la aplicación** | **PerúViajero** (mismo de APF1) |
-| **Integrantes del grupo** | • Kevin Salazar de Jesús<br>• Edison Edgar Sivipaucar Quispe<br>• Gerson Osmar Machuca Abanto |
-| **Package name** | `pe.edu.utp.perviajero` |
-| **API pública consumida** | API REST Pública de Destinos Turísticos del Perú (GitHub Raw CDN Service) |
-| **Endpoint(s) utilizados** | `GET https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/destinos.json` (12 destinos oficiales con fotos HD, rating y categorías) |
+| **Aplicación** | **PerúViajero** (Android Nativo — Kotlin + Material Design 3) |
+| **Integrantes** | • Kevin Salazar de Jesús<br>• Edison Edgar Sivipaucar Quispe<br>• Gerson Osmar Machuca Abanto |
+| **Arquitectura** | Capas desacopladas (`ui/` → `data/repository/` → `services/` + `network/`) con `ServiceLocator` |
+| **Compilación** | Debug + Release optimizado con **R8**, `lintVitalRelease` y **31 pruebas unitarias JVM** |
 
 ---
 
-## 2. Equivalencias Demostradas (React Native vs Android Nativo — Sección 2)
+## 2. Problemática, Objetivos, Visión y Misión
 
-| Concepto (React Native — Sílabo) | Implementación Nativa Exigida (Android) | Implementación Real en PerúViajero (Clases y Archivos) |
+### Problemática
+El turismo en el Perú sufre de información fragmentada (el viajero necesita distintas apps para descubrir atractivos, ver rutas, leer reseñas y reservar), informalidad en las reservas (ausencia de manifiestos de pasajeros con DNI exigidos por MTC/SUTRAN y boletos verificables), conectividad intermitente en sierra y selva, y falta de herramientas móviles para que las agencias gestionen sus reservas y catálogo territorial.
+
+### Objetivo General
+Desarrollar una aplicación móvil nativa profesional que unifique la **exploración turística**, **comunidad social multi-foto**, **navegación GPS y brújula offline**, **reserva formal con boleto QR** y un **panel administrativo ejecutivo** con control estricto de roles (RBAC).
+
+### Visión
+Ser la plataforma móvil referente del turismo formal y sostenible en el Perú, conectando de forma transparente, segura y sin fricción a viajeros con los destinos y agencias acreditadas de las 25 regiones del país.
+
+### Misión
+Ofrecer una experiencia móvil intuitiva y resiliente que acompañe al viajero desde el descubrimiento hasta el embarque certificado con boleto digital QR, dotando a las agencias de turismo de herramientas modernas para operar con orden, trazabilidad y calidad de servicio.
+
+> Para el detalle completo del planeamiento estratégico (SDD), objetivos específicos y trazabilidad curricular, consulta [planeamiento/README.md](planeamiento/README.md).
+
+---
+
+## 3. Roles del Aplicativo y Control de Acceso (RBAC)
+
+```mermaid
+flowchart LR
+    A["Splash Épico + Onboarding"] --> B["Modo Visitante (Público)"]
+    B -->|"Acción protegida (AuthGuardHelper)"| C["Login / Registro"]
+    C --> D["Turista Registrado (#006837 Esmeralda)"]
+    C --> E["Administrador Agencia (#1B3B4B Andean Slate)"]
+```
+
+| Rol | Identidad Visual | Funcionalidades Habilitadas |
 | :--- | :--- | :--- |
-| **Hooks `useState` / `useEffect`** | Manejo de estado mediante variables de instancia + métodos que refrescan la UI manualmente, o ciclo de vida (`onCreate`, `onResume`). | **Doble implementación reactiva:**<br>1. [`DestinosFragment.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/DestinosFragment.kt): Buscador en tiempo real con `TextWatcher` y filtro en vivo sobre el `RecyclerView` sin recrear la Activity.<br>2. [`ReservaTourActivity.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/ReservaTourActivity.kt): Calculadora dinámica de cotización que actualiza el costo en vivo según pasajeros, movilidad, hotel y guía.<br>3. [`ItinerarioActivity.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/ItinerarioActivity.kt): Estado reactivo de progreso de actividades semanales y conmutador entre Vista por Días y Calendario. |
-| **`fetch` / `axios`** | Consumo de una API REST pública usando Retrofit, OkHttp o HttpURLConnection. | **Retrofit 2 + OkHttp 4 + Gson Converter:**<br>• [`ApiClient.kt`](app/src/main/java/pe/edu/utp/perviajero/network/ApiClient.kt): Cliente singleton con interceptor de conectividad.<br>• [`TourismApiService.kt`](app/src/main/java/pe/edu/utp/perviajero/network/TourismApiService.kt): Interfaz del servicio REST con llamadas asíncronas `Call<List<Destino>>`. |
-| **`AsyncStorage`** | Persistencia local simple con `SharedPreferences`. | [`PreferencesHelper.kt`](app/src/main/java/pe/edu/utp/perviajero/data/local/PreferencesHelper.kt): Gestor centralizado que persiste:<br>• `KEY_LAST_SEARCH`: Último término buscado en el catálogo.<br>• `KEY_FAVORITOS`: Set de IDs de destinos preferidos (`Set<String>`).<br>• `KEY_DARK_MODE`: Estado del tema claro / oscuro (`Boolean`).<br>• `KEY_FIRST_RUN`: Flag para mostrar la pantalla de bienvenida Onboarding (`Boolean`).<br>• `KEY_RESERVAS`: Lista completa de reservas, vouchers y pagos (JSON vía Gson).<br>• `KEY_EMPRESA_INFO`: Razón social, RUC y registro MINCETUR editables de la agencia.<br>• `KEY_ITINERARIO`: Actividades programadas día a día por el turista. |
-| **Integración de temas (Claro / Oscuro)** | DayNight theme de Material Components o selector manual de tema guardado en `SharedPreferences`. | [`AjustesFragment.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/AjustesFragment.kt) + [`Theme.PerúViajero`](app/src/main/res/values/themes.xml):<br>• Selector visual con Switch que aplica `AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES / MODE_NIGHT_NO)` de inmediato y persiste la selección entre cierres y aperturas de la app. |
+| **Visitante (`INVITADO`)** | Esmeralda (`#006837`) | Acceso inmediato al abrir la app: Explorar con filtros por Categoría/Departamento/Provincia, Detalle Hero, Mapa GPS, Brújula Offline, Guía IPERÚ, leer Comunidad (fotos y comentarios) y Bandeja de Avisos públicos. |
+| **Turista (`CLIENTE`)** | Esmeralda (`#006837`) | Todo lo de Visitante + Cotizar y Reservar Tour, importar acompañantes desde Contactos, Pasarela de Pagos SSL, Boletos Oficiales con QR, Itinerario Semanal con Calendario, publicar experiencias **multi-foto** (hasta 5 fotos), dar `Útil` y comentar publicaciones. |
+| **Administrador (`ADMIN`)** | **Azul Pizarra Ejecutivo (`#1B3B4B`)** | Dashboard con 4 KPIs en vivo, datos fiscales MINCETUR, gestión de Reservas filtradas por Destino/Estado/Buscador, **CRUD de Lugares Turísticos** con selector en cascada **Departamento → Provincia → Distrito (API Ubigeo Perú)**, moderación de Comunidad (publicaciones y comentarios) y Emisor de Alertas Push. |
 
 ---
 
-## 3. Requisitos Funcionales Obligatorios del APF2
+## 4. Credenciales de Testing
 
-### 3.1 Continuidad con APF1 (Semana 5)
-* **Navegación Fluida:** `BottomNavigationView` adaptativo en [`MainActivity.kt`](app/src/main/java/pe/edu/utp/perviajero/MainActivity.kt) que permite navegar entre **Destinos**, **Guía**, **Reservas / Agencia**, **Favoritos** y **Ajustes**.
-* **Intents Explícitos e Implícitos:** Navegación entre actividades (`DetalleDestinoActivity`, `RutaDestinoActivity`, `ReservaTourActivity`, `ItinerarioActivity`, `OnboardingActivity`), apertura de rutas en **Google Maps** (`geo:lat,lng`) y llamada directa a **IPERÚ** (`tel:015748000`).
+Definidas en [`app/src/main/assets/services/usuarios.json`](app/src/main/assets/services/usuarios.json):
 
-### 3.2 Consumo de API REST y Manejo de los 3 Estados Visibles
-* **12 Destinos Oficiales del Perú:** Catálogo completo con imágenes HD, departamento, categoría, calificación y costo base renderizado en `RecyclerView` con `Glide`.
-* **3 Estados de Red Implementados en [`DestinosFragment.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/DestinosFragment.kt):**
-  1. ⏳ **Cargando:** `ProgressBar` centrado mientras se resuelve la petición.
-  2. ✅ **Éxito:** `RecyclerView` poblado con la lista de destinos.
-  3. ❌ **Error:** Vista con ícono de desconexión, mensaje de error y botón **"Reintentar"** (se activa automáticamente al apagar el internet en el emulador gracias a `ApiClient.isOnline()`).
+| Rol | Usuario | Correo | Contraseña |
+| :--- | :--- | :--- | :--- |
+| **Turista (`CLIENTE`)** | Kevin Turista | `kevin@peruviajero.pe` | `123456` |
+| **Turista (`CLIENTE`)** | Edison Viajero | `edison@peruviajero.pe` | `123456` |
+| **Administrador (`ADMIN`)** | Gerson Administrador | `gerson@peruviajero.pe` | `admin123` |
 
-### 3.3 Estado Dinámico en Pantalla (sin recrear Activity)
-* **Buscador en tiempo real:** Filtra destinos por nombre o departamento al escribir sin recargar.
-* **Cotizador Interactivo en vivo:** Permite elegir fecha, cantidad de pasajeros (1 a 10), transporte (Van, Minibús, 4x4, Tren VIP), alojamiento (Sin hotel, 3★, 4★, 5★) y guía turístico. El monto total en Soles (S/.) se recalcula instantáneamente en pantalla.
-
-### 3.4 Persistencia y Modo Oscuro
-* Todas las preferencias, favoritos, última búsqueda, reservas y actividades del planificador sobreviven al cierre forzoso y reinicio de la aplicación.
-* Soporte nativo para modo claro y oscuro con colores contrastantes y Material Design 3.
+*(También dispone de botones de **Acceso Rápido** en `LoginActivity` y alternancia de rol en el menú lateral para evaluaciones rápidas).*
 
 ---
 
-## 4. Nuevas Funcionalidades Profesionales Implementadas
+## 5. APIs y Servicios Integrados
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                             PERÚVIAJERO TOURS & TRAVEL                           │
-│                                                                                  │
-│  [1. Onboarding]          [2. Catálogo REST]         [3. Cotizador & Manifiesto] │
-│  • 4 Slides interactivos  • 12 destinos peruanos     • Selector de terminales    │
-│  • Guía de bienvenida     • 3 estados de red         • Horarios de salida        │
-│  • Saltable / Repetible   • Buscador reactivo        • DNI obligatorio SUTRAN    │
-│                                                                                  │
-│  [4. Pasarela de Pagos]   [5. Boleto / Voucher]      [6. Planificador Semanal]   │
-│  • Tarjeta Visa/Mastercard • Código QR / Barras      • Vista Días (1 a 7)        │
-│  • Yape / Plin oficial    • Datos fiscales RUC       • 📅 Calendario interactivo │
-│  • PagoEfectivo (CIP)     • Mapa del terminal        • Sugerencias de expertos   │
-│  • Cifrado SSL simulado   • Compartir WhatsApp       • Registro de actividades   │
-└──────────────────────────────────────────────────────────────────────────────────┘
-```
-
-1. **Pantalla de Bienvenida / Onboarding Inicial ([`OnboardingActivity.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/OnboardingActivity.kt)):**
-   * Se muestra al abrir la app por primera vez (o al tocar *"Ver Bienvenida"* en Ajustes).
-   * 4 diapositivas (`ViewPager2`) con puntos indicadores (dots): Maravillas del Perú, Favoritos y Guías, Boletos MTC y Planificador Semanal con Calendario.
-
-2. **Terminales de Embarque y Horarios Oficiales (Perú):**
-   * Selección de terminales terrestres: *Terminal Plaza Norte (Lima)*, *Gran Terminal Javier Prado*, *Terminal Huancayo*, *Terminal Terrestre Cusco*, *Terminal Arequipa*, *Aeropuerto Jorge Chávez*.
-   * Horarios: Mañana (05:30 AM), Mediodía (08:00 AM / 01:30 PM), Tarde (05:00 PM) y Nocturno Cama (08:30 PM / 10:45 PM).
-
-3. **Manifiesto de Pasajeros Obligatorio (Normativa MTC / SUTRAN):**
-   * Diálogo modal interactivo para registrar DNI (8 dígitos), nombres, edad y teléfono de contacto de cada integrante.
-
-4. **Simulación de Pasarela de Pago Segura ([`dialog_pasarela_pago.xml`](app/src/main/res/layout/dialog_pasarela_pago.xml)):**
-   * Desglose de Subtotal e IGV (18%).
-   * 3 métodos de pago:
-     * **Tarjeta de Crédito / Débito** (con botón de autocompletado demo).
-     * **Billetera Móvil (Yape / Plin)** al 984 112 233 con código de operación.
-     * **Transferencia / PagoEfectivo** con código CIP generado.
-   * Simulación en 3 pasos con estados bancarios dinámicos y notificación nativa.
-
-5. **Boleto de Embarque / Voucher Interactivo ([`dialog_detalle_voucher.xml`](app/src/main/res/layout/dialog_detalle_voucher.xml)):**
-   * Al pulsar cualquier tarjeta en *"Mis Reservas"* o en el panel de Agencia, se abre el boleto de viaje detallado con código de barras, desglose de pago, lista de DNI, botón para ubicar el terminal en Google Maps y botón para compartir por WhatsApp.
-
-6. **Planificador de Viaje Semanal con Calendario ([`ItinerarioActivity.kt`](app/src/main/java/pe/edu/utp/perviajero/ui/ItinerarioActivity.kt)):**
-   * **Modo Días (1 a 7)** y **Modo Calendario (`CalendarView`)**.
-   * Filtra actividades por fecha concreta seleccionada en el calendario.
-   * Catálogo de sugerencias turísticas de la semana (Lunes a Domingo) con botón de 1 toque para agregar al itinerario.
+| API / Servicio | Endpoint / Tecnología | Propósito |
+| :--- | :--- | :--- |
+| **API REST de Destinos Turísticos** | `https://raw.githubusercontent.com/Edisonkz/Per-Viajero/main/destinos.json` | Catálogo oficial de destinos del Perú (Retrofit 2 + OkHttp 4 + caché 10 MB + 3 estados: Carga/Éxito/Error). |
+| **API Oficial de Ubigeos del Perú** | `https://raw.githubusercontent.com/joseluisq/ubigeos-peru/master/json/{departamentos,provincias,distritos}.json` | Selector en cascada de **25 Departamentos, 196 Provincias y 1,874 Distritos** para el CRUD Admin, con caché local y respaldo offline en `assets/services/ubigeo_peru_fallback.json`. |
+| **OSRM Routing API** | `https://router.project-osrm.org/route/v1/driving/...` | Cálculo de rutas viales reales desde la ubicación GPS del usuario (con fallback geodésico Haversine offline). |
+| **OpenStreetMap (OSMDroid)** | Tiles públicos OSM (`MAPNIK`) | Mapas interactivos nativos en `MapaRutaActivity` y `RutaDestinoActivity`. |
+| **FCM + Simulador Push + WorkManager** | `PeruViajeroMessagingService`, `AvisoPushSimulator`, `RecordatorioViajeWorker` | 4 canales de notificación por prioridad, agrupación `InboxStyle`, `TaskStackBuilder` y Bandeja de Avisos (`🔔`). |
+| **Android `ContactsContract`** | `ContentResolver` + `GestorPermisos` (4 estados) | Importación de acompañantes de viaje desde la agenda telefónica con degradación elegante a registro manual. |
 
 ---
 
-## 5. Modelo con Dos Roles de Usuario
+## 6. Módulos y Funcionalidades Clave
 
-* **Modo Invitado (Libre):** Exploración completa del catálogo REST y búsqueda sin registro previo.
-* **Rol 1 — Turista / Cliente:** Cotiza tours, registra pasajeros, paga en la pasarela, recibe vouchers interactivos y gestiona su itinerario semanal.
-* **Rol 2 — Administrador / Agencia:** Dashboard con KPIs de ingresos en Soles (S/.), volumen de reservas, edición de datos fiscales (Razón Social, RUC, MINCETUR) y despacho de reservas (*Confirmada ➔ En Ruta ➔ Completada*).
-* **Conmutador Rápido:** En la pestaña *Ajustes*, un solo botón permite alternar entre Turista y Administrador para facilitar la evaluación docente.
-
----
-
-## 6. Guía de Sustentación Oral (2 a 3 Minutos)
-
-Para la sustentación en clase, demostrar en este orden:
-1. **Primer inicio / Onboarding:** Mostrar las 4 pantallas de bienvenida que explican la app.
-2. **Catálogo REST y 3 Estados de Red:**
-   * Mostrar el `ProgressBar` al cargar la lista de 12 destinos.
-   * Probar el buscador en tiempo real escribiendo `"Cusco"` o `"Colca"` (estado dinámico).
-   * **Simular error:** Activar el Modo Avión en el emulador y presionar *"Reintentar"* para mostrar la pantalla de error de conexión.
-3. **Cotizador y Pasarela de Pago:**
-   * Entrar a un destino, cambiar la cantidad de pasajeros (el total se recalcula en vivo).
-   * Elegir terminal, horario y llenar el manifiesto de pasajeros con DNI.
-   * Presionar *"Proceder al Pago Seguro"*, pulsar *"Autocompletar Tarjeta Demo"* y presionar pagar. Observar el procesamiento bancario y la notificación de reserva.
-4. **Voucher y Calendario:**
-   * Mostrar el voucher emitido con código de barras y opción de Google Maps.
-   * Abrir el *Planificador de Itinerario*, tocar una fecha en el calendario y ver las actividades programadas.
-5. **Alternancia de Rol y Modo Oscuro:**
-   * En *Ajustes*, activar el Modo Oscuro y alternar a *Modo Administrador* para ver el dashboard de métricas de la agencia.
+1. **Splash Épico + Bienvenida Inmersiva:** Logo oficial vectorial animado (`SplashActivity`) seguido en el primer inicio por `OnboardingActivity` con degradados dinámicos (*morphing*), parallax 3D y acceso directo a Modo Visitante o Login.
+2. **Explorar & Detalle Hero:** Buscador reactivo en vivo, filtros por Categoría, Departamento y Provincia, distancia GPS en tiempo real, clima, mapa vial y brújula por sensores físicos (`CompassView`).
+3. **Comunidad Multi-Foto & Comentarios:** Publicación de experiencias con **hasta 5 fotos** (Cámara o Galería múltiple), carrusel deslizable en `DetallePublicacionActivity`, sistema completo de comentarios entre viajeros y moderación exclusiva para `ADMIN`.
+4. **Cotizador, Pasarela SSL y Boleto Oficial QR:** Rediseño fiel a los mockups aprobados (`docs/mockups_ux_ui/07..09`), Manifiesto SUTRAN con DNI, tarjeta virtual interactiva / Yape / Plin / CIP y Boarding Pass perforado con QR vectorial (`QrVisualView`).
+5. **Bandeja de Avisos Turísticos (`🔔`):** Parseo JSON seguro (`AvisoPayloadParser`), filtros por tipo, acción rápida *"Marcar leído"* y detalle con enlace oficial sanitizado.
+6. **Módulo Ejecutivo de Administrador:** Cambio automático de paleta a *Andean Slate* (`#1B3B4B`), gestión de reservas por destino/estado, CRUD de destinos con API Ubigeo Perú y emisión de alertas Push.
+7. **Soporte Light & Dark Mode + Edge-to-Edge:** Adaptación completa a tema claro/oscuro y barras del sistema (Android 15/16).
 
 ---
 
-## 7. Preguntas de Reflexión para la Sustentación (Sección 7 del Documento)
-
-### Pregunta 1:
-> **¿Qué parte de este avance hubiera sido más directa con fetch/axios y useState en React Native, y por qué en Android nativo toma más líneas de código?**
-
-**Respuesta:**  
-En React Native, el consumo de datos y la reactividad son extremadamente concisos: un hook `useState` para el estado (`[destinos, setDestinos]`), una llamada `fetch` dentro de `useEffect` y un componente `<FlatList>` renderizan la lista en menos de 30 líneas de código gracias al JSX declarativo y al motor de renderizado de JavaScript.
-
-En Android nativo (Kotlin), el modelo es fuertemente tipado y requiere mayor arquitectura:
-1. Declarar permisos de red en el `AndroidManifest.xml` (`INTERNET`, `ACCESS_NETWORK_STATE`).
-2. Configurar la interfaz de Retrofit (`TourismApiService`) y los Data Transfer Objects (DTOs) con anotaciones Gson.
-3. Crear un cliente `OkHttpClient` y gestionar los hilos mediante callbacks asíncronos (`enqueue`) para alternar entre el hilo secundario (background thread) y el hilo principal de interfaz (UI thread).
-4. Implementar un `RecyclerView.Adapter` con el patrón `ViewHolder`, inflando manualmente los archivos XML para reutilizar las vistas en la memoria RAM del dispositivo.
-
-Aunque toma más líneas de código, Android nativo ofrece **mayor rendimiento en el hardware móvil**, menor consumo de batería, reciclaje óptimo de vistas y tipado estricto en tiempo de compilación.
-
----
-
-### Pregunta 2:
-> **¿Qué diferencia encontraron entre guardar datos con SharedPreferences y lo que AsyncStorage haría en React Native (por ejemplo, en cuanto a tipos de datos soportados)?**
-
-**Respuesta:**  
-La diferencia fundamental radica en el **sistema de tipos** y el **modelo de concurrencia**:
-1. **Tipos de datos soportados:**
-   * `SharedPreferences` en Android es un almacén estructurado que soporta nativamente tipos de datos primitivos (`boolean`, `int`, `long`, `float`, `String`) y colecciones (`Set<String>`).
-   * `AsyncStorage` en React Native es un almacén estrictamente de clave-valor basado en **texto plano (`String`)**. Cualquier dato numérico, booleano o estructura compleja debe serializarse forzosamente con `JSON.stringify()` antes de guardar y deserializarse con `JSON.parse()` al recuperar.
-2. **Concurrencia:**
-   * `SharedPreferences` ofrece operaciones síncronas (`commit()`) y asíncronas en segundo plano (`apply()`).
-   * `AsyncStorage` es estrictamente asíncrono y devuelve siempre Promesas (`Promise`), requiriendo `async/await` en cada operación de lectura y escritura.
-
----
-
-## 8. Estructura del Proyecto
+## 7. Estructura del Proyecto
 
 ```text
-pe.edu.utp.perviajero/
-├── PeruViajeroApp.kt                     (Application: logger, canal de notificaciones y manejo global de errores)
-├── MainActivity.kt                       (Navegación adaptativa con BottomNavigationView y accesos rápidos)
-├── di/
-│   └── ServiceLocator.kt                 (Inyección de dependencias sobre interfaces Repository)
-├── ui/
-│   ├── OnboardingActivity.kt             (Pantalla de bienvenida en primer inicio con ViewPager2)
-│   ├── DestinosFragment.kt               (Catálogo REST, 3 estados de red y buscador reactivo)
-│   ├── DetalleDestinoActivity.kt         (Ficha técnica, ruta GPS, experiencias y cotizador)
-│   ├── ComunidadActivity.kt              (Red social de viajeros filtrable por Región y Destino)
-│   ├── PublicarExperienciaActivity.kt    (Captura con Cámara real / galería para publicar experiencias)
-│   ├── MapaRutaActivity.kt               (Mapa OSMDroid con trazado de ruta desde GPS real)
-│   ├── BrujulaActivity.kt                (Brújula Turística Offline con Acelerómetro y Magnetómetro)
-│   ├── ReservaTourActivity.kt            (Cotizador en vivo, terminales, manifiesto DNI y pasarela de pago)
-│   ├── ItinerarioActivity.kt             (Planificador semanal, sugerencias de expertos y CalendarView)
-│   ├── MisReservasFragment.kt            (Vouchers de viaje, código QR y mapa de terminales)
-│   ├── AdminDashboardFragment.kt         (Dashboard de agencia, KPIs y despacho de reservas)
-│   ├── GuiaViajeFragment.kt              (Brújula offline, comunidad, planificador e IPERÚ)
-│   ├── FavoritosFragment.kt              (Destinos guardados con respaldo offline)
-│   ├── AjustesFragment.kt                (Foto de perfil, permisos runtime, roles y modo oscuro)
-│   ├── DiagnosticoLogsActivity.kt        (Visor de logs, caché, token FCM y simulador WorkManager)
-│   ├── ErrorFatalActivity.kt             (Pantalla de recuperación ante excepciones no controladas)
-│   ├── LoginActivity.kt                  (Inicio de sesión y registro local)
-│   ├── RutaDestinoActivity.kt            (Distancia GPS, transporte, mapa embebido y brújula)
-│   ├── common/VoucherDialogHelper.kt     (Helper compartido de tickets/vouchers)
-│   └── view/CompassView.kt               (Vista Canvas personalizada de brújula y rumbo)
-├── data/
-│   ├── common/AppResult.kt               (Manejo tipado de resultados y errores de red)
-│   ├── model/                            (Destino, Reserva, Pasajero, PublicacionViajero, Usuario, etc.)
-│   ├── repository/                       (Interfaces Repository + implementaciones desacopladas)
-│   └── local/PreferencesHelper.kt        (Persistencia local con SharedPreferences)
-├── network/
-│   ├── ApiClient.kt                      (Retrofit 2 + OkHttp 4 con caché de 10 MB y logging)
-│   ├── TourismApiService.kt              (Endpoint GET destinos.json)
-│   ├── OsrmApiService.kt & RoutingService.kt (Rutas viales OSRM con fallback geodésico offline)
-│   └── PeruViajeroMessagingService.kt    (Receptor de notificaciones Push FCM)
-├── worker/
-│   └── RecordatorioViajeWorker.kt        (Recordatorios locales programados con WorkManager)
-├── util/                                 (AppLogger, GeoMath, PermissionHelper, LocationHelper, CompassSensorManager, etc.)
-└── adapter/                              (ListAdapter + DiffUtil para Destinos, Reservas, Itinerario y Comunidad)
+Per-Viajero/
+├── README.md                                  # Documentación principal del repositorio
+├── planeamiento/                              # Planeamiento estratégico SDD y roadmap S10–S16
+│   └── README.md
+├── docs/
+│   ├── mockups_ux_ui/                         # Mockups aprobados (01..09) y logo oficial
+│   ├── checklists_terminados/                 # Checklists completados (Fases A–N)
+│   └── checklists_pendientes/                 # Checklist administrativo de Google Play Console
+└── app/src/main/
+    ├── assets/services/                       # Semillas JSON (avisos, comunidad, itinerario, reservas, ubigeo, usuarios)
+    └── java/pe/edu/utp/perviajero/
+        ├── MainActivity.kt                    # Shell curvo 5 tabs + Drawer + paleta dinámica por rol
+        ├── di/ServiceLocator.kt               # Composición e inyección de dependencias
+        ├── ui/                                # Splash, Onboarding, Explorar, Comunidad, DetallePublicacion,
+        │                                      # ReservaTour, MisReservas, Itinerario, BandejaAvisos, AdminDashboard, AdminCatalogo
+        ├── ui/common/                         # AuthGuardHelper, VoucherDialogHelper
+        ├── ui/view/                           # CurvedBottomBarView, DrawerHeaderBgView, CompassView, QrVisualView
+        ├── data/{model,repository,local}/     # Modelos, contratos Repository y PreferencesHelper
+        ├── services/                          # AvisoService, ComunidadService, DestinoService, UbigeoPeruService, etc.
+        ├── network/                           # ApiClient, TourismApiService, UbigeoApiService, OsrmApiService, FCM
+        ├── adapter/                           # ListAdapter + DiffUtil (Destinos, Comunidad, Reservas, Avisos, Onboarding)
+        ├── worker/                            # RecordatorioViajeWorker (WorkManager)
+        └── util/                              # GestorPermisos, AvisoPayloadParser, AdminFilterHelper, ContactoImportHelper, GeoMath
 ```
 
-> **Roadmap Semanas 10 a 16:** Consulta [planeamiento/roadmap_s10_s16/README.md](planeamiento/roadmap_s10_s16/README.md) y el checklist de publicación en [docs/checklist_publicacion_play_store.md](docs/checklist_publicacion_play_store.md).
+---
+
+## 8. Compilación y Pruebas Locales
+
+```bash
+# Ejecutar pruebas unitarias JVM (31 tests en 11 suites)
+./gradlew testDebugUnitTest
+
+# Compilar APK Debug y Release optimizado con R8
+./gradlew assembleDebug assembleRelease
+```
+
+---
+
+## 9. Documentación Complementaria
+- **Planeamiento SDD completo:** [planeamiento/README.md](planeamiento/README.md)
+- **Checklists completados (Fases A–N):** [docs/checklists_terminados/README_CHECKLIST_Y_ADMIN.md](docs/checklists_terminados/README_CHECKLIST_Y_ADMIN.md) y [docs/checklists_terminados/CHECKLIST_REDISENO_UX_UI.md](docs/checklists_terminados/CHECKLIST_REDISENO_UX_UI.md)
+- **Publicación en Play Store:** [docs/checklists_pendientes/checklist_publicacion_play_store.md](docs/checklists_pendientes/checklist_publicacion_play_store.md)
